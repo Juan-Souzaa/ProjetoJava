@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Devolucao;
+import model.Locacao;
 
-public class DevolucaoBanco {
+public class DevolucaoBanco  extends Locacao{
     private DBConnection connection;
 
     public DevolucaoBanco() {
@@ -18,7 +19,7 @@ public class DevolucaoBanco {
         try {
             String sql = "CALL inserir_devolucao(?, ?, ?, ?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setDate(1, java.sql.Date.valueOf(devolucao.getDataDevolucao())); 
+            statement.setString(1, devolucao.getDataDevolucao().toString()); 
             statement.setString(2, devolucao.getCondicaoVeiculo());
             statement.setDouble(3, devolucao.getTaxaAtraso());
             statement.setBoolean(4, devolucao.getStatusDevolucao());

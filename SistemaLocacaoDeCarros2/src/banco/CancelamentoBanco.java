@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Cancelamento;
+import model.Locacao;
 
-public class CancelamentoBanco {
+public class CancelamentoBanco extends Locacao {
     private DBConnection connection;
 
     public CancelamentoBanco() {

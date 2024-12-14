@@ -83,6 +83,7 @@ public class ViewCancelamento {
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
+        
         TableColumn colMotivo = new TableColumn(table, SWT.NONE);
         colMotivo.setWidth(300);
         colMotivo.setText("Motivo");

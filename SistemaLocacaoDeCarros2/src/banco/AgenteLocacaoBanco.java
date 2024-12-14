@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.AgenteLocacao;
+import model.Balconista;
 import model.Usuario;
 
 public class AgenteLocacaoBanco extends UsuarioBanco {
@@ -19,9 +20,9 @@ public class AgenteLocacaoBanco extends UsuarioBanco {
     public void incluir(AgenteLocacao agente) {
         super.incluir(agente); 
         try {
-            String sql = "CALL inserir_agente_locacao(?, ?);";
+            String sql = "CALL inserir_agente(?, ?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, agente.getCodigoAgente());
+            statement.setString(1, agente.getCpf());
             statement.setString(2, agente.getRegiaoAtuacao());
             statement.execute();
             statement.close();
@@ -32,32 +33,29 @@ public class AgenteLocacaoBanco extends UsuarioBanco {
 
     public List<AgenteLocacao> listarAgentes() {
         List<AgenteLocacao> agentes = new ArrayList<>();
-        List<Usuario> usuarios = super.listar(); // Lista os usuários da tabela Usuario
         try {
-            String sql = "CALL listar_agentes_locacao();";
+            String sql = "CALL listar_agentes();";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 AgenteLocacao agente = new AgenteLocacao();
-                agente.setCodigoAgente(rs.getInt("codigoAgente"));
-                agente.setRegiaoAtuacao(rs.getString("regiaoAtuacao"));
-
-        
-                for (Usuario usuario : usuarios) {
-                    if (usuario.getIdUsuario().equals(rs.getInt("idUsuario"))) {
-                        agente.setIdUsuario(usuario.getIdUsuario());
-                        agente.setNomeCompleto(usuario.getNomeCompleto());
-                        agente.setEmail(usuario.getEmail());
-                        agente.setSenha(usuario.getSenha());
-                        agente.setTelefone(usuario.getTelefone());
-                        agente.setEndereco(usuario.getEndereco());
-                        agente.setDataCadastro(usuario.getDataCadastro());
-                     
-                        agente.setNivelAcesso(usuario.getNivelAcesso());
-                        break;
-                    }
-                }
-                agentes.add(agente);
+                
+              
+	                agente.setIdUsuario(rs.getInt("idUsuario"));
+	                agente.setNomeCompleto(rs.getString("nomeCompleto"));
+	                agente.setEmail(rs.getString("email"));
+	                agente.setSenha(rs.getString("senha"));
+	                agente.setTelefone(rs.getString("telefone"));
+	                agente.setEndereco(rs.getString("endereco"));
+	                agente.setDataCadastro(rs.getDate("dataCadastro").toLocalDate());
+	                agente.setNivelAcesso(rs.getString("nivelAcesso"));
+	                agente.setCpf(rs.getString("cpf"));
+	         
+	                agente.setRegiaoAtuacao(rs.getString("regiaoAtuacao"));
+	                
+	               agentes.add(agente);
+          
+             
             }
             rs.close();
             statement.close();

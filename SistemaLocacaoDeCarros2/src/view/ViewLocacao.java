@@ -45,6 +45,14 @@ public class ViewLocacao {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            ViewLocacao window = new ViewLocacao();
+            window.open();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     protected void createContents() {
         shell = new Shell();
         shell.setSize(962, 993);
@@ -136,6 +144,18 @@ public class ViewLocacao {
         TableColumn tblclmnObservacoes = new TableColumn(table, SWT.NONE);
         tblclmnObservacoes.setWidth(100);
         tblclmnObservacoes.setText("Observações");
+        
+        Button btnVerFaturas = new Button(shell, SWT.NONE);
+        btnVerFaturas.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		List<Locacao> locacoes = locacaoBanco.listar(); // Obter locações
+        		ViewFatura viewFatura = new ViewFatura(locacoes);
+        		viewFatura.open();
+        	}
+        });
+        btnVerFaturas.setBounds(551, 406, 75, 25);
+        btnVerFaturas.setText("Ver Faturas");
 
      
         btnCadastrarLocacao.addSelectionListener(new SelectionAdapter() {

@@ -26,327 +26,402 @@ import model.Balconista;
 import model.Cliente;
 
 public class ViewUsuario {
-    private Shell shell;
-    private Text txtNomeCompleto, txtEmail, txtSenha, txtTelefone, txtEndereco;
-    private Text txtCpf, txtCategoriaCnh, txtTurno, txtFilial, txtRegiaoAtuacao;
-    private Table table;
+	private Shell shell;
+	private Text txtNomeCompleto, txtEmail, txtSenha, txtTelefone, txtEndereco;
+	private Text txtCpf, txtCategoriaCnh, txtTurno, txtFilial, txtRegiaoAtuacao;
+	private Table table;
 
-    private ClienteBanco clienteBanco;
-    private BalconistaBanco balconistaBanco;
-    private AgenteLocacaoBanco agenteLocacaoBanco;
-    private UsuarioBanco usuarioBanco;
+	private ClienteBanco clienteBanco;
+	private BalconistaBanco balconistaBanco;
+	private AgenteLocacaoBanco agenteLocacaoBanco;
 
-    public ViewUsuario() {
-        this.clienteBanco = new ClienteBanco();
-        this.balconistaBanco = new BalconistaBanco();
-        this.agenteLocacaoBanco = new AgenteLocacaoBanco();
-        this.usuarioBanco = new UsuarioBanco();
-    }
-    public static void main(String[] args) {
-        try {
-            ViewUsuario window = new ViewUsuario();
-            window.open();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void open() {
-        Display display = Display.getDefault();
-        createContents();
-        shell.open();
-        shell.layout();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch()) {
-                display.sleep();
-            }
-        }
-    }
+	public ViewUsuario() {
+		this.clienteBanco = new ClienteBanco();
+		this.balconistaBanco = new BalconistaBanco();
+		this.agenteLocacaoBanco = new AgenteLocacaoBanco();
 
-    protected void createContents() {
-        shell = new Shell();
-        shell.setSize(900, 700);
-        shell.setText("Cadastro de Usuário");
+	}
 
-        // Campos comuns a todos os usuários
-        Label lblNomeCompleto = new Label(shell, SWT.NONE);
-        lblNomeCompleto.setBounds(20, 30, 120, 15);
-        lblNomeCompleto.setText("Nome Completo:");
+	public static void main(String[] args) {
+		try {
+			ViewUsuario window = new ViewUsuario();
+			window.open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        txtNomeCompleto = new Text(shell, SWT.BORDER);
-        txtNomeCompleto.setBounds(150, 30, 200, 21);
+	public void open() {
+		Display display = Display.getDefault();
+		createContents();
+		shell.open();
+		shell.layout();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+	}
 
-        Label lblEmail = new Label(shell, SWT.NONE);
-        lblEmail.setBounds(20, 60, 100, 15);
-        lblEmail.setText("Email:");
+	protected void createContents() {
+		shell = new Shell();
+		shell.setSize(1153, 705);
+		shell.setText("Cadastro de Usuário");
 
-        txtEmail = new Text(shell, SWT.BORDER);
-        txtEmail.setBounds(150, 60, 200, 21);
+		// Campos comuns a todos os usuários
+		Label lblNomeCompleto = new Label(shell, SWT.NONE);
+		lblNomeCompleto.setBounds(20, 30, 120, 15);
+		lblNomeCompleto.setText("Nome Completo:");
 
-        Label lblSenha = new Label(shell, SWT.NONE);
-        lblSenha.setBounds(20, 90, 100, 15);
-        lblSenha.setText("Senha:");
+		txtNomeCompleto = new Text(shell, SWT.BORDER);
+		txtNomeCompleto.setBounds(150, 30, 200, 21);
 
-        txtSenha = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-        txtSenha.setBounds(150, 90, 200, 21);
+		Label lblEmail = new Label(shell, SWT.NONE);
+		lblEmail.setBounds(20, 60, 100, 15);
+		lblEmail.setText("Email:");
 
-        Label lblTelefone = new Label(shell, SWT.NONE);
-        lblTelefone.setBounds(20, 120, 100, 15);
-        lblTelefone.setText("Telefone:");
+		txtEmail = new Text(shell, SWT.BORDER);
+		txtEmail.setBounds(150, 60, 200, 21);
 
-        txtTelefone = new Text(shell, SWT.BORDER);
-        txtTelefone.setBounds(150, 120, 200, 21);
+		Label lblSenha = new Label(shell, SWT.NONE);
+		lblSenha.setBounds(20, 90, 100, 15);
+		lblSenha.setText("Senha:");
 
-        Label lblEndereco = new Label(shell, SWT.NONE);
-        lblEndereco.setBounds(20, 150, 100, 15);
-        lblEndereco.setText("Endereço:");
+		txtSenha = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		txtSenha.setBounds(150, 90, 200, 21);
 
-        txtEndereco = new Text(shell, SWT.BORDER);
-        txtEndereco.setBounds(150, 150, 200, 21);
+		Label lblTelefone = new Label(shell, SWT.NONE);
+		lblTelefone.setBounds(20, 120, 100, 15);
+		lblTelefone.setText("Telefone:");
 
-        // Radio Buttons para tipo de usuário
-        Label lblTipoUsuario = new Label(shell, SWT.NONE);
-        lblTipoUsuario.setBounds(20, 220, 120, 15);
-        lblTipoUsuario.setText("Tipo de Usuário:");
+		txtTelefone = new Text(shell, SWT.BORDER);
+		txtTelefone.setBounds(150, 120, 200, 21);
 
-        Button rbCliente = new Button(shell, SWT.RADIO);
-        rbCliente.setBounds(150, 220, 100, 15);
-        rbCliente.setText("Cliente");
+		Label lblEndereco = new Label(shell, SWT.NONE);
+		lblEndereco.setBounds(20, 150, 100, 15);
+		lblEndereco.setText("Endereço:");
 
-        Button rbBalconista = new Button(shell, SWT.RADIO);
-        rbBalconista.setBounds(260, 220, 100, 15);
-        rbBalconista.setText("Balconista");
+		txtEndereco = new Text(shell, SWT.BORDER);
+		txtEndereco.setBounds(150, 150, 200, 21);
 
-        Button rbAgenteLocacao = new Button(shell, SWT.RADIO);
-        rbAgenteLocacao.setBounds(370, 220, 150, 15);
-        rbAgenteLocacao.setText("Agente de Locação");
+		// Radio Buttons para tipo de usuário
+		Label lblTipoUsuario = new Label(shell, SWT.NONE);
+		lblTipoUsuario.setBounds(20, 220, 120, 15);
+		lblTipoUsuario.setText("Tipo de Usuário:");
 
-        // Campos específicos
-        Label lblCpf = new Label(shell, SWT.NONE);
-        lblCpf.setBounds(260, 183, 100, 15);
-        lblCpf.setText("CPF:");
-        lblCpf.setVisible(true);
+		Button rbCliente = new Button(shell, SWT.RADIO);
+		rbCliente.setBounds(150, 220, 100, 15);
+		rbCliente.setText("Cliente");
 
-        txtCpf = new Text(shell, SWT.BORDER);
-        txtCpf.setBounds(309, 180, 200, 21);
-        txtCpf.setVisible(true);
+		Button rbBalconista = new Button(shell, SWT.RADIO);
+		rbBalconista.setBounds(260, 220, 100, 15);
+		rbBalconista.setText("Balconista");
 
-        Label lblCategoriaCnh = new Label(shell, SWT.NONE);
-        lblCategoriaCnh.setBounds(20, 290, 120, 15);
-        lblCategoriaCnh.setText("Categoria CNH:");
-        lblCategoriaCnh.setVisible(false);
+		Button rbAgenteLocacao = new Button(shell, SWT.RADIO);
+		rbAgenteLocacao.setBounds(370, 220, 150, 15);
+		rbAgenteLocacao.setText("Agente de Locação");
 
-        txtCategoriaCnh = new Text(shell, SWT.BORDER);
-        txtCategoriaCnh.setBounds(150, 290, 200, 21);
-        txtCategoriaCnh.setVisible(false);
+		// Campos específicos
+		Label lblCpf = new Label(shell, SWT.NONE);
+		lblCpf.setBounds(260, 183, 33, 15);
+		lblCpf.setText("CPF:");
+		lblCpf.setVisible(true);
 
-        Label lblTurno = new Label(shell, SWT.NONE);
-        lblTurno.setBounds(20, 260, 100, 15);
-        lblTurno.setText("Turno:");
-        lblTurno.setVisible(false);
+		txtCpf = new Text(shell, SWT.BORDER);
+		txtCpf.setBounds(309, 180, 200, 21);
+		txtCpf.setVisible(true);
 
-        txtTurno = new Text(shell, SWT.BORDER);
-        txtTurno.setBounds(150, 260, 200, 21);
-        txtTurno.setVisible(false);
+		Label lblCategoriaCnh = new Label(shell, SWT.NONE);
+		lblCategoriaCnh.setBounds(20, 290, 120, 15);
+		lblCategoriaCnh.setText("Categoria CNH:");
+		lblCategoriaCnh.setVisible(false);
 
-        Label lblFilial = new Label(shell, SWT.NONE);
-        lblFilial.setBounds(20, 290, 100, 15);
-        lblFilial.setText("Filial:");
-        lblFilial.setVisible(false);
+		txtCategoriaCnh = new Text(shell, SWT.BORDER);
+		txtCategoriaCnh.setBounds(150, 290, 200, 21);
+		txtCategoriaCnh.setVisible(false);
 
-        txtFilial = new Text(shell, SWT.BORDER);
-        txtFilial.setBounds(150, 290, 200, 21);
-        txtFilial.setVisible(false);
+		Label lblTurno = new Label(shell, SWT.NONE);
+		lblTurno.setBounds(20, 260, 100, 15);
+		lblTurno.setText("Turno:");
+		lblTurno.setVisible(false);
 
-        Label lblRegiaoAtuacao = new Label(shell, SWT.NONE);
-        lblRegiaoAtuacao.setBounds(20, 260, 150, 15);
-        lblRegiaoAtuacao.setText("Região de Atuação:");
-        lblRegiaoAtuacao.setVisible(false);
+		txtTurno = new Text(shell, SWT.BORDER);
+		txtTurno.setBounds(150, 260, 200, 21);
+		txtTurno.setVisible(false);
 
-        txtRegiaoAtuacao = new Text(shell, SWT.BORDER);
-        txtRegiaoAtuacao.setBounds(150, 260, 200, 21);
-        txtRegiaoAtuacao.setVisible(false);
+		Label lblFilial = new Label(shell, SWT.NONE);
+		lblFilial.setBounds(20, 290, 100, 15);
+		lblFilial.setText("Filial:");
+		lblFilial.setVisible(false);
 
-       
-        Button btnCadastrar = new Button(shell, SWT.NONE);
-        btnCadastrar.setBounds(20, 330, 150, 30);
-        btnCadastrar.setText("Cadastrar Usuário");
+		txtFilial = new Text(shell, SWT.BORDER);
+		txtFilial.setBounds(150, 290, 200, 21);
+		txtFilial.setVisible(false);
 
-        Button btnListar = new Button(shell, SWT.NONE);
-        btnListar.setBounds(180, 330, 150, 30);
-        btnListar.setText("Listar Usuários");
+		Label lblRegiaoAtuacao = new Label(shell, SWT.NONE);
+		lblRegiaoAtuacao.setBounds(20, 260, 150, 15);
+		lblRegiaoAtuacao.setText("Região de Atuação:");
+		lblRegiaoAtuacao.setVisible(false);
 
-        table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(20, 380, 860, 250);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
+		txtRegiaoAtuacao = new Text(shell, SWT.BORDER);
+		txtRegiaoAtuacao.setBounds(150, 260, 200, 21);
+		txtRegiaoAtuacao.setVisible(false);
 
-        TableColumn colId = new TableColumn(table, SWT.NONE);
-        colId.setWidth(50);
-        colId.setText("ID");
+		Button btnCadastrar = new Button(shell, SWT.NONE);
+		btnCadastrar.setBounds(20, 330, 150, 30);
+		btnCadastrar.setText("Cadastrar Usuário");
 
-        TableColumn colNome = new TableColumn(table, SWT.NONE);
-        colNome.setWidth(150);
-        colNome.setText("Nome");
+		Button btnListar = new Button(shell, SWT.NONE);
+		btnListar.setBounds(180, 330, 150, 30);
+		btnListar.setText("Listar Usuários");
 
-        TableColumn colEmail = new TableColumn(table, SWT.NONE);
-        colEmail.setWidth(150);
-        colEmail.setText("Email");
-        
-        DateTime dateNasc = new DateTime(shell, SWT.BORDER);
-        dateNasc.setBounds(160, 177, 80, 24);
-        
-        Label lblDataNascimento = new Label(shell, SWT.NONE);
-        lblDataNascimento.setBounds(20, 186, 100, 15);
-        lblDataNascimento.setText("Data Nascimento");
+		table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
+		table.setBounds(20, 380, 1058, 250);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 
-        rbCliente.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               
-                lblCategoriaCnh.setVisible(true);
-                txtCategoriaCnh.setVisible(true);
-                lblDataNascimento.setVisible(true);
-                dateNasc.setVisible(true);
+		TableColumn colId = new TableColumn(table, SWT.NONE);
+		colId.setWidth(50);
+		colId.setText("ID");
 
-                lblTurno.setVisible(false);
-                txtTurno.setVisible(false);
-                lblFilial.setVisible(false);
-                txtFilial.setVisible(false);
-                lblRegiaoAtuacao.setVisible(false);
-                txtRegiaoAtuacao.setVisible(false);
-            }
-        });
+		TableColumn colNome = new TableColumn(table, SWT.NONE);
+		colNome.setWidth(150);
+		colNome.setText("Nome");
 
-        rbBalconista.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                lblTurno.setVisible(true);
-                txtTurno.setVisible(true);
-                lblFilial.setVisible(true);
-                txtFilial.setVisible(true);
+		TableColumn colEmail = new TableColumn(table, SWT.NONE);
+		colEmail.setWidth(150);
+		colEmail.setText("Email");
 
-              
-                lblCategoriaCnh.setVisible(false);
-                txtCategoriaCnh.setVisible(false);
-                lblRegiaoAtuacao.setVisible(false);
-                txtRegiaoAtuacao.setVisible(false);
-                lblDataNascimento.setVisible(false);
-                dateNasc.setVisible(false);
+		TableColumn tblclmnTelefone = new TableColumn(table, SWT.NONE);
+		tblclmnTelefone.setWidth(100);
+		tblclmnTelefone.setText("Telefone");
 
-            }
-        });
+		TableColumn tblclmnEndereco = new TableColumn(table, SWT.NONE);
+		tblclmnEndereco.setWidth(100);
+		tblclmnEndereco.setText("Endereco");
 
-        rbAgenteLocacao.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                lblRegiaoAtuacao.setVisible(true);
-                txtRegiaoAtuacao.setVisible(true);
+		TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+		tblclmnNewColumn.setWidth(100);
+		tblclmnNewColumn.setText("Data Cadastro");
 
-               
-                lblCategoriaCnh.setVisible(false);
-                txtCategoriaCnh.setVisible(false);
-                lblTurno.setVisible(false);
-                txtTurno.setVisible(false);
-                lblFilial.setVisible(false);
-                txtFilial.setVisible(false);
-                lblDataNascimento.setVisible(false);
-                dateNasc.setVisible(false);
+		TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
+		tblclmnNewColumn_1.setWidth(100);
+		tblclmnNewColumn_1.setText("Nivel Acesso");
 
-            }
-        });
+		TableColumn tblclmnNewColumn_2 = new TableColumn(table, SWT.NONE);
+		tblclmnNewColumn_2.setWidth(100);
+		tblclmnNewColumn_2.setText("CPF");
 
-        btnCadastrar.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                String nomeCompleto = txtNomeCompleto.getText();
-                String email = txtEmail.getText();
-                String senha = txtSenha.getText();
-                String telefone = txtTelefone.getText();
-                String endereco = txtEndereco.getText();
-                LocalDate dataAtual = LocalDate.now();
-                
-                
-                
-               
+		TableColumn tblclmnNewColumn_3 = new TableColumn(table, SWT.NONE);
+		TableColumn tblclmnNewColumn_4 = new TableColumn(table, SWT.NONE);
 
-                if (rbCliente.getSelection()) {
-                	Integer idCliente = null;
-                	String nivelAcesso = "1";
-                    String cpf = txtCpf.getText();
-                    String categoriaCNH = txtCategoriaCnh.getText();
-                    LocalDate dataNascimento = LocalDate.of(dateNasc.getYear(), dateNasc.getMonth() + 1, dateNasc.getDay());
-                    Cliente cliente = new Cliente(idCliente,nomeCompleto,email,senha,telefone,endereco,dataAtual,nivelAcesso,cpf,dataNascimento,categoriaCNH);
-                    clienteBanco.incluir(cliente);
-                    MessageBox box = new MessageBox(shell, SWT.OK);
-                    box.setMessage("Cliente cadastrado com sucesso!");
-                    box.open();
-                } else if (rbBalconista.getSelection()) {
-                	Integer idBalc = null;
-                	String nivelAcesso = "2";
-                	String cpf = txtCpf.getText();
-                    String turno = txtTurno.getText();
-                    String filial = txtFilial.getText();
-                    Balconista balconista = new Balconista(idBalc,nomeCompleto,email,senha,telefone,endereco,dataAtual,nivelAcesso,cpf,turno,filial);
-                    balconistaBanco.incluir(balconista);
-                    MessageBox box = new MessageBox(shell, SWT.OK);
-                    box.setMessage("Balconista cadastrado com sucesso!");
-                    box.open();
-                } else if (rbAgenteLocacao.getSelection()) {
-                	Integer idAgente = null;
-                	String nivelAcesso = "3";
-                	String cpf = txtCpf.getText();
-                    String regiaoAtuacao = txtRegiaoAtuacao.getText();
-                    AgenteLocacao agente = new AgenteLocacao(idAgente,nomeCompleto,email,senha,telefone,endereco,dataAtual,nivelAcesso,cpf,regiaoAtuacao);
-                    agenteLocacaoBanco.incluir(agente);
-                    MessageBox box = new MessageBox(shell, SWT.OK);
-                    box.setMessage("Agente de Locação cadastrado com sucesso!");
-                    box.open();
-                } else {
-                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
-                    box.setMessage("Selecione o tipo de usuário antes de cadastrar.");
-                    box.open();
-                }
-            }
-        });
-        
-        btnListar.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                table.removeAll(); 
+		tblclmnNewColumn_3.setText("Data De Nascimento");
+		tblclmnNewColumn_4.setText("Categoria CNH");
+		tblclmnNewColumn_3.setWidth(100);
+		tblclmnNewColumn_4.setWidth(100);
 
-                if (rbCliente.getSelection()) {
-                    List<Cliente> clientes = clienteBanco.listarclientes();
-                    for (Cliente cliente : clientes) {
-                        TableItem item = new TableItem(table, SWT.NONE);
-                        item.setText(new String[]{
-                                String.valueOf(cliente.getIdUsuario()),
-                                cliente.getNomeCompleto(),
-                                cliente.getEmail(),
-                                cliente.getCpf(),
-                                cliente.getCategoriaCNH()
-                        });
-                    }
-                } else if (rbBalconista.getSelection()) {
-                    List<Balconista> balconistas = balconistaBanco.listarBalconistas();
-                    for (Balconista balconista : balconistas) {
-                        TableItem item = new TableItem(table, SWT.NONE);
-                        item.setText(new String[]{
-                                String.valueOf(balconista.getIdUsuario()),
-                                balconista.getNomeCompleto(),
-                                balconista.getEmail(),
-                                balconista.getTurno(),
-                                balconista.getFilial()
-                        });
-                    }
-                }
-                else {
-                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
-                    box.setMessage("Selecione o tipo de usuário para listar.");
-                    box.open();
-                }
-            }
-        });
-      
-    }
+	
+
+		
+
+		DateTime dateNasc = new DateTime(shell, SWT.BORDER);
+		dateNasc.setBounds(160, 177, 80, 24);
+
+		Label lblDataNascimento = new Label(shell, SWT.NONE);
+		lblDataNascimento.setBounds(20, 186, 100, 15);
+		lblDataNascimento.setText("Data Nascimento");
+
+		Button btnAtualizar = new Button(shell, SWT.NONE);
+		btnAtualizar.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		btnAtualizar.setBounds(354, 330, 106, 30);
+		btnAtualizar.setText("Atualizar ");
+
+		Button btnDeletar = new Button(shell, SWT.NONE);
+		btnDeletar.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		btnDeletar.setBounds(496, 330, 75, 30);
+		btnDeletar.setText("Deletar ");
+
+		Button btnConsultaId = new Button(shell, SWT.NONE);
+		btnConsultaId.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		btnConsultaId.setBounds(593, 330, 75, 30);
+		btnConsultaId.setText("Consulta id");
+
+		rbCliente.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				lblCategoriaCnh.setVisible(true);
+				txtCategoriaCnh.setVisible(true);
+				lblDataNascimento.setVisible(true);
+				dateNasc.setVisible(true);
+
+				lblTurno.setVisible(false);
+				txtTurno.setVisible(false);
+				lblFilial.setVisible(false);
+				txtFilial.setVisible(false);
+				lblRegiaoAtuacao.setVisible(false);
+				txtRegiaoAtuacao.setVisible(false);
+			}
+		});
+
+		rbBalconista.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				lblTurno.setVisible(true);
+				txtTurno.setVisible(true);
+				lblFilial.setVisible(true);
+				txtFilial.setVisible(true);
+
+				lblCategoriaCnh.setVisible(false);
+				txtCategoriaCnh.setVisible(false);
+				lblRegiaoAtuacao.setVisible(false);
+				txtRegiaoAtuacao.setVisible(false);
+				lblDataNascimento.setVisible(false);
+				dateNasc.setVisible(false);
+
+			}
+		});
+
+		rbAgenteLocacao.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				lblRegiaoAtuacao.setVisible(true);
+				txtRegiaoAtuacao.setVisible(true);
+
+				lblCategoriaCnh.setVisible(false);
+				txtCategoriaCnh.setVisible(false);
+				lblTurno.setVisible(false);
+				txtTurno.setVisible(false);
+				lblFilial.setVisible(false);
+				txtFilial.setVisible(false);
+				lblDataNascimento.setVisible(false);
+				dateNasc.setVisible(false);
+
+			}
+		});
+
+		btnCadastrar.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String nomeCompleto = txtNomeCompleto.getText();
+				String email = txtEmail.getText();
+				String senha = txtSenha.getText();
+				String telefone = txtTelefone.getText();
+				String endereco = txtEndereco.getText();
+				LocalDate dataAtual = LocalDate.now();
+
+				if (rbCliente.getSelection()) {
+					Integer idCliente = null;
+					String nivelAcesso = "1";
+					String cpf = txtCpf.getText();
+					String categoriaCNH = txtCategoriaCnh.getText();
+					LocalDate dataNascimento = LocalDate.of(dateNasc.getYear(), dateNasc.getMonth() + 1,
+							dateNasc.getDay());
+					Cliente cliente = new Cliente(idCliente, nomeCompleto, email, senha, telefone, endereco, dataAtual,
+							nivelAcesso, cpf, dataNascimento, categoriaCNH);
+					clienteBanco.incluir(cliente);
+					MessageBox box = new MessageBox(shell, SWT.OK);
+					box.setMessage("Cliente cadastrado com sucesso!");
+					box.open();
+				} else if (rbBalconista.getSelection()) {
+					Integer idBalc = null;
+					String nivelAcesso = "2";
+					String cpf = txtCpf.getText();
+					String turno = txtTurno.getText();
+					String filial = txtFilial.getText();
+					Balconista balconista = new Balconista(idBalc, nomeCompleto, email, senha, telefone, endereco,
+							dataAtual, nivelAcesso, cpf, turno, filial);
+					balconistaBanco.incluir(balconista);
+					MessageBox box = new MessageBox(shell, SWT.OK);
+					box.setMessage("Balconista cadastrado com sucesso!");
+					box.open();
+				} else if (rbAgenteLocacao.getSelection()) {
+					Integer idAgente = null;
+					String nivelAcesso = "3";
+					String cpf = txtCpf.getText();
+					String regiaoAtuacao = txtRegiaoAtuacao.getText();
+					AgenteLocacao agente = new AgenteLocacao(idAgente, nomeCompleto, email, senha, telefone, endereco,
+							dataAtual, nivelAcesso, cpf, regiaoAtuacao);
+					agenteLocacaoBanco.incluir(agente);
+					MessageBox box = new MessageBox(shell, SWT.OK);
+					box.setMessage("Agente de Locação cadastrado com sucesso!");
+					box.open();
+				} else {
+					MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+					box.setMessage("Selecione o tipo de usuário antes de cadastrar.");
+					box.open();
+				}
+			}
+		});
+
+		btnListar.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				table.removeAll();
+
+				if (rbCliente.getSelection()) {
+					tblclmnNewColumn_3.setText("Data De Nascimento");
+					tblclmnNewColumn_4.setText("Categoria CNH");
+
+					List<Cliente> clientes = clienteBanco.listarclientes();
+					for (Cliente cliente : clientes) {
+						TableItem item = new TableItem(table, SWT.NONE);
+						item.setText(new String[] { String.valueOf(cliente.getIdUsuario()), cliente.getNomeCompleto(),
+								cliente.getEmail(), cliente.getTelefone(), cliente.getEndereco(),
+								cliente.getDataCadastro().toString(), cliente.getNivelAcesso(), cliente.getCpf(),
+								cliente.getDataNascimento().toString(), cliente.getCategoriaCNH() });
+					}
+				} else if (rbBalconista.getSelection()) {
+					tblclmnNewColumn_3.setText("Turno");
+					tblclmnNewColumn_4.setText("Filial");
+
+					List<Balconista> balconistas = balconistaBanco.listarBalconistas();
+					for (Balconista balconista : balconistas) {
+						TableItem item = new TableItem(table, SWT.NONE);
+						item.setText(
+								new String[] { String.valueOf(balconista.getIdUsuario()), balconista.getNomeCompleto(),
+										balconista.getEmail(), balconista.getTelefone(), balconista.getEndereco(),
+										balconista.getDataCadastro().toString(), balconista.getNivelAcesso(),
+										balconista.getCpf(), balconista.getTurno(), balconista.getFilial(), });
+					}
+				}
+
+				else if (rbAgenteLocacao.getSelection()) {
+					tblclmnNewColumn_3.setText("Regiao de Atuacao");
+					tblclmnNewColumn_4.setText("");
+
+
+					List<AgenteLocacao> agentes = agenteLocacaoBanco.listarAgentes();
+					for (AgenteLocacao agente : agentes) {
+						TableItem item = new TableItem(table, SWT.NONE);
+						item.setText(new String[] { String.valueOf(agente.getIdUsuario()), agente.getNomeCompleto(),
+								agente.getEmail(), agente.getTelefone(), agente.getEndereco(),
+								agente.getDataCadastro().toString(), agente.getNivelAcesso(), agente.getCpf(),
+								agente.getRegiaoAtuacao(),
+
+						});
+					}
+				} else {
+					MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+					box.setMessage("Selecione o tipo de usuário para listar.");
+					box.open();
+				}
+			}
+		});
+
+	}
 }
-

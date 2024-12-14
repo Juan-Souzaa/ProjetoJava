@@ -4,9 +4,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Locacao;
 import model.Retirada;
 
-public class RetiradaBanco {
+public class RetiradaBanco extends Locacao {
     private DBConnection connection;
 
     public RetiradaBanco() {
