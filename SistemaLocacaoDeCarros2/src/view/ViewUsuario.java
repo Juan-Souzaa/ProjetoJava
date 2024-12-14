@@ -122,13 +122,13 @@ public class ViewUsuario {
 
         // Campos específicos
         Label lblCpf = new Label(shell, SWT.NONE);
-        lblCpf.setBounds(20, 260, 100, 15);
+        lblCpf.setBounds(260, 183, 100, 15);
         lblCpf.setText("CPF:");
-        lblCpf.setVisible(false);
+        lblCpf.setVisible(true);
 
         txtCpf = new Text(shell, SWT.BORDER);
-        txtCpf.setBounds(150, 260, 200, 21);
-        txtCpf.setVisible(false);
+        txtCpf.setBounds(309, 180, 200, 21);
+        txtCpf.setVisible(true);
 
         Label lblCategoriaCnh = new Label(shell, SWT.NONE);
         lblCategoriaCnh.setBounds(20, 290, 120, 15);
@@ -202,8 +202,7 @@ public class ViewUsuario {
         rbCliente.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                lblCpf.setVisible(true);
-                txtCpf.setVisible(true);
+               
                 lblCategoriaCnh.setVisible(true);
                 txtCategoriaCnh.setVisible(true);
                 lblDataNascimento.setVisible(true);
@@ -226,8 +225,7 @@ public class ViewUsuario {
                 lblFilial.setVisible(true);
                 txtFilial.setVisible(true);
 
-                lblCpf.setVisible(false);
-                txtCpf.setVisible(false);
+              
                 lblCategoriaCnh.setVisible(false);
                 txtCategoriaCnh.setVisible(false);
                 lblRegiaoAtuacao.setVisible(false);
@@ -244,8 +242,7 @@ public class ViewUsuario {
                 lblRegiaoAtuacao.setVisible(true);
                 txtRegiaoAtuacao.setVisible(true);
 
-                lblCpf.setVisible(false);
-                txtCpf.setVisible(false);
+               
                 lblCategoriaCnh.setVisible(false);
                 txtCategoriaCnh.setVisible(false);
                 lblTurno.setVisible(false);
@@ -286,9 +283,10 @@ public class ViewUsuario {
                 } else if (rbBalconista.getSelection()) {
                 	Integer idBalc = null;
                 	String nivelAcesso = "2";
+                	String cpf = txtCpf.getText();
                     String turno = txtTurno.getText();
                     String filial = txtFilial.getText();
-                    Balconista balconista = new Balconista();
+                    Balconista balconista = new Balconista(idBalc,nomeCompleto,email,senha,telefone,endereco,dataAtual,nivelAcesso,cpf,turno,filial);
                     balconistaBanco.incluir(balconista);
                     MessageBox box = new MessageBox(shell, SWT.OK);
                     box.setMessage("Balconista cadastrado com sucesso!");
@@ -296,8 +294,9 @@ public class ViewUsuario {
                 } else if (rbAgenteLocacao.getSelection()) {
                 	Integer idAgente = null;
                 	String nivelAcesso = "3";
+                	String cpf = txtCpf.getText();
                     String regiaoAtuacao = txtRegiaoAtuacao.getText();
-                    AgenteLocacao agente = new AgenteLocacao();
+                    AgenteLocacao agente = new AgenteLocacao(idAgente,nomeCompleto,email,senha,telefone,endereco,dataAtual,nivelAcesso,cpf,regiaoAtuacao);
                     agenteLocacaoBanco.incluir(agente);
                     MessageBox box = new MessageBox(shell, SWT.OK);
                     box.setMessage("Agente de Locação cadastrado com sucesso!");
@@ -328,7 +327,7 @@ public class ViewUsuario {
                         });
                     }
                 } else if (rbBalconista.getSelection()) {
-                    List<Balconista> balconistas = balconistaBanco.listar();
+                    List<Balconista> balconistas = balconistaBanco.listarBalconistas();
                     for (Balconista balconista : balconistas) {
                         TableItem item = new TableItem(table, SWT.NONE);
                         item.setText(new String[]{

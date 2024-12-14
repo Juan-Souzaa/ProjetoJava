@@ -1,14 +1,16 @@
 package model;
 
+import java.time.LocalDate;
+
 public class Balconista extends Usuario {
-	private String matricula;
+	private Integer idBalconista;
 	private String turno;
 	private String filial;
 
 	// Construtor completo
-	public Balconista(String matricula, String turno, String filial) {
+	public Balconista( String turno, String filial) {
 		super();
-		this.matricula = matricula;
+		
 		this.turno = turno;
 		this.filial = filial;
 	}
@@ -17,18 +19,24 @@ public class Balconista extends Usuario {
 	public Balconista() {
 	}
 
-	public Balconista(String nomeCompleto, String email, String senha, String telefone, String endereco, String turno2,
-			String filial2, String tipoUsuario, String nivelAcesso) {
-		// TODO Auto-generated constructor stub
+	
+
+	public Balconista(Integer idUsuario, String nomeCompleto, String email, String senha, String telefone,
+			String endereco, LocalDate dataCadastro, String nivelAcesso, String cpf,  String turno,
+			String filial) {
+		super(idUsuario, nomeCompleto, email, senha, telefone, endereco, dataCadastro, nivelAcesso, cpf);
+		
+		this.turno = turno;
+		this.filial = filial;
 	}
 
-	// Getters e setters
-	public String getMatricula() {
-		return matricula;
+	
+	public Integer getIdBalconista() {
+		return idBalconista;
 	}
 
-	public void setMatricula(String matricula) {
-		this.matricula = matricula;
+	public void setIdBalconista(Integer idBalconista) {
+		this.idBalconista = idBalconista;
 	}
 
 	public String getTurno() {
