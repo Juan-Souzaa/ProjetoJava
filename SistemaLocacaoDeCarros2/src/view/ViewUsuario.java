@@ -159,7 +159,7 @@ public class ViewUsuario {
 		txtFilial.setVisible(false);
 
 		Label lblRegiaoAtuacao = new Label(shell, SWT.NONE);
-		lblRegiaoAtuacao.setBounds(20, 260, 150, 15);
+		lblRegiaoAtuacao.setBounds(20, 260, 127, 15);
 		lblRegiaoAtuacao.setText("Região de Atuação:");
 		lblRegiaoAtuacao.setVisible(false);
 
@@ -220,10 +220,6 @@ public class ViewUsuario {
 		tblclmnNewColumn_3.setWidth(100);
 		tblclmnNewColumn_4.setWidth(100);
 
-	
-
-		
-
 		DateTime dateNasc = new DateTime(shell, SWT.BORDER);
 		dateNasc.setBounds(160, 177, 80, 24);
 
@@ -235,6 +231,84 @@ public class ViewUsuario {
 		btnAtualizar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selectedItems = table.getSelection();
+
+				if (selectedItems.length == 0) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione um Usuario na tabela para atualizar");
+					warningBox.open();
+					return;
+				}
+
+				try {
+
+					if (selectedItems.length > 0) {
+
+						Integer idUsuario = Integer.parseInt(selectedItems[0].getText(0));
+
+						String nomeCompleto = txtNomeCompleto.getText();
+						String email = txtEmail.getText();
+						String senha = txtSenha.getText();
+						String telefone = txtTelefone.getText();
+						String endereco = txtEndereco.getText();
+						LocalDate dataAtual = LocalDate.now();
+
+						if (rbCliente.getSelection()) {
+
+							String nivelAcesso = "1";
+							String cpf = txtCpf.getText();
+							String categoriaCNH = txtCategoriaCnh.getText();
+							LocalDate dataNascimento = LocalDate.of(dateNasc.getYear(), dateNasc.getMonth() + 1,
+									dateNasc.getDay());
+							Cliente cliente = new Cliente(idUsuario, nomeCompleto, email, senha, telefone, endereco,
+									dataAtual, nivelAcesso, cpf, dataNascimento, categoriaCNH);
+							clienteBanco.atualizar(cliente);
+							MessageBox box = new MessageBox(shell, SWT.OK);
+							box.setMessage("Cliente atualizado com sucesso!");
+							box.open();
+
+						} else if (rbBalconista.getSelection()) {
+							String nivelAcesso = "2";
+							String cpf = txtCpf.getText();
+							String turno = txtTurno.getText();
+							String filial = txtFilial.getText();
+							Balconista balconista = new Balconista(idUsuario, nomeCompleto, email, senha, telefone, endereco,
+									dataAtual, nivelAcesso, cpf, turno, filial);
+							
+						
+							balconistaBanco.atualizar(balconista);
+							MessageBox box = new MessageBox(shell, SWT.OK);
+							box.setMessage("Balconista atualizado com sucesso!");
+							box.open();
+						} else if (rbAgenteLocacao.getSelection()) {
+						
+							String nivelAcesso = "3";
+							String cpf = txtCpf.getText();
+							String regiaoAtuacao = txtRegiaoAtuacao.getText();
+							AgenteLocacao agente = new AgenteLocacao(idUsuario, nomeCompleto, email, senha, telefone, endereco,
+									dataAtual, nivelAcesso, cpf, regiaoAtuacao);
+							agenteLocacaoBanco.atualizar(agente);
+							MessageBox box = new MessageBox(shell, SWT.OK);
+							box.setMessage("Agente de Locação atualizado com sucesso!");
+							box.open();
+						} else {
+							MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+							box.setMessage("Selecione um tipo de usuário para atualizar.");
+							box.open();
+						}
+						btnListar.notifyListeners(SWT.Selection, null);
+
+					}
+
+				} catch (NumberFormatException ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("ID do Usuario inválido: " + ex.getMessage());
+					errorBox.open();
+				} catch (Exception ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("Erro ao Atualizar Usuario: " + ex.getMessage());
+					errorBox.open();
+				}
 			}
 		});
 		btnAtualizar.setBounds(354, 330, 106, 30);
@@ -244,6 +318,52 @@ public class ViewUsuario {
 		btnDeletar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selectedItems = table.getSelection();
+
+				if (selectedItems.length == 0) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione um Usuario na tabela para deletar.");
+					warningBox.open();
+					return;
+				}
+
+				try {
+
+					Integer idUsuario = Integer.parseInt(selectedItems[0].getText(0));
+					Integer nivel = Integer.parseInt(selectedItems[0].getText(6));
+
+					if (nivel == 1) {
+
+						clienteBanco.deletar(idUsuario);
+						MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+						successBox.setMessage("Cliente deletado com sucesso!");
+						successBox.open();
+
+					} else if (nivel == 2) {
+						balconistaBanco.deletar(idUsuario);
+						MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+						successBox.setMessage("Balconista deletado com sucesso!");
+						successBox.open();
+					} else if (nivel == 3) {
+
+						agenteLocacaoBanco.deletar(idUsuario);
+						MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+						successBox.setMessage("Agente deletado com sucesso!");
+						successBox.open();
+					}
+					;
+
+					btnListar.notifyListeners(SWT.Selection, null);
+
+				} catch (NumberFormatException ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("ID do Usuario inválido: " + ex.getMessage());
+					errorBox.open();
+				} catch (Exception ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("Erro ao deletar Usuario: " + ex.getMessage());
+					errorBox.open();
+				}
 			}
 		});
 		btnDeletar.setBounds(496, 330, 75, 30);
@@ -293,6 +413,7 @@ public class ViewUsuario {
 				dateNasc.setVisible(false);
 
 			}
+
 		});
 
 		rbAgenteLocacao.addSelectionListener(new SelectionAdapter() {
@@ -403,7 +524,6 @@ public class ViewUsuario {
 				else if (rbAgenteLocacao.getSelection()) {
 					tblclmnNewColumn_3.setText("Regiao de Atuacao");
 					tblclmnNewColumn_4.setText("");
-
 
 					List<AgenteLocacao> agentes = agenteLocacaoBanco.listarAgentes();
 					for (AgenteLocacao agente : agentes) {

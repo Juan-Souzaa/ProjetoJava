@@ -96,17 +96,19 @@ public class UsuarioBanco {
     // Função para atualizar um usuário
     public void atualizar(Usuario usuario) {
         try {
-            String sql = "CALL atualizar_usuario(?, ?, ?, ?, ?, ?, ?, ?);";
+            String sql = "CALL atualizar_usuario(?, ?, ?, ?, ?, ?, ?, ?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, usuario.getNomeCompleto());
-            statement.setString(2, usuario.getEmail());
-            statement.setString(3, usuario.getSenha());
-            statement.setString(4, usuario.getTelefone());
-            statement.setString(5, usuario.getEndereco());
-            statement.setString(6, usuario.getDataCadastro().toString());
+            statement.setInt(1, usuario.getIdUsuario());
+            statement.setString(2, usuario.getNomeCompleto());
+            statement.setString(3, usuario.getEmail());
+            statement.setString(4, usuario.getSenha());
+            statement.setString(5, usuario.getTelefone());
+            statement.setString(6, usuario.getEndereco());
+            statement.setString(7, usuario.getDataCadastro().toString());
            
             statement.setString(8, usuario.getNivelAcesso());
-            statement.setInt(9, usuario.getIdUsuario());
+            statement.setString(9, usuario.getCpf());
+            
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

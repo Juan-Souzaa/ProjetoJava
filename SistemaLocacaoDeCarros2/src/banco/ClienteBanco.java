@@ -113,9 +113,10 @@ public class ClienteBanco extends UsuarioBanco {
     public void atualizar(Cliente cliente) {
         super.atualizar(cliente); 
         try {
-            String sql = "CALL atualizar_cliente(?, ?, ?, ?);";
+            String sql = "CALL atualizar_cliente(?, ?, ?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, cliente.getCpf());
+            statement.setInt(1, cliente.getIdUsuario());
+            
             statement.setString(2, cliente.getDataNascimento().toString());
             statement.setString(3, cliente.getCategoriaCNH());
            
@@ -126,14 +127,16 @@ public class ClienteBanco extends UsuarioBanco {
         }
     }
 
-    public void deletar(int idCliente) {
-        super.deletar(idCliente); 
+    public void deletar(int idUsuario) {
+        
         try {
             String sql = "CALL deletar_cliente(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idCliente);
+            statement.setInt(1, idUsuario);
             statement.executeUpdate();
             statement.close();
+            
+            super.deletar(idUsuario); 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar cliente: " + e.getMessage(), e);
         }

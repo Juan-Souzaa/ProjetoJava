@@ -100,9 +100,9 @@ public class AgenteLocacaoBanco extends UsuarioBanco {
     public void atualizar(AgenteLocacao agente) {
         super.atualizar(agente); 
         try {
-            String sql = "CALL atualizar_agente_locacao(?, ?);";
+            String sql = "CALL atualizar_agente(?, ?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, agente.getCodigoAgente());
+            statement.setInt(1, agente.getIdUsuario());
             statement.setString(2, agente.getRegiaoAtuacao());
             statement.executeUpdate();
             statement.close();
@@ -112,13 +112,15 @@ public class AgenteLocacaoBanco extends UsuarioBanco {
     }
 
     public void deletar(int codigoAgente) {
-        super.deletar(codigoAgente);
+      
         try {
-            String sql = "CALL deletar_agente_locacao(?);";
+            String sql = "CALL deletar_agente(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
             statement.setInt(1, codigoAgente);
             statement.executeUpdate();
             statement.close();
+            
+            super.deletar(codigoAgente);
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar agente de locação: " + e.getMessage(), e);
         }
