@@ -33,6 +33,13 @@ public class Multa {
 		this.statusMulta = statusMulta;
 
 	}
+	
+	
+	
+
+	public Multa() {
+		super();
+	}
 
 	// Getters e Setters
 	public String getIdMulta() {

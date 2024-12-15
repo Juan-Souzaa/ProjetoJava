@@ -30,7 +30,8 @@ public class ViewMulta {
     private Table table;
     private MultaBanco multaBanco;
     private Veiculo veiculoSelecionado;
-    private Text textTipoMulta;
+    private Text textMotivoMulta;
+    private Text textStatusMulta;
 
     public ViewMulta() {
         multaBanco = new MultaBanco();
@@ -83,25 +84,25 @@ public class ViewMulta {
         });
 
         Label lblDataMulta = new Label(shell, SWT.NONE);
-        lblDataMulta.setBounds(27, 73, 150, 15);
+        lblDataMulta.setBounds(24, 107, 150, 15);
         lblDataMulta.setText("Data da Multa");
 
         DateTime dateMulta = new DateTime(shell, SWT.BORDER);
-        dateMulta.setBounds(180, 73, 80, 24);
+        dateMulta.setBounds(180, 94, 80, 24);
 
         Label lblDescricao = new Label(shell, SWT.NONE);
-        lblDescricao.setBounds(27, 136, 150, 15);
+        lblDescricao.setBounds(24, 179, 150, 15);
         lblDescricao.setText("Descrição da Multa");
 
         txtDescricao = new Text(shell, SWT.BORDER);
-        txtDescricao.setBounds(184, 133, 200, 21);
+        txtDescricao.setBounds(184, 176, 200, 21);
 
         Label lblValor = new Label(shell, SWT.NONE);
-        lblValor.setBounds(27, 170, 150, 15);
+        lblValor.setBounds(24, 206, 150, 15);
         lblValor.setText("Valor");
 
         txtValor = new Text(shell, SWT.BORDER);
-        txtValor.setBounds(180, 167, 153, 21);
+        txtValor.setBounds(180, 203, 153, 21);
 
         Button btnCadastrarMulta = new Button(shell, SWT.NONE);
         btnCadastrarMulta.setBounds(74, 230, 75, 25);
@@ -116,7 +117,7 @@ public class ViewMulta {
         btnListarMulta.setText("Consultar Multa");
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(41, 280, 964, 269);
+        table.setBounds(41, 280, 902, 276);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
@@ -126,7 +127,7 @@ public class ViewMulta {
         
         TableColumn tblclmnTipo = new TableColumn(table, SWT.NONE);
         tblclmnTipo.setWidth(100);
-        tblclmnTipo.setText("Tipo");
+        tblclmnTipo.setText("Motivo");
 
         TableColumn tblclmnDataMulta = new TableColumn(table, SWT.NONE);
         tblclmnDataMulta.setWidth(100);
@@ -136,28 +137,35 @@ public class ViewMulta {
         tblclmnDescricao.setWidth(200);
         tblclmnDescricao.setText("Descrição");
         
-        TableColumn tblclmnMarca = new TableColumn(table, SWT.NONE);
-        tblclmnMarca.setWidth(100);
-        tblclmnMarca.setText("Marca");
+        TableColumn tblclmnStatusMulta = new TableColumn(table, SWT.NONE);
+        tblclmnStatusMulta.setWidth(100);
+        tblclmnStatusMulta.setText("Status Multa");
         
         TableColumn tblclmnPlaca = new TableColumn(table, SWT.NONE);
         tblclmnPlaca.setWidth(100);
         tblclmnPlaca.setText("Placa");
         
-        TableColumn tblclmnDataUltimaMulta = new TableColumn(table, SWT.NONE);
-        tblclmnDataUltimaMulta.setWidth(159);
-        tblclmnDataUltimaMulta.setText("Data Ultima Multa");
+        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+        tblclmnNewColumn.setWidth(100);
+        tblclmnNewColumn.setText("Chassi");
 
         TableColumn tblclmnValor = new TableColumn(table, SWT.CENTER);
         tblclmnValor.setWidth(100);
         tblclmnValor.setText("Valor");
         
-        Label lblTipoMulta = new Label(shell, SWT.NONE);
-        lblTipoMulta.setBounds(28, 102, 105, 15);
-        lblTipoMulta.setText("Tipo Multa");
+        Label lblNewLabel = new Label(shell, SWT.NONE);
+        lblNewLabel.setBounds(57, 63, 55, 15);
+        lblNewLabel.setText("Motivo");
         
-        textTipoMulta = new Text(shell, SWT.BORDER);
-        textTipoMulta.setBounds(190, 106, 76, 21);
+        textMotivoMulta = new Text(shell, SWT.BORDER);
+        textMotivoMulta.setBounds(180, 58, 76, 21);
+        
+        Label lblNewLabel_1 = new Label(shell, SWT.NONE);
+        lblNewLabel_1.setBounds(24, 158, 88, 15);
+        lblNewLabel_1.setText("Status Multa ");
+        
+        textStatusMulta = new Text(shell, SWT.BORDER);
+        textStatusMulta.setBounds(133, 152, 76, 21);
 
         btnCadastrarMulta.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -165,9 +173,11 @@ public class ViewMulta {
                 LocalDate dataMulta = LocalDate.of(dateMulta.getYear(), dateMulta.getMonth() + 1, dateMulta.getDay());
                 String descricao = txtDescricao.getText();
                 double valor = Double.parseDouble(txtValor.getText());
-                String tipoMulta = textTipoMulta.getText();
+                String statusMulta = textStatusMulta.getText();
+                String motivoMulta = textMotivoMulta.getText();
+                
 
-                Multa multa = new Multa(dataMulta, tipoMulta, valor, descricao, veiculoSelecionado);
+                Multa multa = new Multa(motivoMulta, valor,dataMulta,statusMulta, descricao, veiculoSelecionado);
                 multaBanco.incluir(multa);
 
                 MessageBox box = new MessageBox(shell, SWT.OK);
@@ -185,13 +195,13 @@ public class ViewMulta {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[] {
                         String.valueOf(multa.getIdMulta()),
-                        multa.getTipoMulta(),
-                        multa.getDataMulta().toString(),
-                        multa.getDescricao(),
-                        multa.getVeiculoMulta().getMarca(),
-                        multa.getVeiculoMulta().getPlaca(),
-                        multa.getVeiculoMulta().getDataUltimaMulta().toString(),
-                        String.valueOf(multa.getValor())
+                        multa.getMotivo(),
+                        multa.getDataOcorrencia().toString(),
+                        multa.getObservacoes(),
+                        multa.getStatusMulta(),
+                        multa.getVeiculo().getPlaca(),
+                        multa.getVeiculo().getChassi(),
+                        String.valueOf(multa.getValorMulta())
                     });
                 }
             }

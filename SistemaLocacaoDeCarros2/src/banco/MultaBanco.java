@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Multa;
+import model.Veiculo;
 
 public class MultaBanco {
     private DBConnection connection;
@@ -15,13 +16,15 @@ public class MultaBanco {
 
     public void incluir(Multa multa) {
         try {
-            String sql = "CALL inserir_multa(?, ?, ?, ?, ?);";
+            String sql = "CALL inserir_multa(?, ?, ?, ?, ?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, multa.getIdMulta());
-            statement.setString(2, multa.getMotivo());
-            statement.setDouble(3, multa.getValorMulta());
-            statement.setString(4,multa.getDataOcorrencia().toString());
-            statement.setString(5, multa.getStatusMulta());
+            
+            statement.setString(1, multa.getMotivo());
+            statement.setDouble(2, multa.getValorMulta());
+            statement.setString(3,multa.getDataOcorrencia().toString());
+            statement.setString(4, multa.getStatusMulta());
+            statement.setString(5, multa.getObservacoes());
+            statement.setInt(6, multa.getVeiculo().getIdVeiculo());
             statement.execute();
             statement.close();
         } catch (SQLException e) {
@@ -36,13 +39,22 @@ public class MultaBanco {
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                Multa multa = new Multa(
-                    rs.getString("idMulta"),
-                    rs.getString("motivo"),
-                    rs.getDouble("valorMulta"),
-                    rs.getDate("dataOcorrencia").toLocalDate(),
-                    rs.getString("statusMulta")
-                );
+                Multa multa = new Multa();
+                    multa.setIdMulta(rs.getString("idMulta"));
+                    multa.setMotivo(rs.getString("motivo"));
+                    multa.setValorMulta(rs.getDouble("valorMulta"));
+                    multa.setDataOcorrencia(rs.getDate("dataOcorrencia").toLocalDate());
+                    multa.setStatusMulta(rs.getString("statusMulta"));
+                    multa.setObservacoes(rs.getString("observacoes"));
+               
+                Veiculo veiculoMulta = new Veiculo();
+                veiculoMulta.setChassi(rs.getString("chassi"));
+                veiculoMulta.setPlaca(rs.getString("placa"));
+                
+                multa.setVeiculo(veiculoMulta);
+                
+                
+                
                 multas.add(multa);
             }
             rs.close();
