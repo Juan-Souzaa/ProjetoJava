@@ -16,19 +16,19 @@ public class VeiculoBanco {
 
     public void incluir(Veiculo veiculo) {
         try {
-            String sql = "CALL inserir_veiculo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            String sql = "CALL inserir_veiculo( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, veiculo.getIdVeiculo());
-            statement.setString(2, veiculo.getPlaca());
-            statement.setString(3, veiculo.getChassi());
-            statement.setString(4, veiculo.getCor());
-            statement.setString(5, veiculo.getAno().toString());
-            statement.setDouble(6, veiculo.getQuilometragem());
-            statement.setBoolean(7, veiculo.isStatusDisponibilidade());
-            statement.setString(8, veiculo.getCategoria());
-            statement.setBoolean(9, veiculo.isSeguroAtivo());
-            statement.setString(10, veiculo.getMarca());
-            statement.setString(11, veiculo.getDataUltimaManutencao().toString());
+           
+            statement.setString(1, veiculo.getPlaca());
+            statement.setString(2, veiculo.getChassi());
+            statement.setString(3, veiculo.getCor());
+            statement.setString(4, veiculo.getAno().toString());
+            statement.setDouble(5, veiculo.getQuilometragem());
+            statement.setBoolean(6, veiculo.isStatusDisponibilidade());
+            statement.setString(7, veiculo.getCategoria());
+            statement.setBoolean(8, veiculo.isSeguroAtivo());
+            statement.setString(9, veiculo.getMarca());
+            statement.setString(10, veiculo.getDataUltimaManutencao().toString());
             statement.execute();
             statement.close();
         } catch (SQLException e) {

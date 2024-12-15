@@ -8,17 +8,7 @@ public class Devolucao extends Locacao {
 	private Double taxaAtraso;
 	private Boolean statusDevolucao;
 
-	public Devolucao(Integer idLocacao, LocalDate dataLocacao, LocalDate dataDevolucaoPrevista,
-			LocalDate dataDevolucaoReal, Double valorTotal, String tipoLocacao, String observacoes, Cliente cliente,
-			Veiculo veiculo, Fatura fatura, LocalDate dataDevolucao, String condicaoVeiculo, Double taxaAtraso,
-			Boolean statusDevolucao) {
-		super(idLocacao, dataLocacao, dataDevolucaoPrevista, dataDevolucaoReal, valorTotal, tipoLocacao, observacoes,
-				cliente, veiculo, fatura);
-		this.dataDevolucao = dataDevolucao;
-		this.condicaoVeiculo = condicaoVeiculo;
-		this.taxaAtraso = taxaAtraso;
-		this.statusDevolucao = statusDevolucao;
-	}
+	
 
 	public Devolucao(LocalDate dataDevolucao, String condicaoVeiculo, Double taxaAtraso, Boolean statusDevolucao) {
 		super();

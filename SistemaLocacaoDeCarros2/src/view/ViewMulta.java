@@ -19,17 +19,18 @@ import org.eclipse.swt.widgets.Text;
 
 import banco.MultaBanco;
 import model.Multa;
+import model.Veiculo;
 
 public class ViewMulta {
 
     protected Shell shell;
-    private Text textIdMulta;
-    private Text textMotivo;
-    private Text textValorMulta;
-    private Text textStatusMulta;
-    private Text textObeservacoes;
+    
+    private Text txtDescricao;
+    private Text txtValor;
     private Table table;
     private MultaBanco multaBanco;
+    private Veiculo veiculoSelecionado;
+    private Text textTipoMulta;
 
     public ViewMulta() {
         multaBanco = new MultaBanco();
@@ -47,148 +48,181 @@ public class ViewMulta {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            ViewMulta window = new ViewMulta();
+            window.open();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(819, 573);
+        shell.setSize(1112, 987);
         shell.setText("Multa");
 
-        Label lblIdMulta = new Label(shell, SWT.NONE);
-        lblIdMulta.setText("ID Multa:");
-        lblIdMulta.setBounds(10, 13, 59, 15);
+        Button btnSelecionarVeiculo = new Button(shell, SWT.NONE);
+        btnSelecionarVeiculo.setBounds(6, 27, 150, 30);
+        btnSelecionarVeiculo.setText("Selecionar Veículo");
 
-        textIdMulta = new Text(shell, SWT.BORDER);
-        textIdMulta.setBounds(73, 10, 110, 21);
+        Label lblVeiculoSelecionado = new Label(shell, SWT.NONE);
+        lblVeiculoSelecionado.setBounds(184, 27, 200, 25);
+        lblVeiculoSelecionado.setText("Nenhum veículo selecionado");
 
-        Label lblMotivo = new Label(shell, SWT.NONE);
-        lblMotivo.setText("Motivo:");
-        lblMotivo.setBounds(10, 42, 46, 15);
+        btnSelecionarVeiculo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarVeiculo viewSelecionarVeiculo = new ViewSelecionarVeiculo();
+                veiculoSelecionado = viewSelecionarVeiculo.open();
 
-        textMotivo = new Text(shell, SWT.BORDER);
-        textMotivo.setBounds(57, 37, 242, 51);
+                if (veiculoSelecionado != null) {
+                    lblVeiculoSelecionado.setText("Veículo: " + veiculoSelecionado.getPlaca());
+                }
+            }
+        });
 
-        Label lblValorDaMulta = new Label(shell, SWT.NONE);
-        lblValorDaMulta.setText("Valor da Multa:");
-        lblValorDaMulta.setBounds(10, 111, 86, 15);
+        Label lblDataMulta = new Label(shell, SWT.NONE);
+        lblDataMulta.setBounds(27, 73, 150, 15);
+        lblDataMulta.setText("Data da Multa");
 
-        textValorMulta = new Text(shell, SWT.BORDER);
-        textValorMulta.setBounds(102, 108, 92, 21);
+        DateTime dateMulta = new DateTime(shell, SWT.BORDER);
+        dateMulta.setBounds(180, 73, 80, 24);
 
-        Label lblDataDaOcorrncia = new Label(shell, SWT.NONE);
-        lblDataDaOcorrncia.setText("Data da Ocorrência :");
-        lblDataDaOcorrncia.setBounds(10, 150, 114, 15);
+        Label lblDescricao = new Label(shell, SWT.NONE);
+        lblDescricao.setBounds(27, 136, 150, 15);
+        lblDescricao.setText("Descrição da Multa");
 
-        DateTime dateTimeDataOcorrencia = new DateTime(shell, SWT.BORDER);
-        dateTimeDataOcorrencia.setBounds(127, 141, 80, 24);
+        txtDescricao = new Text(shell, SWT.BORDER);
+        txtDescricao.setBounds(184, 133, 200, 21);
 
-        Label lblStatusDaMulta = new Label(shell, SWT.NONE);
-        lblStatusDaMulta.setText("Status da Multa:");
-        lblStatusDaMulta.setBounds(10, 184, 86, 15);
+        Label lblValor = new Label(shell, SWT.NONE);
+        lblValor.setBounds(27, 170, 150, 15);
+        lblValor.setText("Valor");
 
-        textStatusMulta = new Text(shell, SWT.BORDER);
-        textStatusMulta.setBounds(102, 181, 81, 21);
-
-        Label lblObeservacoes = new Label(shell, SWT.NONE);
-        lblObeservacoes.setText("Obeservações:");
-        lblObeservacoes.setBounds(10, 225, 81, 15);
-
-        textObeservacoes = new Text(shell, SWT.BORDER);
-        textObeservacoes.setBounds(102, 222, 209, 44);
+        txtValor = new Text(shell, SWT.BORDER);
+        txtValor.setBounds(180, 167, 153, 21);
 
         Button btnCadastrarMulta = new Button(shell, SWT.NONE);
-        btnCadastrarMulta.setText("Cadastrar Multa");
-        btnCadastrarMulta.setBounds(57, 286, 150, 25);
+        btnCadastrarMulta.setBounds(74, 230, 75, 25);
+        btnCadastrarMulta.setText("Cadastrar");
 
         Button btnDeletarMulta = new Button(shell, SWT.NONE);
+        btnDeletarMulta.setBounds(221, 230, 105, 25);
         btnDeletarMulta.setText("Deletar Multa");
-        btnDeletarMulta.setBounds(339, 286, 134, 25);
 
-        Button btnConsultarMulta = new Button(shell, SWT.NONE);
-        btnConsultarMulta.setText("Consultar Multa");
-        btnConsultarMulta.setBounds(597, 286, 150, 25);
+        Button btnListarMulta = new Button(shell, SWT.NONE);
+        btnListarMulta.setBounds(385, 230, 105, 25);
+        btnListarMulta.setText("Consultar Multa");
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setLinesVisible(true);
+        table.setBounds(41, 280, 964, 269);
         table.setHeaderVisible(true);
-        table.setBounds(10, 329, 789, 205);
+        table.setLinesVisible(true);
 
-        TableColumn tblclmnIdMulta = new TableColumn(table, SWT.CENTER);
-        tblclmnIdMulta.setWidth(79);
+        TableColumn tblclmnIdMulta = new TableColumn(table, SWT.NONE);
+        tblclmnIdMulta.setWidth(100);
         tblclmnIdMulta.setText("ID Multa");
+        
+        TableColumn tblclmnTipo = new TableColumn(table, SWT.NONE);
+        tblclmnTipo.setWidth(100);
+        tblclmnTipo.setText("Tipo");
 
-        TableColumn tblclmnMotivo = new TableColumn(table, SWT.CENTER);
-        tblclmnMotivo.setWidth(122);
-        tblclmnMotivo.setText("Motivo");
+        TableColumn tblclmnDataMulta = new TableColumn(table, SWT.NONE);
+        tblclmnDataMulta.setWidth(100);
+        tblclmnDataMulta.setText("Data da Multa");
 
-        TableColumn tblclmnValorMulta = new TableColumn(table, SWT.CENTER);
-        tblclmnValorMulta.setWidth(106);
-        tblclmnValorMulta.setText("Valor da Multa");
+        TableColumn tblclmnDescricao = new TableColumn(table, SWT.NONE);
+        tblclmnDescricao.setWidth(200);
+        tblclmnDescricao.setText("Descrição");
+        
+        TableColumn tblclmnMarca = new TableColumn(table, SWT.NONE);
+        tblclmnMarca.setWidth(100);
+        tblclmnMarca.setText("Marca");
+        
+        TableColumn tblclmnPlaca = new TableColumn(table, SWT.NONE);
+        tblclmnPlaca.setWidth(100);
+        tblclmnPlaca.setText("Placa");
+        
+        TableColumn tblclmnDataUltimaMulta = new TableColumn(table, SWT.NONE);
+        tblclmnDataUltimaMulta.setWidth(159);
+        tblclmnDataUltimaMulta.setText("Data Ultima Multa");
 
-        TableColumn tblclmnDataOcorrencia = new TableColumn(table, SWT.CENTER);
-        tblclmnDataOcorrencia.setWidth(138);
-        tblclmnDataOcorrencia.setText("Data da Ocorrência");
-
-        TableColumn tblclmnStatusMulta = new TableColumn(table, SWT.CENTER);
-        tblclmnStatusMulta.setWidth(97);
-        tblclmnStatusMulta.setText("Status da Multa");
-
-        TableColumn tblclmnObeservacoes = new TableColumn(table, SWT.CENTER);
-        tblclmnObeservacoes.setWidth(248);
-        tblclmnObeservacoes.setText("Obeservações");
-
+        TableColumn tblclmnValor = new TableColumn(table, SWT.CENTER);
+        tblclmnValor.setWidth(100);
+        tblclmnValor.setText("Valor");
+        
+        Label lblTipoMulta = new Label(shell, SWT.NONE);
+        lblTipoMulta.setBounds(28, 102, 105, 15);
+        lblTipoMulta.setText("Tipo Multa");
+        
+        textTipoMulta = new Text(shell, SWT.BORDER);
+        textTipoMulta.setBounds(190, 106, 76, 21);
 
         btnCadastrarMulta.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                String motivo = textMotivo.getText();
-                double valorMulta = Double.parseDouble(textValorMulta.getText());
-                LocalDate dataOcorrencia = LocalDate.of(dateTimeDataOcorrencia.getYear(), dateTimeDataOcorrencia.getMonth() + 1, dateTimeDataOcorrencia.getDay());
-                String statusMulta = textStatusMulta.getText();
-                String observacoes = textObeservacoes.getText();
+                LocalDate dataMulta = LocalDate.of(dateMulta.getYear(), dateMulta.getMonth() + 1, dateMulta.getDay());
+                String descricao = txtDescricao.getText();
+                double valor = Double.parseDouble(txtValor.getText());
+                String tipoMulta = textTipoMulta.getText();
 
-                Multa multa = new Multa(motivo, valorMulta, dataOcorrencia, statusMulta, observacoes);
+                Multa multa = new Multa(dataMulta, tipoMulta, valor, descricao, veiculoSelecionado);
                 multaBanco.incluir(multa);
+
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Multa cadastrada com sucesso!");
                 box.open();
             }
         });
 
-       
-        btnDeletarMulta.addSelectionListener(new SelectionAdapter() {
+        btnListarMulta.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                try {
-                    int idMulta = Integer.parseInt(textIdMulta.getText());
-                    multaBanco.deletar(idMulta);
-                    MessageBox box = new MessageBox(shell, SWT.OK);
-                    box.setMessage("Multa deletada com sucesso!");
-                    box.open();
-                } catch (NumberFormatException ex) {
-                    MessageBox box = new MessageBox(shell, SWT.ERROR);
-                    box.setMessage("ID inválido.");
-                    box.open();
+                List<Multa> multaList = multaBanco.listar();
+                table.removeAll();
+                for (Multa multa : multaList) {
+                    TableItem item = new TableItem(table, SWT.NONE);
+                    item.setText(new String[] {
+                        String.valueOf(multa.getIdMulta()),
+                        multa.getTipoMulta(),
+                        multa.getDataMulta().toString(),
+                        multa.getDescricao(),
+                        multa.getVeiculoMulta().getMarca(),
+                        multa.getVeiculoMulta().getPlaca(),
+                        multa.getVeiculoMulta().getDataUltimaMulta().toString(),
+                        String.valueOf(multa.getValor())
+                    });
                 }
             }
         });
 
-   
-        btnConsultarMulta.addSelectionListener(new SelectionAdapter() {
+        btnDeletarMulta.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                List<Multa> multas = multaBanco.listar();
-                table.removeAll();
-                for (Multa multa : multas) {
-                    TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(new String[] {
-                        String.valueOf(multa.getIdMulta()),
-                        multa.getMotivo(),
-                        String.valueOf(multa.getValorMulta()),
-                        multa.getDataOcorrencia().toString(),
-                        multa.getStatusMulta(),
-                        multa.getObservacoes()
-                    });
+                TableItem[] selectedItems = table.getSelection();
+
+                if (selectedItems.length == 0) {
+                    MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione uma Multa na tabela para deletar.");
+                    warningBox.open();
+                    return;
+                }
+
+                try {
+                    Integer idMulta = Integer.parseInt(selectedItems[0].getText(0));
+                    multaBanco.deletar(idMulta);
+                    MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+                    successBox.setMessage("Multa deletada com sucesso!");
+                    successBox.open();
+                    btnListarMulta.notifyListeners(SWT.Selection, null);
+                } catch (NumberFormatException ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao deletar multa.");
+                    errorBox.open();
                 }
             }
         });
     }
 }
+

@@ -41,14 +41,10 @@ public class MenuPrincipal {
         int spacing = 10; // Espaçamento entre os botões
 
         // Criar botões para todas as views
-        criarBotao(shell, "Clientes", x, y, width, height, ViewUsuario.class);
+        criarBotao(shell, "Usuarios", x, y, width, height, ViewUsuario.class);
         y += height + spacing;
 
-        criarBotao(shell, "Balconistas", x, y, width, height, ViewBalconista.class);
-        y += height + spacing;
-
-        criarBotao(shell, "Agentes de Locação", x, y, width, height, ViewAgenteLocacao.class);
-        y += height + spacing;
+      
 
         criarBotao(shell, "Veículos", x, y, width, height, ViewVeiculo.class);
         y += height + spacing;

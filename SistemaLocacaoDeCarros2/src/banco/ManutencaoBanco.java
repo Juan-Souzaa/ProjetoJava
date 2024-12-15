@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Manutencao;
+import model.Veiculo;
 
 public class ManutencaoBanco {
     private DBConnection connection;
@@ -17,7 +18,7 @@ public class ManutencaoBanco {
         try {
             String sql = "CALL inserir_manutencao(?, ?, ?, ?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, manutencao.getIdManutencao());
+            statement.setInt(1, manutencao.getVeiculoManutencao().getIdVeiculo());
             statement.setString(2, manutencao.getDataManutencao().toString());
             statement.setString(3, manutencao.getTipoManutencao());
             statement.setDouble(4, manutencao.getCusto());
@@ -42,6 +43,13 @@ public class ManutencaoBanco {
                    manutencao.setTipoManutencao(rs.getString("tipoManutencao")); 
                    manutencao.setCusto(rs.getDouble("custo"));
                    manutencao.setDescricao(rs.getString("descricao")); 
+                   
+                   Veiculo veiculoManutencao = new Veiculo();
+                   veiculoManutencao.setMarca(rs.getString("marca"));
+                   veiculoManutencao.setPlaca(rs.getString("placa"));
+                   veiculoManutencao.setDataUltimaManutencao(rs.getDate("dataUltimaManutencao").toLocalDate());
+                   
+                   manutencao.setVeiculomanutencao(veiculoManutencao);
                
                 manutencoes.add(manutencao);
             }

@@ -11,24 +11,26 @@ public class Locacao {
 	private String tipoLocacao;
 	private String observacoes;
 
-	// Relacionamentos
-	private Cliente clienteLocacao; // Uma locação pertence a um cliente
+	
 	private Veiculo veiculoLocacao; // Um veículo está associado à locação
-	private Fatura fatura; // Uma fatura está vinculada à locação
+	private Reserva reservaLocacao;
+	
 
-	public Locacao(Integer idLocacao, LocalDate dataLocacao, LocalDate dataDevolucaoPrevista,
-			LocalDate dataDevolucaoReal, Double valorTotal, String tipoLocacao, String observacoes, Cliente cliente,
-			Veiculo veiculo, Fatura fatura) {
-		this.idLocacao = idLocacao;
+	public Locacao( LocalDate dataLocacao, LocalDate dataDevolucaoPrevista,
+			LocalDate dataDevolucaoReal, Double valorTotal, String tipoLocacao, String observacoes,
+			Veiculo veiculo, Reserva reserva) {
+		
 		this.dataLocacao = dataLocacao;
 		this.dataDevolucaoPrevista = dataDevolucaoPrevista;
 		this.dataDevolucaoReal = dataDevolucaoReal;
 		this.valorTotal = valorTotal;
 		this.tipoLocacao = tipoLocacao;
 		this.observacoes = observacoes;
-		this.setClienteLocacao(cliente);
-		this.setVeiculoLocacao(veiculo);
-		this.fatura = fatura;
+		this.veiculoLocacao=veiculo;
+	
+		this.reservaLocacao=reserva;
+		
+	
 	}
 
 	public Locacao(Integer idLocacao, LocalDate dataLocacao, LocalDate dataDevolucaoPrevista,
@@ -106,21 +108,9 @@ public class Locacao {
 		this.observacoes = observacoes;
 	}
 
-	public Fatura getFatura() {
-		return fatura;
-	}
 
-	public void setFatura(Fatura fatura) {
-		this.fatura = fatura;
-	}
 
-	public Cliente getClienteLocacao() {
-		return clienteLocacao;
-	}
-
-	public void setClienteLocacao(Cliente clienteLocacao) {
-		this.clienteLocacao = clienteLocacao;
-	}
+	
 
 	public Veiculo getVeiculoLocacao() {
 		return veiculoLocacao;
@@ -129,4 +119,14 @@ public class Locacao {
 	public void setVeiculoLocacao(Veiculo veiculoLocacao) {
 		this.veiculoLocacao = veiculoLocacao;
 	}
+
+	public Reserva getReservaLocacao() {
+		return reservaLocacao;
+	}
+
+	public void setReservaLocacao(Reserva reservaLocacao) {
+		this.reservaLocacao = reservaLocacao;
+	}
+	
+	
 }

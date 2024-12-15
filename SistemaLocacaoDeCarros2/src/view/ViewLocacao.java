@@ -19,15 +19,20 @@ import org.eclipse.swt.widgets.Text;
 
 import banco.LocacaoBanco;
 import model.Locacao;
+import model.Reserva;
+import model.Veiculo;
 
 public class ViewLocacao {
 
     protected Shell shell;
-    private Text txtIdLocacao;
+  
     private Text txtValorTotal;
     private Text txtTipoLocacao;
     private Table table;
     private LocacaoBanco locacaoBanco;
+    private Veiculo veiculoSelecionado;
+    private Reserva reservaSelecionada;
+    private Text txtObservacoes;
 
     public ViewLocacao() {
         locacaoBanco = new LocacaoBanco();
@@ -44,6 +49,7 @@ public class ViewLocacao {
             }
         }
     }
+    
 
     public static void main(String[] args) {
         try {
@@ -53,18 +59,83 @@ public class ViewLocacao {
             e.printStackTrace();
         }
     }
+    
+    
+    
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(962, 993);
+        shell.setSize(1112, 987);
         shell.setText("Locação");
+        
+        Button btnSelecionarReserva = new Button(shell, SWT.NONE);
+        btnSelecionarReserva.setBounds(234, 27, 150, 30);
+        btnSelecionarReserva.setText("Selecionar Reserva");
 
-        Label lblIdLocacao = new Label(shell, SWT.NONE);
-        lblIdLocacao.setBounds(27, 28, 85, 15);
-        lblIdLocacao.setText("ID da locação");
+        Label lblClienteSelecionado = new Label(shell, SWT.NONE);
+        lblClienteSelecionado.setBounds(6, 27, 193, 30);
+        lblClienteSelecionado.setText("Reserva do Cliente: Nenhum selecionado");
 
-        txtIdLocacao = new Text(shell, SWT.BORDER);
-        txtIdLocacao.setBounds(118, 28, 191, 21);
+        btnSelecionarReserva.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarReserva viewSelecionarReserva = new ViewSelecionarReserva(); // Crie a instância da ViewCliente
+                reservaSelecionada =viewSelecionarReserva.open(); // Abre a janela de seleção
+                  // Obtém o cliente selecionado
+                if (reservaSelecionada != null) {
+                    lblClienteSelecionado.setText("Reserva do Cliente:" + reservaSelecionada.getClienteReserva().getNomeCompleto());
+                }
+            }
+        });
+        
+        
+        Button btnSelecionarVeiculo = new Button(shell, SWT.NONE);
+        btnSelecionarVeiculo.setBounds(6, 359, 150, 25);
+        btnSelecionarVeiculo.setText("Selecionar Veículo");
 
+        Label lblVeiculoSelecionado = new Label(shell, SWT.NONE);
+        lblVeiculoSelecionado.setBounds(184, 359, 200, 25);
+        lblVeiculoSelecionado.setText("Nenhum veículo selecionado");
+
+        btnSelecionarVeiculo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarVeiculo viewSelecionarVeiculo = new ViewSelecionarVeiculo();
+                veiculoSelecionado = viewSelecionarVeiculo.open();
+
+                // Verificar se a reserva foi selecionada
+                if (reservaSelecionada == null) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Nenhuma reserva foi selecionada.");
+                    box.open();
+                    return;
+                }
+
+                // Verificar se o modelo da reserva é válido
+                if (reservaSelecionada.getModeloReserva() == null) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("O modelo da reserva não está associado.");
+                    box.open();
+                    return;
+                }
+
+                // Verificar se o veículo pertence à mesma categoria do modelo da reserva
+                if (veiculoSelecionado != null && 
+                    !veiculoSelecionado.getCategoria().equals(reservaSelecionada.getModeloReserva().getCategoria())) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Selecione um veículo da categoria escolhida.");
+                    box.open();
+                    return;
+                }
+
+                // Exibir o veículo selecionado
+                if (veiculoSelecionado != null) {
+                    lblVeiculoSelecionado.setText("Veículo: " + veiculoSelecionado.getPlaca());
+                }
+            }
+        });
+
+
+      
         Label lblDataLocacao = new Label(shell, SWT.NONE);
         lblDataLocacao.setBounds(27, 73, 85, 15);
         lblDataLocacao.setText("Data da locação");
@@ -108,18 +179,22 @@ public class ViewLocacao {
         btnDeletarLocacao.setBounds(221, 406, 105, 25);
         btnDeletarLocacao.setText("Deletar locação");
 
-        Button btnConsultarLocacao = new Button(shell, SWT.NONE);
-        btnConsultarLocacao.setBounds(385, 406, 105, 25);
-        btnConsultarLocacao.setText("Consultar locação");
+        Button btnListarLocacao = new Button(shell, SWT.NONE);
+        btnListarLocacao.setBounds(385, 406, 105, 25);
+        btnListarLocacao.setText("Consultar locação");
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(27, 464, 777, 283);
+        table.setBounds(41, 463, 1045, 269);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
         TableColumn tblclmnIdLocacao = new TableColumn(table, SWT.NONE);
         tblclmnIdLocacao.setWidth(100);
         tblclmnIdLocacao.setText("ID da locação");
+        
+        TableColumn tblclmnNomeCliente = new TableColumn(table, SWT.NONE);
+        tblclmnNomeCliente.setWidth(100);
+        tblclmnNomeCliente.setText("Nome Cliente");
 
         TableColumn tblclmnDataLocacao = new TableColumn(table, SWT.NONE);
         tblclmnDataLocacao.setWidth(100);
@@ -145,30 +220,35 @@ public class ViewLocacao {
         tblclmnObservacoes.setWidth(100);
         tblclmnObservacoes.setText("Observações");
         
-        Button btnVerFaturas = new Button(shell, SWT.NONE);
-        btnVerFaturas.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		List<Locacao> locacoes = locacaoBanco.listar(); // Obter locações
-        		ViewFatura viewFatura = new ViewFatura(locacoes);
-        		viewFatura.open();
-        	}
-        });
-        btnVerFaturas.setBounds(551, 406, 75, 25);
-        btnVerFaturas.setText("Ver Faturas");
-
+        TableColumn tblclmnPlaca = new TableColumn(table, SWT.NONE);
+        tblclmnPlaca.setWidth(100);
+        tblclmnPlaca.setText("Placa");
+        
+        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+        tblclmnNewColumn.setWidth(100);
+        tblclmnNewColumn.setText("Categoria");
+        
+        txtObservacoes = new Text(shell, SWT.BORDER);
+        txtObservacoes.setBounds(118, 319, 153, 21);
+        
+        Label lblObservacoes = new Label(shell, SWT.NONE);
+        lblObservacoes.setBounds(27, 325, 55, 15);
+        lblObservacoes.setText("Observacoes");
+        
+ 
      
         btnCadastrarLocacao.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                int idLocacao = Integer.parseInt(txtIdLocacao.getText());
+               
                 LocalDate dataLocacao = LocalDate.of(dateLocacao.getYear(), dateLocacao.getMonth() + 1, dateLocacao.getDay());
                 LocalDate dataDevolucaoPrevista = LocalDate.of(dateDevolucaoPrevista.getYear(), dateDevolucaoPrevista.getMonth() + 1, dateDevolucaoPrevista.getDay());
                 LocalDate dataDevolucao = LocalDate.of(dateDevolucao.getYear(), dateDevolucao.getMonth() + 1, dateDevolucao.getDay());
                 double valorTotal = Double.parseDouble(txtValorTotal.getText());
                 String tipoLocacao = txtTipoLocacao.getText();
+                String observacoes = txtObservacoes.getText();
 
-                Locacao locacao = new Locacao(idLocacao, dataLocacao, dataDevolucaoPrevista, dataDevolucao, valorTotal, tipoLocacao, null);
+                Locacao locacao = new Locacao( dataLocacao, dataDevolucaoPrevista, dataDevolucao, valorTotal, tipoLocacao, observacoes,veiculoSelecionado,reservaSelecionada);
                 locacaoBanco.incluir(locacao);
 
                 MessageBox box = new MessageBox(shell, SWT.OK);
@@ -177,20 +257,28 @@ public class ViewLocacao {
             }
         });
 
-        btnConsultarLocacao.addSelectionListener(new SelectionAdapter() {
+        btnListarLocacao.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                List<Locacao> locacoes = locacaoBanco.listar();
-                table.removeAll();
+                List<Locacao> locacoes = locacaoBanco.listar(); // Lista de locações
+                table.removeAll(); // Remove itens antigos da tabela
                 for (Locacao locacao : locacoes) {
+                    // Adicionando nova linha na tabela
                     TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(new String[]{
-                            String.valueOf(locacao.getIdLocacao()),
-                            locacao.getDataLocacao().toString(),
-                            locacao.getDataDevolucaoPrevista().toString(),
-                            locacao.getDataDevolucaoReal().toString(),
-                            String.valueOf(locacao.getValorTotal()),
-                            locacao.getTipoLocacao()
+                    
+                    // Preenchendo a linha com os dados de locação, reserva, cliente e veiculo
+                    item.setText(new String[] {
+                        String.valueOf(locacao.getIdLocacao()), // ID da locação
+                        locacao.getReservaLocacao().getClienteReserva().getNomeCompleto(), // Nome do cliente (da reserva)
+                        locacao.getDataLocacao().toString(), // Data da locação
+                        locacao.getDataDevolucaoPrevista().toString(), // Data de devolução prevista
+                        locacao.getDataDevolucaoReal() != null ? locacao.getDataDevolucaoReal().toString() : "Não devolvido", // Data de devolução real
+                        String.valueOf(locacao.getValorTotal()), // Valor total
+                        locacao.getTipoLocacao(), // Tipo de locação
+                        locacao.getObservacoes(), // Observações
+                        
+                        locacao.getVeiculoLocacao().getPlaca(), // Placa do veículo
+                        locacao.getVeiculoLocacao().getCategoria() // Categoria do veículo
                     });
                 }
             }
@@ -198,15 +286,39 @@ public class ViewLocacao {
 
 
         btnDeletarLocacao.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                int idLocacao = Integer.parseInt(txtIdLocacao.getText());
-                locacaoBanco.deletar(idLocacao);
+        	@Override
+    			public void widgetSelected(SelectionEvent e) {
+    				TableItem[] selectedItems = table.getSelection();
 
-                MessageBox box = new MessageBox(shell, SWT.OK);
-                box.setMessage("Locação deletada com sucesso!");
-                box.open();
-            }
-        });
+    				if (selectedItems.length == 0) {
+    					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+    					warningBox.setMessage("Selecione uma Locacao na tabela para deletar.");
+    					warningBox.open();
+    					return;
+    				}
+
+    				try {
+
+    					Integer idLocacao = Integer.parseInt(selectedItems[0].getText(0));
+    					locacaoBanco.deletar(idLocacao);
+    					MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+    					successBox.setMessage("Locacao deletada com sucesso!");
+    					successBox.open();
+
+    				
+
+    					btnListarLocacao.notifyListeners(SWT.Selection, null);
+
+    				} catch (NumberFormatException ex) {
+    					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+    					errorBox.setMessage("ID do Usuario inválido: " + ex.getMessage());
+    					errorBox.open();
+    				} catch (Exception ex) {
+    					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+    					errorBox.setMessage("Erro ao deletar Usuario: " + ex.getMessage());
+    					errorBox.open();
+    				}
+    			}
+    		});
     }
 }

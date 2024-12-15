@@ -79,17 +79,17 @@ public class ClienteBanco extends UsuarioBanco {
 	    }
 
 
-    public Cliente consultar(int idCliente) {
-        Usuario usuario = super.consultar(idCliente); 
+    public Cliente consultar(int idUsuario) {
+        Usuario usuario = super.consultar(idUsuario); 
         Cliente cliente = null;
         try {
             String sql = "CALL consultar_cliente(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idCliente);
+            statement.setInt(1, idUsuario);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 cliente = new Cliente();
-                cliente.setCpf(rs.getString("cpf"));
+                cliente.setCpf(usuario.getCpf());
                 cliente.setDataNascimento(rs.getDate("dataNascimento").toLocalDate());
                 cliente.setCategoriaCNH(rs.getString("categoriaCNH"));
                 cliente.setIdUsuario(usuario.getIdUsuario());

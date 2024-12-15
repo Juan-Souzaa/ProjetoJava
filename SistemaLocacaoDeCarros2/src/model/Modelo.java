@@ -1,6 +1,7 @@
 package model;
 
 public class Modelo {
+	private Integer idModelo;
 	private String nomeModelo;
 	private Double valorDiaria;
 	private String categoria;
@@ -35,6 +36,14 @@ public class Modelo {
 		this.capacidadePassageiros = capacidadePassageiros;
 		this.tipoCombustivel = tipoCombustivel;
 		this.consumoMedio = consumoMedio;
+	}
+
+	public Integer getIdModelo() {
+		return idModelo;
+	}
+
+	public void setIdModelo(Integer idModelo) {
+		this.idModelo = idModelo;
 	}
 
 	// Getters e Setters

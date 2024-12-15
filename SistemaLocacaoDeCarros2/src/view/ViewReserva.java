@@ -1,5 +1,6 @@
 package view;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -17,22 +18,33 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import banco.ReservaBanco;
+import model.Cliente;
+import model.Modelo;
 import model.Reserva;
 
 public class ViewReserva {
 
     protected Shell shell;
-    private Text textReserva;
+   
     private Text textStatusReserva;
     private Text textObservacoes;
-    private Text textVeiculoReservado;
+   
     private Table table;
     private ReservaBanco reservaBanco;
+    private Cliente clienteSelecionado;
+    private Modelo modeloSelecionado;
 
     public ViewReserva() {
         reservaBanco = new ReservaBanco();
     }
-
+    public static void main(String[] args) {
+		try {
+			ViewReserva window = new ViewReserva();
+			window.open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
     public void open() {
         Display display = Display.getDefault();
         createContents();
@@ -45,28 +57,61 @@ public class ViewReserva {
         }
     }
 
+
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(949, 737);
+        shell.setSize(1006, 736);
         shell.setText("Reserva");
+        
+    
 
-        Label lblIdReserva = new Label(shell, SWT.NONE);
-        lblIdReserva.setText("ID Reserva:");
-        lblIdReserva.setBounds(10, 13, 81, 15);
+        Button btnSelecionarCliente = new Button(shell, SWT.NONE);
+        btnSelecionarCliente.setBounds(205, 43, 150, 30);
+        btnSelecionarCliente.setText("Selecionar Cliente");
 
-        textReserva = new Text(shell, SWT.BORDER);
-        textReserva.setBounds(97, 10, 110, 21);
+        Label lblClienteSelecionado = new Label(shell, SWT.NONE);
+        lblClienteSelecionado.setBounds(10, 51, 193, 30);
+        lblClienteSelecionado.setText("Cliente: Nenhum selecionado");
 
-        Label lblDataDaReserva = new Label(shell, SWT.NONE);
-        lblDataDaReserva.setText("Data da Reserva:");
-        lblDataDaReserva.setBounds(10, 57, 92, 15);
+        btnSelecionarCliente.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarCliente viewClienteSelecionar = new ViewSelecionarCliente(); // Crie a instância da ViewCliente
+                viewClienteSelecionar.open(); // Abre a janela de seleção
+                clienteSelecionado = viewClienteSelecionar.getClienteSelecionado(); // Obtém o cliente selecionado
+                if (clienteSelecionado != null) {
+                    lblClienteSelecionado.setText("Cliente: " + clienteSelecionado.getNomeCompleto());
+                }
+            }
+        });
+        
+        Button btnSelecionarModelo = new Button(shell, SWT.NONE);
+        btnSelecionarModelo.setBounds(10, 265, 150, 25);
+        btnSelecionarModelo.setText("Selecionar Modelo");
+
+        Label lblModeloSelecionado = new Label(shell, SWT.NONE);
+        lblModeloSelecionado.setBounds(184, 265, 200, 25);
+        lblModeloSelecionado.setText("Nenhum modelo selecionado");
+
+        // Ação do botão selecionar modelo
+        btnSelecionarModelo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarModelo viewSelecionarModelo = new ViewSelecionarModelo();
+                modeloSelecionado = viewSelecionarModelo.open();
+                if (modeloSelecionado != null) {
+                    lblModeloSelecionado.setText("Modelo: " + modeloSelecionado.getNomeModelo());
+                    
+                }
+            }
+        });
 
         Label lblStatusDaReserva = new Label(shell, SWT.NONE);
         lblStatusDaReserva.setText("Status da Reserva:");
-        lblStatusDaReserva.setBounds(10, 93, 110, 15);
+        lblStatusDaReserva.setBounds(9, 98, 110, 15);
 
         textStatusReserva = new Text(shell, SWT.BORDER);
-        textStatusReserva.setBounds(125, 90, 92, 21);
+        textStatusReserva.setBounds(125, 95, 92, 21);
 
         DateTime dateTimeDataRetirada = new DateTime(shell, SWT.BORDER);
         dateTimeDataRetirada.setBounds(115, 133, 80, 24);
@@ -94,27 +139,21 @@ public class ViewReserva {
         btnDeletarReserva.setText("Deletar Reserva");
         btnDeletarReserva.setBounds(342, 325, 134, 25);
 
-        Button btnConsultarReserva = new Button(shell, SWT.NONE);
-        btnConsultarReserva.setText("Consultar Reserva");
-        btnConsultarReserva.setBounds(604, 325, 150, 25);
+        Button btnListarReserva = new Button(shell, SWT.NONE);
+        btnListarReserva.setText("Consultar Reserva");
+        btnListarReserva.setBounds(604, 325, 150, 25);
 
-        DateTime dateTimeDataReserva = new DateTime(shell, SWT.BORDER);
-        dateTimeDataReserva.setBounds(107, 48, 80, 24);
+     
 
         DateTime dateTimeDataDevolucao = new DateTime(shell, SWT.BORDER);
         dateTimeDataDevolucao.setBounds(137, 170, 80, 24);
 
-        Label lblVeiculoReservado = new Label(shell, SWT.NONE);
-        lblVeiculoReservado.setText("Veículo Reservado:");
-        lblVeiculoReservado.setBounds(10, 273, 110, 15);
-
-        textVeiculoReservado = new Text(shell, SWT.BORDER);
-        textVeiculoReservado.setBounds(123, 270, 162, 21);
+    
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
-        table.setBounds(10, 377, 913, 311);
+        table.setBounds(10, 377, 970, 311);
 
         TableColumn tblclmnIdReserva = new TableColumn(table, SWT.CENTER);
         tblclmnIdReserva.setWidth(106);
@@ -139,47 +178,95 @@ public class ViewReserva {
         TableColumn tblclmnObservacoes = new TableColumn(table, SWT.CENTER);
         tblclmnObservacoes.setWidth(172);
         tblclmnObservacoes.setText("Observações");
+        
+        TableColumn tblclmnNomeCompleto = new TableColumn(table, SWT.NONE);
+        tblclmnNomeCompleto.setWidth(100);
+        tblclmnNomeCompleto.setText("Nome Completo");
+        
+        TableColumn tblclmnModelo = new TableColumn(table, SWT.NONE);
+        tblclmnModelo.setWidth(100);
+        tblclmnModelo.setText("Modelo");
 
-        TableColumn tblclmnVeiculoReservado = new TableColumn(table, SWT.CENTER);
-        tblclmnVeiculoReservado.setWidth(127);
-        tblclmnVeiculoReservado.setText("Veículo Reservado");
 
     
         btnCadastrarReserva.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-               
-                String statusReserva = textStatusReserva.getText();
-                String observacoes = textObservacoes.getText();
-                String veiculoReservado = textVeiculoReservado.getText();
-                Reserva reserva = new Reserva(statusReserva, observacoes, veiculoReservado);
-                reservaBanco.incluir(reserva);
-                MessageBox box = new MessageBox(shell, SWT.OK);
-                box.setMessage("Reserva cadastrada com sucesso!");
-                box.open();
-            }
-        });
+            	if (clienteSelecionado == null || modeloSelecionado == null) {
+            	    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+            	    box.setMessage("Selecione um cliente e um modelo antes de cadastrar a reserva.");
+            	    box.open();
+            	    return;
+            	}
+                
+                
+                 
+                    
+                    
+                
+                
 
-    
-        btnDeletarReserva.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
                 try {
-                    int idReserva = Integer.parseInt(textReserva.getText());
-                    reservaBanco.deletar(idReserva);
+                    LocalDate dataReserva = LocalDate.now();
+                    String statusReserva = textStatusReserva.getText();
+                    LocalDate dataRetirada = LocalDate.of(dateTimeDataRetirada.getYear(), dateTimeDataRetirada.getMonth() + 1, dateTimeDataRetirada.getDay());
+                    LocalDate dataDevolucao = LocalDate.of(dateTimeDataDevolucao.getYear(), dateTimeDataDevolucao.getMonth() + 1, dateTimeDataDevolucao.getDay());
+                    String observacoes = textObservacoes.getText();
+                    
+
+                    Reserva reserva = new Reserva( dataReserva, statusReserva, dataRetirada, dataDevolucao, observacoes, clienteSelecionado,modeloSelecionado);
+                    reservaBanco.incluir(reserva);
+
                     MessageBox box = new MessageBox(shell, SWT.OK);
-                    box.setMessage("Reserva deletada com sucesso!");
+                    box.setMessage("Reserva cadastrada com sucesso!");
                     box.open();
-                } catch (NumberFormatException ex) {
-                    MessageBox box = new MessageBox(shell, SWT.ERROR);
-                    box.setMessage("ID inválido.");
+                } catch (Exception ex) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_ERROR);
+                    box.setMessage("Erro ao cadastrar reserva: " + ex.getMessage());
                     box.open();
                 }
             }
         });
 
+    
+        btnDeletarReserva.addSelectionListener(new SelectionAdapter() {
+        	@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selectedItems = table.getSelection();
+
+				if (selectedItems.length == 0) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione uma Reserva na tabela para deletar.");
+					warningBox.open();
+					return;
+				}
+
+				try {
+
+					Integer idReserva = Integer.parseInt(selectedItems[0].getText(0));
+					
+					reservaBanco.deletar(idReserva);
+					MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+					successBox.setMessage("Reserva deletada com sucesso!");
+					successBox.open();
+
+				
+
+					btnListarReserva.notifyListeners(SWT.Selection, null);
+
+				} catch (NumberFormatException ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("ID do Usuario inválido: " + ex.getMessage());
+					errorBox.open();
+				} catch (Exception ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("Erro ao deletar Usuario: " + ex.getMessage());
+					errorBox.open();
+				}
+			}
+		});
         
-        btnConsultarReserva.addSelectionListener(new SelectionAdapter() {
+        btnListarReserva.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 List<Reserva> reservas = reservaBanco.listar();
@@ -193,6 +280,8 @@ public class ViewReserva {
                         reserva.getDataRetirada().toString(),
                         reserva.getDataDevolucao().toString(),
                         reserva.getObservacoes(),
+                        reserva.getClienteReserva().getNomeCompleto(),
+                        reserva.getModeloReserva().getNomeModelo(),
                         
                     });
                 }

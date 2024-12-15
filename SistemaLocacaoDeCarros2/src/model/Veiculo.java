@@ -21,11 +21,11 @@ public class Veiculo {
     
     
     
-    public Veiculo(Integer idVeiculo, String placa, String chassi, String cor, LocalDate ano, Double quilometragem,
+    public Veiculo(String placa, String chassi, String cor, LocalDate ano, Double quilometragem,
 			Boolean statusDisponibilidade, String categoria, Boolean seguroAtivo, String marca,
 			LocalDate dataUltimaManutencao, Multa multaVeiculo, Manutencao manutencaoVeiculo) {
 		super();
-		this.idVeiculo = idVeiculo;
+		
 		this.placa = placa;
 		this.chassi = chassi;
 		this.cor = cor;
@@ -42,11 +42,11 @@ public class Veiculo {
     
     
 
-	public Veiculo(Integer idVeiculo, String placa, String chassi, String cor, LocalDate ano, Double quilometragem,
+	public Veiculo( String placa, String chassi, String cor, LocalDate ano, Double quilometragem,
 			Boolean statusDisponibilidade, String categoria, Boolean seguroAtivo, String marca,
 			LocalDate dataUltimaManutencao) {
 		
-		this.idVeiculo = idVeiculo;
+		
 		this.placa = placa;
 		this.chassi = chassi;
 		this.cor = cor;

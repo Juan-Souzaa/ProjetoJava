@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 
 import banco.ModeloBanco;
 import model.Modelo;
+import model.Veiculo;
 
 public class ViewModelo {
 
@@ -29,6 +30,9 @@ public class ViewModelo {
     private Text textConsumoMedio;
     private Table table;
     private ModeloBanco modeloBanco;
+    private Veiculo veiculoSelecionado;
+    
+  
 
   
     
@@ -48,13 +52,42 @@ public class ViewModelo {
             }
         }
     }
+    public static void main(String[] args) {
+		try {
+			ViewModelo window = new ViewModelo();
+			window.open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
   
     protected void createContents() {
         shell = new Shell();
         shell.setSize(825, 584);
         shell.setText("Modelo Veículo");
+        
+        Button btnSelecionarVeiculo = new Button(shell, SWT.NONE);
+        btnSelecionarVeiculo.setBounds(10, 265, 150, 25);
+        btnSelecionarVeiculo.setText("Selecionar Veículo");
 
+        Label lblVeiculoSelecionado = new Label(shell, SWT.NONE);
+        lblVeiculoSelecionado.setBounds(184, 265, 200, 25);
+        lblVeiculoSelecionado.setText("Nenhum veículo selecionado");
+
+        // Ação do botão selecionar veículo
+        btnSelecionarVeiculo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarVeiculo viewSelecionarVeiculo = new ViewSelecionarVeiculo();
+                veiculoSelecionado = viewSelecionarVeiculo.open();
+                if (veiculoSelecionado != null) {
+                    lblVeiculoSelecionado.setText("Veículo: " + veiculoSelecionado.getPlaca());
+                    // Aqui você pode associar o objeto veiculoSelecionado ao modelo
+                }
+            }
+        });
+    
         Label lblModeloVeiculo = new Label(shell, SWT.NONE);
         lblModeloVeiculo.setText("Modelo do Veículo:");
         lblModeloVeiculo.setBounds(10, 26, 110, 15);
@@ -106,13 +139,17 @@ public class ViewModelo {
         btnDeletarModelo.setBounds(339, 299, 134, 25);
 
         Button btnListarModelo = new Button(shell, SWT.NONE);
-        btnListarModelo.setText("Consultar Modelo");
+        btnListarModelo.setText("Listar Modelo");
         btnListarModelo.setBounds(597, 299, 150, 25);
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
         table.setBounds(10, 330, 789, 205);
+        
+        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+        tblclmnNewColumn.setWidth(100);
+        tblclmnNewColumn.setText("IdModelo");
 
         TableColumn tblclmnModeloDoVeiculo = new TableColumn(table, SWT.CENTER);
         tblclmnModeloDoVeiculo.setWidth(127);
@@ -142,6 +179,11 @@ public class ViewModelo {
         btnCadastrarModelo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+            	 if (veiculoSelecionado == null) {
+                     MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                     box.setMessage("Selecione um Veiculo antes de cadastrar a Modelo.");
+                     box.open();
+                     return;}
                 String modeloVeiculo = textModeloVeiculo.getText();
                 double valorDiaria = Double.parseDouble(textValorDiaria.getText());
                 String categoria = textCategoria.getText();
@@ -149,7 +191,7 @@ public class ViewModelo {
                 String tipoCombustivel = textTipoCombustivel.getText();
                 double consumoMedio = Double.parseDouble(textConsumoMedio.getText());
 
-                Modelo modelo = new Modelo(modeloVeiculo, valorDiaria, categoria, capacidadePassageiros, tipoCombustivel, consumoMedio);
+                Modelo modelo = new Modelo(modeloVeiculo, valorDiaria, categoria, capacidadePassageiros, tipoCombustivel, consumoMedio, veiculoSelecionado);
                 modeloBanco.incluir(modelo);
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Modelo de veículo cadastrado com sucesso!");
@@ -159,38 +201,52 @@ public class ViewModelo {
 
         
         btnDeletarModelo.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                try {
-                    String id = textModeloVeiculo.getText();
-                    if (!id.isEmpty()) {
-                        String idModelo = id;
-                        modeloBanco.deletar(idModelo);
-                        MessageBox box = new MessageBox(shell, SWT.OK);
-                        box.setMessage("Modelo de veículo deletado com sucesso!");
-                        box.open();
-                    } else {
-                        MessageBox box = new MessageBox(shell, SWT.ERROR);
-                        box.setMessage("Por favor, insira o ID do modelo.");
-                        box.open();
-                    }
-                } catch (NumberFormatException ex) {
-                    MessageBox box = new MessageBox(shell, SWT.ERROR);
-                    box.setMessage("ID inválido.");
-                    box.open();
-                }
-            }
-        });
+        	@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selectedItems = table.getSelection();
 
+				if (selectedItems.length == 0) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione um Usuario na tabela para deletar.");
+					warningBox.open();
+					return;
+				}
+
+				try {
+
+					Integer idModelo = Integer.parseInt(selectedItems[0].getText(0));
+					
+					modeloBanco.deletar(idModelo);
+					MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+					successBox.setMessage("Modelo deletado com sucesso!");
+					successBox.open();
+
+				
+
+					btnListarModelo.notifyListeners(SWT.Selection, null);
+
+				} catch (NumberFormatException ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("ID do Usuario inválido: " + ex.getMessage());
+					errorBox.open();
+				} catch (Exception ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("Erro ao deletar Usuario: " + ex.getMessage());
+					errorBox.open();
+				}
+			}
+		});
      
         btnListarModelo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+            	
                 List<Modelo> modelos = modeloBanco.listar();
                 table.removeAll();
                 for (Modelo modelo : modelos) {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[] {
+                    	modelo.getIdModelo().toString(),
                         modelo.getNomeModelo(),
                         String.valueOf(modelo.getValorDiaria()),
                         modelo.getCategoria(),

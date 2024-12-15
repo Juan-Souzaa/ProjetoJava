@@ -6,14 +6,6 @@ public class Cancelamento extends Locacao {
 	private String motivoCancelamento;
 	private LocalDate dataCancelamento;
 
-	public Cancelamento(Integer idLocacao, LocalDate dataLocacao, LocalDate dataDevolucaoPrevista,
-			LocalDate dataDevolucaoReal, Double valorTotal, String tipoLocacao, String observacoes, Cliente cliente,
-			Veiculo veiculo, Fatura fatura, String motivoCancelamento, LocalDate dataCancelamento) {
-		super(idLocacao, dataLocacao, dataDevolucaoPrevista, dataDevolucaoReal, valorTotal, tipoLocacao, observacoes,
-				cliente, veiculo, fatura);
-		this.motivoCancelamento = motivoCancelamento;
-		this.dataCancelamento = dataCancelamento;
-	}
 
 	
 

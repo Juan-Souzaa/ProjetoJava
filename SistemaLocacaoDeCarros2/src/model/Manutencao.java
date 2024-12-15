@@ -10,16 +10,16 @@ public class Manutencao {
 	private String descricao;
 
 	// Relacionamento
-	private Veiculo veiculo; // Manutenção está associada a um veículo
+	private Veiculo veiculoManutencao; // Manutenção está associada a um veículo
 
-	public Manutencao(Integer idManutencao, LocalDate dataManutencao, String tipoManutencao, Double custo, String descricao,
+	public Manutencao( LocalDate dataManutencao, String tipoManutencao, Double custo, String descricao,
 			Veiculo veiculo) {
-		this.idManutencao = idManutencao;
+		
 		this.dataManutencao = dataManutencao;
 		this.tipoManutencao = tipoManutencao;
 		this.custo = custo;
 		this.descricao = descricao;
-		this.veiculo = veiculo;
+		this.veiculoManutencao = veiculo;
 	}
 
 	
@@ -83,11 +83,11 @@ public class Manutencao {
 		this.descricao = descricao;
 	}
 
-	public Veiculo getVeiculo() {
-		return veiculo;
+	public Veiculo getVeiculoManutencao() {
+		return veiculoManutencao;
 	}
 
-	public void setVeiculo(Veiculo veiculo) {
-		this.veiculo = veiculo;
+	public void setVeiculomanutencao(Veiculo veiculo) {
+		this.veiculoManutencao = veiculo;
 	}
 }

@@ -64,12 +64,7 @@ public class ViewVeiculo {
         shell.setSize(1425, 1018);
         shell.setText("Veículo");
         
-        Label lblIdVeiculo = new Label(shell, SWT.NONE);
-        lblIdVeiculo.setText("ID Veículo:");
-        lblIdVeiculo.setBounds(10, 13, 67, 15);
-        
-        textIdVeiculo = new Text(shell, SWT.BORDER);
-        textIdVeiculo.setBounds(83, 10, 99, 21);
+       
         
         Label lblPlaca = new Label(shell, SWT.NONE);
         lblPlaca.setText("Placa:");
@@ -156,7 +151,7 @@ public class ViewVeiculo {
         btnCadastrarVeiculo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                Integer idVeiculo = Integer.parseInt(textIdVeiculo.getText());
+               
                 String placaVeiculo = textPlaca.getText();
                 String chassiVeiculo = textChassi.getText();
                 String corVeiculo = textCor.getText();
@@ -169,7 +164,7 @@ public class ViewVeiculo {
                 String marcaVeiculo = textMarca.getText();
 
             
-                Veiculo veiculo = new Veiculo(idVeiculo, placaVeiculo, chassiVeiculo, corVeiculo, anoVeiculo, quilometragemVeiculo, disponivelVeiculo, categoriaVeiculo,seguroAtivo, marcaVeiculo, anoManu);
+                Veiculo veiculo = new Veiculo( placaVeiculo, chassiVeiculo, corVeiculo, anoVeiculo, quilometragemVeiculo, disponivelVeiculo, categoriaVeiculo,seguroAtivo, marcaVeiculo, anoManu);
                 veiculoBanco.incluir(veiculo);
 
                 MessageBox box = new MessageBox(shell, SWT.OK);

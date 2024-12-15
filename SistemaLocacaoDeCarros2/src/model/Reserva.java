@@ -13,19 +13,19 @@ public class Reserva {
 
 	// Relacionamentos
 	private Cliente clienteReserva; // Uma reserva pertence a um cliente
-	private Veiculo veiculo; // Uma reserva está associada a um veículo
+	private Modelo modeloReserva; // Uma reserva está associada a um veículo
 
-	public Reserva(Integer idReserva, LocalDate dataReserva, String statusReserva, LocalDate dataRetirada,
-			LocalDate dataDevolucao, String observacoes,  Cliente cliente, Veiculo veiculo) {
-		this.idReserva = idReserva;
+	public Reserva(LocalDate dataReserva, String statusReserva, LocalDate dataRetirada,
+			LocalDate dataDevolucao, String observacoes,  Cliente cliente, Modelo veiculo) {
+		
 		this.dataReserva = dataReserva;
 		this.statusReserva = statusReserva;
 		this.dataRetirada = dataRetirada;
 		this.dataDevolucao = dataDevolucao;
 		this.observacoes = observacoes;
 		
-		this.setClienteReserva(cliente);
-		this.veiculo = veiculo;
+		this.clienteReserva= cliente;
+		this.modeloReserva = veiculo;
 	}
 
 	public Reserva(Integer idReserva, LocalDate dataReserva, String statusReserva, LocalDate dataRetirada,
@@ -37,6 +37,12 @@ public class Reserva {
 		this.dataRetirada = dataRetirada;
 		this.dataDevolucao = dataDevolucao;
 		this.observacoes = observacoes;
+	}
+	
+	
+
+	public Reserva() {
+		super();
 	}
 
 	// Getters e Setters
@@ -90,12 +96,12 @@ public class Reserva {
 
 	
 
-	public Veiculo getVeiculo() {
-		return veiculo;
+	public Modelo getModeloReserva() {
+		return modeloReserva;
 	}
 
-	public void setVeiculo(Veiculo veiculo) {
-		this.veiculo = veiculo;
+	public void setModeloReserva(Modelo veiculo) {
+		this.modeloReserva = veiculo;
 	}
 
 	public Cliente getClienteReserva() {

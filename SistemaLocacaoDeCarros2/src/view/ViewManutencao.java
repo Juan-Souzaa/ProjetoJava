@@ -19,16 +19,18 @@ import org.eclipse.swt.widgets.Text;
 
 import banco.ManutencaoBanco;
 import model.Manutencao;
+import model.Veiculo;
 
 public class ViewManutencao {
 
     protected Shell shell;
-    private Text textIdManu;
-    private Text textTipoManu;
-    private Text textValorManu;
-    private Text textDescricao;
+    
+    private Text txtDescricao;
+    private Text txtCusto;
     private Table table;
     private ManutencaoBanco manutencaoBanco;
+    private Veiculo veiculoSelecionado;
+    private Text textTipoManu;
 
     public ViewManutencao() {
         manutencaoBanco = new ManutencaoBanco();
@@ -46,127 +48,179 @@ public class ViewManutencao {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            ViewManutencao window = new ViewManutencao();
+            window.open();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(832, 584);
+        shell.setSize(1112, 987);
         shell.setText("Manutenção");
 
-        Label lblIdManu = new Label(shell, SWT.NONE);
-        lblIdManu.setBounds(10, 26, 90, 15);
-        lblIdManu.setText("ID Manutenção:");
+        Button btnSelecionarVeiculo = new Button(shell, SWT.NONE);
+        btnSelecionarVeiculo.setBounds(6, 27, 150, 30);
+        btnSelecionarVeiculo.setText("Selecionar Veículo");
 
-        textIdManu = new Text(shell, SWT.BORDER);
-        textIdManu.setBounds(101, 23, 81, 21);
+        Label lblVeiculoSelecionado = new Label(shell, SWT.NONE);
+        lblVeiculoSelecionado.setBounds(184, 27, 200, 25);
+        lblVeiculoSelecionado.setText("Nenhum veículo selecionado");
 
-        Label lblDataDaManutencao = new Label(shell, SWT.NONE);
-        lblDataDaManutencao.setText("Data da Manutenção:");
-        lblDataDaManutencao.setBounds(10, 75, 119, 15);
-
-        DateTime dateTimeDataDaManu = new DateTime(shell, SWT.BORDER);
-        dateTimeDataDaManu.setBounds(135, 66, 80, 24);
-
-        Label lblTipoDaManutencao = new Label(shell, SWT.NONE);
-        lblTipoDaManutencao.setText("Tipo da Manutenção:");
-        lblTipoDaManutencao.setBounds(10, 132, 119, 15);
-
-        textTipoManu = new Text(shell, SWT.BORDER);
-        textTipoManu.setBounds(135, 129, 246, 21);
-
-        Label lblValorDaManutencao = new Label(shell, SWT.NONE);
-        lblValorDaManutencao.setText("Valor da Manutenção:");
-        lblValorDaManutencao.setBounds(10, 183, 119, 15);
-
-        textValorManu = new Text(shell, SWT.BORDER);
-        textValorManu.setBounds(134, 180, 81, 21);
-
-        Label lblDescricao = new Label(shell, SWT.NONE);
-        lblDescricao.setText("Descrição:");
-        lblDescricao.setBounds(10, 229, 67, 15);
-
-        textDescricao = new Text(shell, SWT.BORDER);
-        textDescricao.setBounds(86, 226, 219, 48);
-
-        Button btnCadastrarManu = new Button(shell, SWT.NONE);
-        btnCadastrarManu.setBounds(57, 299, 150, 25);
-        btnCadastrarManu.setText("Cadastrar Manutenção");
-
-        Button btnDeletarManutencao = new Button(shell, SWT.NONE);
-        btnDeletarManutencao.addSelectionListener(new SelectionAdapter() {
+        btnSelecionarVeiculo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                int idManutencao = Integer.parseInt(textIdManu.getText());
-                manutencaoBanco.deletar(idManutencao);
+                ViewSelecionarVeiculo viewSelecionarVeiculo = new ViewSelecionarVeiculo();
+                veiculoSelecionado = viewSelecionarVeiculo.open();
+
+                if (veiculoSelecionado != null) {
+                    lblVeiculoSelecionado.setText("Veículo: " + veiculoSelecionado.getPlaca());
+                }
+            }
+        });
+
+        Label lblDataManutencao = new Label(shell, SWT.NONE);
+        lblDataManutencao.setBounds(27, 73, 150, 15);
+        lblDataManutencao.setText("Data da Manutenção");
+
+        DateTime dateManutencao = new DateTime(shell, SWT.BORDER);
+        dateManutencao.setBounds(180, 73, 80, 24);
+
+        Label lblDescricao = new Label(shell, SWT.NONE);
+        lblDescricao.setBounds(27, 136, 150, 15);
+        lblDescricao.setText("Descrição da Manutenção");
+
+        txtDescricao = new Text(shell, SWT.BORDER);
+        txtDescricao.setBounds(184, 133, 200, 21);
+
+        Label lblCusto = new Label(shell, SWT.NONE);
+        lblCusto.setBounds(27, 170, 150, 15);
+        lblCusto.setText("Custo");
+
+        txtCusto = new Text(shell, SWT.BORDER);
+        txtCusto.setBounds(180, 167, 153, 21);
+
+        Button btnCadastrarManutencao = new Button(shell, SWT.NONE);
+        btnCadastrarManutencao.setBounds(74, 230, 75, 25);
+        btnCadastrarManutencao.setText("Cadastrar");
+
+        Button btnDeletarManutencao = new Button(shell, SWT.NONE);
+        btnDeletarManutencao.setBounds(221, 230, 105, 25);
+        btnDeletarManutencao.setText("Deletar Manutenção");
+
+        Button btnListarManutencao = new Button(shell, SWT.NONE);
+        btnListarManutencao.setBounds(385, 230, 105, 25);
+        btnListarManutencao.setText("Consultar Manutenção");
+
+        table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
+        table.setBounds(41, 280, 964, 269);
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+
+        TableColumn tblclmnIdManutencao = new TableColumn(table, SWT.NONE);
+        tblclmnIdManutencao.setWidth(100);
+        tblclmnIdManutencao.setText("ID Manutenção");
+        
+        TableColumn tblclmnTipo = new TableColumn(table, SWT.NONE);
+        tblclmnTipo.setWidth(100);
+        tblclmnTipo.setText("Tipo");
+
+        TableColumn tblclmnDataManutencao = new TableColumn(table, SWT.NONE);
+        tblclmnDataManutencao.setWidth(100);
+        tblclmnDataManutencao.setText("Data da Manutenção");
+
+        TableColumn tblclmnDescricao = new TableColumn(table, SWT.NONE);
+        tblclmnDescricao.setWidth(200);
+        tblclmnDescricao.setText("Descrição");
+        
+        TableColumn tblclmnMarca = new TableColumn(table, SWT.NONE);
+        tblclmnMarca.setWidth(100);
+        tblclmnMarca.setText("Marca");
+        
+        TableColumn tblclmnPlaca = new TableColumn(table, SWT.NONE);
+        tblclmnPlaca.setWidth(100);
+        tblclmnPlaca.setText("Placa");
+        
+        TableColumn tblclmnDataUltimaManutencao = new TableColumn(table, SWT.NONE);
+        tblclmnDataUltimaManutencao.setWidth(159);
+        tblclmnDataUltimaManutencao.setText("Data Ultima Manutencao");
+
+        TableColumn tblclmnCusto = new TableColumn(table, SWT.CENTER);
+        tblclmnCusto.setWidth(100);
+        tblclmnCusto.setText("Custo");
+        
+        Label lblTipoManu = new Label(shell, SWT.NONE);
+        lblTipoManu.setBounds(28, 102, 105, 15);
+        lblTipoManu.setText("Tipo Manutencao");
+        
+        textTipoManu = new Text(shell, SWT.BORDER);
+        textTipoManu.setBounds(190, 106, 76, 21);
+
+        btnCadastrarManutencao.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                LocalDate dataManutencao = LocalDate.of(dateManutencao.getYear(), dateManutencao.getMonth() + 1, dateManutencao.getDay());
+                String descricao = txtDescricao.getText();
+                double custo = Double.parseDouble(txtCusto.getText());
+                String tipoManu = textTipoManu.getText();
+
+                Manutencao manutencao = new Manutencao(dataManutencao, tipoManu, custo, descricao, veiculoSelecionado);
+                manutencaoBanco.incluir(manutencao);
 
                 MessageBox box = new MessageBox(shell, SWT.OK);
-                box.setMessage("Manutenção deletada com sucesso!");
+                box.setMessage("Manutenção cadastrada com sucesso!");
                 box.open();
             }
         });
-        btnDeletarManutencao.setText("Deletar Manutenção");
-        btnDeletarManutencao.setBounds(339, 299, 134, 25);
 
-        Button btnConsultarManutencao = new Button(shell, SWT.NONE);
-        btnConsultarManutencao.setText("Consultar Manutenção");
-        btnConsultarManutencao.setBounds(597, 299, 150, 25);
-        btnConsultarManutencao.addSelectionListener(new SelectionAdapter() {
+        btnListarManutencao.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 List<Manutencao> manutencaoList = manutencaoBanco.listar();
                 table.removeAll();
                 for (Manutencao manutencao : manutencaoList) {
                     TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(new String[]{
+                    item.setText(new String[] {
                         String.valueOf(manutencao.getIdManutencao()),
-                        manutencao.getDataManutencao().toString(),
                         manutencao.getTipoManutencao(),
-                        String.valueOf(manutencao.getCusto()),
-                        manutencao.getDescricao()
+                        manutencao.getDataManutencao().toString(),
+                        manutencao.getDescricao(),
+                        manutencao.getVeiculoManutencao().getMarca(),
+                        manutencao.getVeiculoManutencao().getPlaca(),
+                        manutencao.getVeiculoManutencao().getDataUltimaManutencao().toString(),
+                        String.valueOf(manutencao.getCusto())
                     });
                 }
             }
         });
 
-        table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(121, 330, 590, 180);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-
-        TableColumn tblclmnIdManu = new TableColumn(table, SWT.CENTER);
-        tblclmnIdManu.setWidth(100);
-        tblclmnIdManu.setText("ID Manutenção");
-
-        TableColumn tblclmnDataManu = new TableColumn(table, SWT.CENTER);
-        tblclmnDataManu.setWidth(122);
-        tblclmnDataManu.setText("Data da Manutenção");
-
-        TableColumn tblclmnTipoManu = new TableColumn(table, SWT.CENTER);
-        tblclmnTipoManu.setWidth(128);
-        tblclmnTipoManu.setText("Tipo da Manutenção");
-
-        TableColumn tblclmnValorManu = new TableColumn(table, SWT.CENTER);
-        tblclmnValorManu.setWidth(139);
-        tblclmnValorManu.setText("Valor da Manutenção");
-
-        TableColumn tblclmnDescricao = new TableColumn(table, SWT.CENTER);
-        tblclmnDescricao.setWidth(100);
-        tblclmnDescricao.setText("Descrição");
-
-        
-        btnCadastrarManu.addSelectionListener(new SelectionAdapter() {
+        btnDeletarManutencao.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                Integer idManutencao = Integer.parseInt(textIdManu.getText());
-                LocalDate dataManutencao = LocalDate.of(dateTimeDataDaManu.getYear(), dateTimeDataDaManu.getMonth() + 1, dateTimeDataDaManu.getDay());
-                String tipoManutencao = textTipoManu.getText();
-                Double valorManutencao = Double.parseDouble(textValorManu.getText());
-                String descricao = textDescricao.getText();
+                TableItem[] selectedItems = table.getSelection();
 
-                Manutencao manutencao = new Manutencao(idManutencao, dataManutencao, tipoManutencao, valorManutencao, descricao);
-                manutencaoBanco.incluir(manutencao);
+                if (selectedItems.length == 0) {
+                    MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione uma Manutenção na tabela para deletar.");
+                    warningBox.open();
+                    return;
+                }
 
-                MessageBox box = new MessageBox(shell, SWT.OK);
-                box.setMessage("Manutenção cadastrada com sucesso!");
-                box.open();
+                try {
+                    Integer idManutencao = Integer.parseInt(selectedItems[0].getText(0));
+                    manutencaoBanco.deletar(idManutencao);
+                    MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+                    successBox.setMessage("Manutenção deletada com sucesso!");
+                    successBox.open();
+                    btnListarManutencao.notifyListeners(SWT.Selection, null);
+                } catch (NumberFormatException ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao deletar manutenção.");
+                    errorBox.open();
+                }
             }
         });
     }

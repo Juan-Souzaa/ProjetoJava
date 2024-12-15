@@ -16,7 +16,7 @@ public class ModeloBanco {
 
     public void incluir(Modelo modelo) {
         try {
-            String sql = "CALL inserir_modelo(?, ?, ?, ?, ?, ?;?);";
+            String sql = "CALL inserir_modelo(?, ?, ?, ?, ?, ?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
             statement.setString(1, modelo.getNomeModelo());
             statement.setDouble(2, modelo.getValorDiaria());
@@ -40,13 +40,16 @@ public class ModeloBanco {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Modelo modelo = new Modelo();
+                	modelo.setIdModelo(rs.getInt("idModelo"));
                     modelo.setNomeModelo(rs.getString("nomeModelo"));
                     modelo.setValorDiaria(rs.getDouble("valorDiaria"));
                     modelo.setCategoria(rs.getString("categoria"));
                     modelo.setCapacidadePassageiros(rs.getInt("capacidadePassageiros"));
                     modelo.setTipoCombustivel(rs.getString("tipoCombustivel"));
                     modelo.setConsumoMedio(rs.getDouble("consumoMedio"));
-                    modelo.setVeiculo((Veiculo) rs.getObject("veiculo"));
+                   
+                    
+                   
                
                 modelos.add(modelo);
             }
@@ -100,11 +103,11 @@ public class ModeloBanco {
         }
     }
 
-    public void deletar(String nomeModelo) {
+    public void deletar(int nomeModelo) {
         try {
             String sql = "CALL deletar_modelo(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, nomeModelo);
+            statement.setInt(1, nomeModelo);
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

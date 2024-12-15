@@ -13,9 +13,9 @@ public class Multa {
 	// Relacionamento
 	private Veiculo veiculo; // Uma multa está associada a um veículo
 
-	public Multa(String idMulta, String motivo, Double valorMulta, LocalDate dataOcorrencia, String statusMulta,
+	public Multa( String motivo, Double valorMulta, LocalDate dataOcorrencia, String statusMulta,
 			String observacoes, Veiculo veiculo) {
-		this.idMulta = idMulta;
+		
 		this.motivo = motivo;
 		this.valorMulta = valorMulta;
 		this.dataOcorrencia = dataOcorrencia;
