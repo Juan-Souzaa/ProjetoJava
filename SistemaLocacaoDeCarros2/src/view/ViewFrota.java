@@ -102,9 +102,9 @@ public class ViewFrota {
         btnCadastrar.setBounds(100, 258, 75, 25);
         btnCadastrar.setText("Cadastrar");
 
-        Button btnConsultar = new Button(shell, SWT.NONE);
-        btnConsultar.setBounds(349, 258, 75, 25);
-        btnConsultar.setText("Consultar");
+        Button btnListarFrota = new Button(shell, SWT.NONE);
+        btnListarFrota.setBounds(349, 258, 75, 25);
+        btnListarFrota.setText("Listar");
 
      
         btnCadastrar.addSelectionListener(new SelectionAdapter() {
@@ -124,7 +124,7 @@ public class ViewFrota {
         });
 
         
-        btnConsultar.addSelectionListener(new SelectionAdapter() {
+        btnListarFrota.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 List<Frota> frotas = frotaBanco.listar();
@@ -140,5 +140,37 @@ public class ViewFrota {
                 }
             }
         });
+//criar botao de deletar, atualizar e consultar 
+
+        btnDeletarFrota.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int selectedIndex = table.getSelectionIndex();
+				if (selectedIndex != -1) {
+					TableItem item = table.getItem(selectedIndex);
+					int idFrota = Integer.parseInt(item.getText(0));
+
+					frotaBanco.deletar(idFrota);
+					MessageBox messageBox = new MessageBox(shell, SWT.OK);
+					messageBox.setMessage("Deletado com sucesso!");
+					messageBox.open();
+
+					btnListarFrota.notifyListeners(SWT.Selection, null);
+				} else {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione uma Frota na tabela para deletar.");
+					warningBox.open();
+				}
+
+			}
+		});
+
+        
+
+
+
+
+
+
     }
 }

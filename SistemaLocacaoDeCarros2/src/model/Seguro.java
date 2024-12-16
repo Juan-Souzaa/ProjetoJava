@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDate;
 
 public class Seguro {
-	private String idSeguro;
+	private Integer idSeguro;
 	private String tipoSeguro;
 	private Double valorCobertura;
 	private Double franquia;
@@ -12,9 +12,9 @@ public class Seguro {
 	// Relacionamento
 	private Locacao locacao; // Seguro está associado a uma locação
 
-	public Seguro(String idSeguro, String tipoSeguro, Double valorCobertura, Double franquia, LocalDate vigencia,
+	public Seguro( String tipoSeguro, Double valorCobertura, Double franquia, LocalDate vigencia,
 			Locacao locacao) {
-		this.idSeguro = idSeguro;
+		
 		this.tipoSeguro = tipoSeguro;
 		this.valorCobertura = valorCobertura;
 		this.franquia = franquia;
@@ -22,21 +22,20 @@ public class Seguro {
 		this.locacao = locacao;
 	}
 
-	public Seguro(String idSeguro, String tipoSeguro, Double valorCobertura, Double franquia, LocalDate vigencia) {
+	
+
+	public Seguro() {
 		super();
-		this.idSeguro = idSeguro;
-		this.tipoSeguro = tipoSeguro;
-		this.valorCobertura = valorCobertura;
-		this.franquia = franquia;
-		this.vigencia = vigencia;
 	}
 
+
+
 	// Getters e Setters
-	public String getIdSeguro() {
+	public Integer getIdSeguro() {
 		return idSeguro;
 	}
 
-	public void setIdSeguro(String idSeguro) {
+	public void setIdSeguro(Integer idSeguro) {
 		this.idSeguro = idSeguro;
 	}
 

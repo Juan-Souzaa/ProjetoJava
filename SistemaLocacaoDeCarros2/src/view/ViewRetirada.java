@@ -73,9 +73,9 @@ public class ViewRetirada {
         btnDeletarRetirada.setText("Deletar Retirada");
         btnDeletarRetirada.setBounds(330, 168, 134, 25);
 
-        Button btnConsultarRetirada = new Button(shell, SWT.NONE);
-        btnConsultarRetirada.setText("Consultar Retirada");
-        btnConsultarRetirada.setBounds(585, 168, 150, 25);
+        Button btnListarRetirada = new Button(shell, SWT.NONE);
+        btnListarRetirada.setText("Listar Retirada");
+        btnListarRetirada.setBounds(585, 168, 150, 25);
 
         DateTime dateTimeDataRetirada = new DateTime(shell, SWT.BORDER);
         dateTimeDataRetirada.setBounds(117, 4, 80, 24);
@@ -154,8 +154,8 @@ public class ViewRetirada {
             }
         });
 
-        // Consultar Retirada
-        btnConsultarRetirada.addSelectionListener(new SelectionAdapter() {
+        // Listar Retirada
+        btnListarRetirada.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 List<Retirada> retiradas = retiradaBanco.listar();

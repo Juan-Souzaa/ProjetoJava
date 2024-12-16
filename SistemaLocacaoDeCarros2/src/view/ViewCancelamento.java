@@ -91,6 +91,10 @@ public class ViewCancelamento {
         TableColumn colData = new TableColumn(table, SWT.NONE);
         colData.setWidth(300);
         colData.setText("Data");
+        
+        Button btnDeletar = new Button(shell, SWT.NONE);
+        btnDeletar.setBounds(275, 125, 75, 25);
+        btnDeletar.setText("Deletar");
 
      
         btnCadastrar.addSelectionListener(new SelectionAdapter() {
@@ -127,5 +131,46 @@ public class ViewCancelamento {
                 }
             }
         });
+
+        btnDeletar.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                int selectedIndex = table.getSelectionIndex();
+                if(selectedIndex != -1) {
+                    TableItem item = table.getItem(selectedIndex);
+                    int idCancelamento = Integer.parseInt(item.getText(0));
+
+                    cancelamentoBanco.deletar(idCancelamento);
+                    MessageBox messageBox = new MessageBox(shell, SWT.OK);
+                    messageBox.setMessage("Cancelamento deletado com sucesso!");
+                    messageBox.open();  
+
+                    btnConsultar.notifyListeners(SWT.Selection, null);
+                } else {
+                        MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione um cancelamento na tabela para deletar.");
+                    warningBox.open();
+                }
+    
+            }
+        });
+
+            btnAtualizar.addSelectionListener(new SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+                            String motivo = txtMotivo.getText();
+                            LocalDate data = dateCancelamento.getData();
+
+
+                            Cancelamento cancelamento = new Cancelamento(motivo, data);
+                            cancelamentoBanco.atualizar(cancelamento);
+
+                            MessageBox messageBox = new MessageBox(shell, SWT.OK);
+                            messageBox.setMessage("Cancelamento atualizado com sucesso!");
+                            messageBox.open();
+                        }
+                    });
+
+
     }
 }

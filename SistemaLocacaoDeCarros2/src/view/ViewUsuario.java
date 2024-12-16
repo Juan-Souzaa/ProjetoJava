@@ -228,6 +228,8 @@ public class ViewUsuario {
 		lblDataNascimento.setText("Data Nascimento");
 
 		Button btnAtualizar = new Button(shell, SWT.NONE);
+
+		
 		btnAtualizar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

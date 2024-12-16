@@ -25,6 +25,7 @@ public class ViewFatura {
     private FaturaBanco faturaBanco;
     protected Shell shell;
     private Table table;
+    private Locacao locacaoSelecionada;
 
     public ViewFatura() {
         this.faturaBanco = new FaturaBanco();
@@ -42,19 +43,43 @@ public class ViewFatura {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            ViewFatura window = new ViewFatura();
+            window.open();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(600, 733);
+        shell.setSize(743, 729);
         shell.setText("Fatura");
+        
+        
+        Button btnSelecionarLocacao = new Button(shell, SWT.NONE);
+        btnSelecionarLocacao.setBounds(229, 8, 150, 25);
+        btnSelecionarLocacao.setText("Selecionar Locacao");
 
-        // Campos para cadastro de fatura
-        Label lblNumeroFatura = new Label(shell, SWT.NONE);
-        lblNumeroFatura.setBounds(20, 30, 120, 15);
-        lblNumeroFatura.setText("Número da Fatura:");
+        Label lblVeiculoSelecionado = new Label(shell, SWT.NONE);
+        lblVeiculoSelecionado.setBounds(23, 13, 200, 25);
+        lblVeiculoSelecionado.setText("Nenhuma Locacao selecionada");
 
-        Text txtNumeroFatura = new Text(shell, SWT.BORDER);
-        txtNumeroFatura.setBounds(160, 30, 200, 25);
+        // Ação do botão selecionar veículo
+        btnSelecionarLocacao.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarLocacao viewSelecionarLocacao = new ViewSelecionarLocacao();
+                locacaoSelecionada = viewSelecionarLocacao.open();
+                if (locacaoSelecionada != null) {
+                    lblVeiculoSelecionado.setText("Veículo: " + locacaoSelecionada.getReservaLocacao().getClienteReserva().getNomeCompleto());
+                    // Aqui você pode associar o objeto veiculoSelecionado ao modelo
+                }
+            }
+        });
 
+     
         Label lblDataEmissao = new Label(shell, SWT.NONE);
         lblDataEmissao.setBounds(20, 70, 120, 15);
         lblDataEmissao.setText("Data de Emissão:");
@@ -80,18 +105,22 @@ public class ViewFatura {
         btnCadastrarFatura.setBounds(40, 210, 120, 30);
         btnCadastrarFatura.setText("Cadastrar Fatura");
 
-        Button btnConsultarFatura = new Button(shell, SWT.NONE);
-        btnConsultarFatura.setBounds(180, 210, 120, 30);
-        btnConsultarFatura.setText("Consultar Faturas");
+        Button btnListarFatura = new Button(shell, SWT.NONE);
+        btnListarFatura.setBounds(180, 210, 120, 30);
+        btnListarFatura.setText("Listar Faturas");
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(40, 260, 500, 300);
+        table.setBounds(40, 260, 587, 293);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
         TableColumn tblclmnNumeroFatura = new TableColumn(table, SWT.NONE);
         tblclmnNumeroFatura.setWidth(100);
-        tblclmnNumeroFatura.setText("Número");
+        tblclmnNumeroFatura.setText("Id Locacao");
+        
+        TableColumn tblclmnCliente = new TableColumn(table, SWT.NONE);
+        tblclmnCliente.setWidth(100);
+        tblclmnCliente.setText("Cliente");
 
         TableColumn tblclmnDataEmissao = new TableColumn(table, SWT.NONE);
         tblclmnDataEmissao.setWidth(120);
@@ -104,19 +133,26 @@ public class ViewFatura {
         TableColumn tblclmnObservacoes = new TableColumn(table, SWT.NONE);
         tblclmnObservacoes.setWidth(200);
         tblclmnObservacoes.setText("Observações");
+        
+        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+        tblclmnNewColumn.setWidth(0);
+        tblclmnNewColumn.setText("idfatura");
+        
+        Button btnDeletarFatura = new Button(shell, SWT.NONE);
+        btnDeletarFatura.setBounds(326, 213, 75, 25);
+        btnDeletarFatura.setText("Deletar");
 
     
         btnCadastrarFatura.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                String numeroFatura = txtNumeroFatura.getText();
+          
                 LocalDate dataEmissao = LocalDate.of(dateEmissao.getYear(), dateEmissao.getMonth() + 1, dateEmissao.getDay());
                 double valorTotal = Double.parseDouble(txtValorTotal.getText());
                 String observacoes = txtObservacoes.getText();
 
-                Locacao locacao = new Locacao();
-                locacao.setIdLocacao(1); 
-                Fatura fatura = new Fatura(numeroFatura, dataEmissao, valorTotal, observacoes, locacao);
+               
+                Fatura fatura = new Fatura( dataEmissao, valorTotal, observacoes, locacaoSelecionada);
 
                 faturaBanco.incluir(fatura);
                 MessageBox box = new MessageBox(shell, SWT.OK);
@@ -126,7 +162,7 @@ public class ViewFatura {
         });
 
  
-        btnConsultarFatura.addSelectionListener(new SelectionAdapter() {
+        btnListarFatura.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 List<Fatura> faturas = faturaBanco.listar();
@@ -134,13 +170,47 @@ public class ViewFatura {
                 for (Fatura fatura : faturas) {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[]{
-                            fatura.getNumeroFatura(),
+                            String.valueOf(fatura.getLocacaoFatura().getIdLocacao()),
+                            fatura.getLocacaoFatura().getReservaLocacao().getClienteReserva().getNomeCompleto(),
                             fatura.getDataEmissao().toString(),
                             String.format("%.2f", fatura.getValorTotal()),
-                            fatura.getObservacoes()
+                            fatura.getObservacoes(),
+                            String.valueOf(fatura.getNumeroFatura()),
                     });
                 }
             }
         });
+        
+
+        
+        // colocar botao de deletar, atualizar e listar
+
+         btnDeletarFatura.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                int selectedIndex = table.getSelectionIndex();
+                if(selectedIndex != -1) {
+                    TableItem item = table.getItem(selectedIndex);
+                    int idFatura = Integer.parseInt(item.getText(5));
+
+                    faturaBanco.deletar(idFatura);
+                    MessageBox messageBox = new MessageBox(shell, SWT.OK);
+                    messageBox.setMessage(" deletado com sucesso!");
+                    messageBox.open();  
+
+                    btnListarFatura.notifyListeners(SWT.Selection, null);
+                } else {
+                        MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione uma Fatura na tabela para deletar.");
+                    warningBox.open();
+                }
+    
+            }
+        });
+
+        
+
+
+
     }
 }

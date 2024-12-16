@@ -3,31 +3,26 @@ package model;
 import java.time.LocalDate;
 
 public class Fatura {
-	private String numeroFatura;
+	private Integer numeroFatura;
 	private LocalDate dataEmissao;
 	private Double valorTotal;
 	private String observacoes;
 	private Locacao locacaoFatura;
 
 	
-	private Pagamento pagamento; 
+	
 
-	public Fatura(String numeroFatura, LocalDate dataEmissao, Double valorTotal, String observacoes,
-			Pagamento pagamento) {
-		this.numeroFatura = numeroFatura;
+	public Fatura( LocalDate dataEmissao, Double valorTotal, String observacoes,
+		Locacao	locacao) {
+	
 		this.dataEmissao = dataEmissao;
 		this.valorTotal = valorTotal;
 		this.observacoes = observacoes;
-		this.pagamento = pagamento;
+		this.locacaoFatura = locacao;
+		
 	}
 
-	public Fatura(String numeroFatura, LocalDate dataEmissao, Double valorTotal, String observacoes) {
-		super();
-		this.numeroFatura = numeroFatura;
-		this.dataEmissao = dataEmissao;
-		this.valorTotal = valorTotal;
-		this.observacoes = observacoes;
-	}
+	
 
 	public Fatura() {
 		
@@ -39,11 +34,11 @@ public class Fatura {
 	}
 
 
-	public String getNumeroFatura() {
+	public Integer getNumeroFatura() {
 		return numeroFatura;
 	}
 
-	public void setNumeroFatura(String numeroFatura) {
+	public void setNumeroFatura(Integer numeroFatura) {
 		this.numeroFatura = numeroFatura;
 	}
 
@@ -71,13 +66,7 @@ public class Fatura {
 		this.observacoes = observacoes;
 	}
 
-	public Pagamento getPagamento() {
-		return pagamento;
-	}
 
-	public void setPagamento(Pagamento pagamento) {
-		this.pagamento = pagamento;
-	}
 
 	public Locacao getLocacaoFatura() {
 		return locacaoFatura;

@@ -13,9 +13,9 @@ public class Pagamento {
 	// Relacionamento
 	private Fatura fatura; // Pagamento está vinculado a uma fatura
 
-	public Pagamento(String idPagamento, Double valor, String metodoPagamento, LocalDate dataPagamento, String status,
+	public Pagamento(Double valor, String metodoPagamento, LocalDate dataPagamento, String status,
 			String descricao, Fatura fatura) {
-		this.idPagamento = idPagamento;
+	
 		this.valor = valor;
 		this.metodoPagamento = metodoPagamento;
 		this.dataPagamento = dataPagamento;
@@ -24,16 +24,6 @@ public class Pagamento {
 		this.fatura = fatura;
 	}
 
-	public Pagamento(String idPagamento, Double valor, String metodoPagamento, LocalDate dataPagamento, String status,
-			String descricao) {
-		super();
-		this.idPagamento = idPagamento;
-		this.valor = valor;
-		this.metodoPagamento = metodoPagamento;
-		this.dataPagamento = dataPagamento;
-		this.status = status;
-		this.descricao = descricao;
-	}
 	
 	
 

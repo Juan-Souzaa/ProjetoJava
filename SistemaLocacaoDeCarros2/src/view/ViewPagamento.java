@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import banco.PagamentoBanco;
+import model.Fatura;
 import model.Pagamento;
 
 public class ViewPagamento {
@@ -29,6 +30,7 @@ public class ViewPagamento {
     private Text textDescricao;
     private Text textValor;
     private Table table;
+    private Fatura faturaSelecionada;
     private PagamentoBanco pagamentoBanco;
 
     public ViewPagamento() {
@@ -46,18 +48,39 @@ public class ViewPagamento {
             }
         }
     }
-
+    public static void main(String[] args) {
+        try {
+            ViewPagamento window = new ViewPagamento();
+            window.open();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(818, 577);
+        shell.setSize(1158, 795);
         shell.setText("Pagamento");
 
-        Label lblIdPagamento = new Label(shell, SWT.NONE);
-        lblIdPagamento.setText("ID Pagamento:");
-        lblIdPagamento.setBounds(10, 13, 81, 15);
+        Button btnSelecionarFatura = new Button(shell, SWT.NONE);
+        btnSelecionarFatura.setBounds(229, 8, 150, 25);
+        btnSelecionarFatura.setText("Selecionar Fatura");
 
-        textIdPagamento = new Text(shell, SWT.BORDER);
-        textIdPagamento.setBounds(97, 10, 110, 21);
+        Label lblVeiculoSelecionado = new Label(shell, SWT.NONE);
+        lblVeiculoSelecionado.setBounds(23, 13, 200, 25);
+        lblVeiculoSelecionado.setText("Nenhuma Fatura selecionada");
+
+        // Ação do botão selecionar veículo
+        btnSelecionarFatura.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarFatura viewSelecionarFatura = new ViewSelecionarFatura();
+                faturaSelecionada = viewSelecionarFatura.open();
+                if (faturaSelecionada != null) {
+                    lblVeiculoSelecionado.setText("Fatura do cliente " + faturaSelecionada.getLocacaoFatura().getReservaLocacao().getClienteReserva().getNomeCompleto());
+                    // Aqui você pode associar o objeto veiculoSelecionado ao modelo
+                }
+            }
+        });
 
         Label lblValor = new Label(shell, SWT.NONE);
         lblValor.setText("Valor:");
@@ -103,18 +126,22 @@ public class ViewPagamento {
         btnDeletarPagamento.setText("Deletar Pagamento");
         btnDeletarPagamento.setBounds(339, 286, 134, 25);
 
-        Button btnConsultarPagamento = new Button(shell, SWT.NONE);
-        btnConsultarPagamento.setText("Consultar Pagamento");
-        btnConsultarPagamento.setBounds(597, 286, 150, 25);
+        Button btnListarPagamento = new Button(shell, SWT.NONE);
+        btnListarPagamento.setText("Consultar Pagamento");
+        btnListarPagamento.setBounds(597, 286, 150, 25);
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
-        table.setBounds(10, 333, 789, 205);
+        table.setBounds(46, 325, 920, 230);
 
         TableColumn tblclmnIdPagamento = new TableColumn(table, SWT.CENTER);
         tblclmnIdPagamento.setWidth(106);
         tblclmnIdPagamento.setText("ID Pagamento");
+        
+        TableColumn tblclmnNome = new TableColumn(table, SWT.NONE);
+        tblclmnNome.setWidth(100);
+        tblclmnNome.setText("Nome");
 
         TableColumn tblclmnValor = new TableColumn(table, SWT.CENTER);
         tblclmnValor.setWidth(71);
@@ -140,13 +167,14 @@ public class ViewPagamento {
         btnCadastrarPagamento.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                double valor = Double.parseDouble(textValor.getText());
+            	
+                Double valor = Double.parseDouble(textValor.getText());
                 String metodoPagamento = textMetodoPagamento.getText();
                 LocalDate dataPagamento = LocalDate.of(dateTimeDataPagamento.getYear(), dateTimeDataPagamento.getMonth() + 1, dateTimeDataPagamento.getDay());
                 String statusPagamento = textStatusPagamento.getText();
                 String descricao = textDescricao.getText();
 
-                Pagamento pagamento = new Pagamento(valor, metodoPagamento, dataPagamento, statusPagamento, descricao);
+                Pagamento pagamento = new Pagamento(valor, metodoPagamento, dataPagamento, statusPagamento, descricao,faturaSelecionada);
                 pagamentoBanco.incluir(pagamento);
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Pagamento cadastrado com sucesso!");
@@ -156,24 +184,44 @@ public class ViewPagamento {
 
       
         btnDeletarPagamento.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                try {
-                    int idPagamento = Integer.parseInt(textIdPagamento.getText());
-                    pagamentoBanco.deletar(idPagamento);
-                    MessageBox box = new MessageBox(shell, SWT.OK);
-                    box.setMessage("Pagamento deletado com sucesso!");
-                    box.open();
-                } catch (NumberFormatException ex) {
-                    MessageBox box = new MessageBox(shell, SWT.ERROR);
-                    box.setMessage("ID inválido.");
-                    box.open();
-                }
-            }
-        });
+        	@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selectedItems = table.getSelection();
 
-        // Consultar Pagamento
-        btnConsultarPagamento.addSelectionListener(new SelectionAdapter() {
+				if (selectedItems.length == 0) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione um Pagamento na tabela para deletar.");
+					warningBox.open();
+					return;
+				}
+
+				try {
+
+					Integer idPagamento= Integer.parseInt(selectedItems[0].getText(0));
+					
+					pagamentoBanco.deletar(idPagamento);
+					MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+					successBox.setMessage("Pagamento deletado com sucesso!");
+					successBox.open();
+
+				
+
+					btnListarPagamento.notifyListeners(SWT.Selection, null);
+
+				} catch (NumberFormatException ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("ID do Usuario inválido: " + ex.getMessage());
+					errorBox.open();
+				} catch (Exception ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("Erro ao deletar Usuario: " + ex.getMessage());
+					errorBox.open();
+				}
+			}
+		});
+
+        // Listar Pagamento
+        btnListarPagamento.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 List<Pagamento> pagamentos = pagamentoBanco.listar();
@@ -182,6 +230,7 @@ public class ViewPagamento {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[] {
                         String.valueOf(pagamento.getIdPagamento()),
+                        pagamento.getFatura().getLocacaoFatura().getReservaLocacao().getClienteReserva().getNomeCompleto(),
                         String.valueOf(pagamento.getValor()),
                         pagamento.getMetodoPagamento(),
                         pagamento.getDataPagamento().toString(),

@@ -7,13 +7,16 @@ public class Fidelidade {
 	private Integer pontos;
 	private String nivel;
 	private LocalDate dataUltimaAtualizacao;
+	
+	private Cliente clienteFidelidade ;
 
 	// Construtor completo
-	public Fidelidade(String idFidelidade, Integer pontos, String nivel, LocalDate dataUltimaAtualizacao) {
-		this.idFidelidade = idFidelidade;
+	public Fidelidade( Integer pontos, String nivel, LocalDate dataUltimaAtualizacao, Cliente cliente) {
+		
 		this.pontos = pontos;
 		this.nivel = nivel;
 		this.dataUltimaAtualizacao = dataUltimaAtualizacao;
+		this.clienteFidelidade = cliente;
 	}
 
 	// Construtor vazio
@@ -43,6 +46,14 @@ public class Fidelidade {
 
 	public void setNivel(String nivel) {
 		this.nivel = nivel;
+	}
+
+	public Cliente getClienteFidelidade() {
+		return clienteFidelidade;
+	}
+
+	public void setClienteFidelidade(Cliente clienteFidelidade) {
+		this.clienteFidelidade = clienteFidelidade;
 	}
 
 	public LocalDate getDataUltimaAtualizacao() {

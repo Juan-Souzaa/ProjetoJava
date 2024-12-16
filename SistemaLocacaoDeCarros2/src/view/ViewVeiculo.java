@@ -24,7 +24,7 @@ import model.Veiculo;
 public class ViewVeiculo {
 
     protected Shell shell;
-    private Text textIdVeiculo;
+    
     private Text textPlaca;
     private Text textChassi;
     private Text textCor;
@@ -176,8 +176,9 @@ public class ViewVeiculo {
         btnCadastrarVeiculo.setBounds(105, 412, 150, 25);
         
         
-        Button btnConsultarVeiculo = new Button(shell, SWT.NONE);
-        btnConsultarVeiculo.addSelectionListener(new SelectionAdapter() {
+        Button btnListarVeiculo = new Button(shell, SWT.NONE);
+        
+        btnListarVeiculo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 List<Veiculo> listaVeiculos = veiculoBanco.listar();
@@ -203,8 +204,8 @@ public class ViewVeiculo {
                 }
             }
         });
-        btnConsultarVeiculo.setText("Consultar Veículo");
-        btnConsultarVeiculo.setBounds(651, 412, 150, 25);
+        btnListarVeiculo.setText("Listar Veículo");
+        btnListarVeiculo.setBounds(651, 412, 150, 25);
 
         Button btnDeletarVeiculo = new Button(shell, SWT.NONE);
         btnDeletarVeiculo.setText("Deletar Veículo");
@@ -228,16 +229,14 @@ public class ViewVeiculo {
                    
                     int idVeiculo = Integer.parseInt(selectedItems[0].getText(0));
 
-                  
                     veiculoBanco.deletar(idVeiculo);
 
-                 
                     MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
                     successBox.setMessage("Veículo deletado com sucesso!");
                     successBox.open();
 
                    
-                    btnConsultarVeiculo.notifyListeners(SWT.Selection, null);
+                    btnListarVeiculo.notifyListeners(SWT.Selection, null);
                 } catch (NumberFormatException ex) {
                     MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
                     errorBox.setMessage("ID do veículo inválido: " + ex.getMessage());

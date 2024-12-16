@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Cliente;
 import model.Fidelidade;
 
 public class FidelidadeBanco {
@@ -17,10 +18,11 @@ public class FidelidadeBanco {
         try {
             String sql = "CALL inserir_fidelidade(?, ?, ?, ?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, fidelidade.getIdFidelidade());
-            statement.setInt(2, fidelidade.getPontos());
-            statement.setString(3, fidelidade.getNivel());
-            statement.setString(4, fidelidade.getDataUltimaAtualizacao().toString());
+            
+            statement.setInt(1, fidelidade.getPontos());
+            statement.setString(2, fidelidade.getNivel());
+            statement.setString(3, fidelidade.getDataUltimaAtualizacao().toString());
+            statement.setInt(4, fidelidade.getClienteFidelidade().getIdUsuario());
             statement.execute();
             statement.close();
         } catch (SQLException e) {
@@ -40,6 +42,12 @@ public class FidelidadeBanco {
                    fidelidade.setPontos(rs.getInt("pontos"));
                    fidelidade.setNivel(rs.getString("nivel"));
                    fidelidade.setDataUltimaAtualizacao(rs.getDate("dataUltimaAtualizacao").toLocalDate()); 
+                   
+                   Cliente cliente = new Cliente();
+                   cliente.setIdUsuario(rs.getInt("idUsuario"));
+                   cliente.setNomeCompleto(rs.getString("nomeCompleto"));
+                   
+                   fidelidade.setClienteFidelidade(cliente);
                
                 fidelidades.add(fidelidade);
             }
@@ -88,11 +96,11 @@ public class FidelidadeBanco {
         }
     }
 
-    public void deletar(String idFidelidade) {
+    public void deletar(int idFidelidade) {
         try {
             String sql = "CALL deletar_fidelidade(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, idFidelidade);
+            statement.setInt(1, idFidelidade);
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
