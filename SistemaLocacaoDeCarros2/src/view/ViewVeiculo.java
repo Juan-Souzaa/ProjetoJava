@@ -173,7 +173,7 @@ public class ViewVeiculo {
             }
         });
         btnCadastrarVeiculo.setText("Cadastrar Veículo");
-        btnCadastrarVeiculo.setBounds(105, 412, 150, 25);
+        btnCadastrarVeiculo.setBounds(61, 412, 150, 25);
         
         
         Button btnListarVeiculo = new Button(shell, SWT.NONE);
@@ -204,12 +204,12 @@ public class ViewVeiculo {
                 }
             }
         });
-        btnListarVeiculo.setText("Listar Veículo");
-        btnListarVeiculo.setBounds(651, 412, 150, 25);
+        btnListarVeiculo.setText("Listar  Todos os Veículos");
+        btnListarVeiculo.setBounds(688, 412, 150, 25);
 
         Button btnDeletarVeiculo = new Button(shell, SWT.NONE);
         btnDeletarVeiculo.setText("Deletar Veículo");
-        btnDeletarVeiculo.setBounds(396, 412, 134, 25);
+        btnDeletarVeiculo.setBounds(371, 412, 134, 25);
        
         btnDeletarVeiculo.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -297,9 +297,137 @@ public class ViewVeiculo {
         tblclmnMarca_1.setText("Marca");
         
         
-        
+        Button btnAtualizarVeiculo = new Button(shell, SWT.NONE);
+        btnAtualizarVeiculo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                TableItem[] selectedItems = table.getSelection();
+                
+                if (selectedItems.length == 0) {
+                    MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione um veículo na tabela para atualizar.");
+                    warningBox.open();
+                    btnListarVeiculo.notifyListeners(SWT.Selection, null);
+                    
+                    return;
+                }
+
+                try {
+                    // Obtém os dados selecionados na tabela
+                    Integer idVeiculo = Integer.parseInt(selectedItems[0].getText(0));
+                    String placaVeiculo = textPlaca.getText();
+                    String chassiVeiculo = textChassi.getText();
+                    String corVeiculo = textCor.getText();
+                    LocalDate anoVeiculo = LocalDate.of(dateTimeAno.getYear(), dateTimeAno.getMonth() + 1, dateTimeAno.getDay());
+                    LocalDate anoManu = LocalDate.of(dateTimeMan.getYear(), dateTimeMan.getMonth() + 1, dateTimeMan.getDay());
+                    Double quilometragemVeiculo = Double.parseDouble(textQuilometragem.getText());
+                    Boolean disponivelVeiculo = btnDisponivel.getSelection();
+                    String categoriaVeiculo = textCategoria.getText();
+                    Boolean seguroAtivo = btnSim.getSelection();
+                    String marcaVeiculo = textMarca.getText();
+
+                    // Cria o objeto Veículo para atualizar
+                    Veiculo veiculo = new Veiculo( idVeiculo,placaVeiculo, chassiVeiculo, corVeiculo, anoVeiculo, quilometragemVeiculo,
+                                                   disponivelVeiculo, categoriaVeiculo, seguroAtivo, marcaVeiculo, anoManu);
+
+                    veiculoBanco.atualizar(veiculo);
+
+                    MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+                    successBox.setMessage("Veículo atualizado com sucesso!");
+                    successBox.open();
+
+                    // Atualiza a lista de veículos
+                    btnListarVeiculo.notifyListeners(SWT.Selection, null);
+                } catch (NumberFormatException ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao atualizar veículo: ID inválido ou valores incorretos.");
+                    errorBox.open();
+                } catch (Exception ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao atualizar veículo: " + ex.getMessage());
+                    errorBox.open();
+                }
+            }
+        });
+        btnAtualizarVeiculo.setText("Atualizar Veículo");
+        btnAtualizarVeiculo.setBounds(231, 412, 134, 25);
        
- 
-       
+     // Adicionando o botão para exibir o campo de ID do Veículo
+        Button btnConsultarId = new Button(shell, SWT.NONE);
+        btnConsultarId.setText("Consultar Veículo por ID");
+        btnConsultarId.setBounds(521, 409, 150, 30);
+        btnConsultarId.setVisible(false); // Começa invisível
+
+        // Text para digitar o ID do veículo
+        Text txtVeiculoId = new Text(shell, SWT.BORDER);
+        txtVeiculoId.setBounds(540, 328, 100, 25);
+        txtVeiculoId.setVisible(false); // Começa invisível
+
+        // Adicionando botão para confirmar a consulta com o ID
+        Button btnConfirmarId = new Button(shell, SWT.NONE);
+        btnConfirmarId.setText("Confirmar ID");
+        btnConfirmarId.setBounds(521, 360, 150, 30);
+        btnConfirmarId.setVisible(false); // Começa invisível
+
+        // Quando o botão "Consultar Veículo por ID" for clicado
+        btnConsultarId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                txtVeiculoId.setVisible(true); // Exibe o campo para inserir o ID
+                btnConfirmarId.setVisible(true); // Exibe o botão de confirmação
+            }
+        });
+
+        // Quando o botão "Confirmar ID" for clicado
+        btnConfirmarId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+                    String idVeiculoInput = txtVeiculoId.getText(); // Pega o ID inserido
+                    if (idVeiculoInput != null && !idVeiculoInput.isEmpty()) {
+                        int idVeiculo = Integer.parseInt(idVeiculoInput); // Converte o ID para inteiro
+
+                        Veiculo veiculo = veiculoBanco.consultar(idVeiculo); // Consulta no banco de dados
+
+                        if (veiculo != null) {
+                            // Adiciona os dados do veículo à tabela
+                            table.removeAll();
+                            TableItem item = new TableItem(table, SWT.NONE);
+                            item.setText(new String[]{
+                                String.valueOf(veiculo.getIdVeiculo()),
+                                veiculo.getPlaca(),
+                                veiculo.getChassi(),
+                                veiculo.getCor(),
+                                veiculo.getAno().toString(),
+                                String.format("%.2f", veiculo.getQuilometragem()),
+                                veiculo.isStatusDisponibilidade() ? "Sim" : "Não",
+                                veiculo.getCategoria(),
+                                veiculo.isSeguroAtivo() ? "Sim" : "Não",
+                                veiculo.getMarca(),
+                                veiculo.getDataUltimaManutencao().toString()
+                            });
+                        } else {
+                            // Exibe mensagem caso o veículo não seja encontrado
+                            MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                            messageBox.setMessage("Veículo não encontrado.");
+                            messageBox.open();
+                        }
+                    } else {
+                        // Exibe mensagem caso o campo de ID esteja vazio
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                        messageBox.setMessage("Digite um ID válido.");
+                        messageBox.open();
+                    }
+                } catch (NumberFormatException ex) {
+                    // Exibe mensagem caso o ID não seja um número válido
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    messageBox.setMessage("ID inválido.");
+                    messageBox.open();
+                }
+            }
+        });
+
+        // Exibe o botão de "Consultar Veículo por ID" quando necessário
+        btnConsultarId.setVisible(true); 
     }
 }

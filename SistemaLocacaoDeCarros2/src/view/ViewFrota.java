@@ -1,5 +1,6 @@
 package view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -16,7 +17,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import banco.FrotaBanco;
+import banco.VeiculoBanco;
 import model.Frota;
+import model.Veiculo;
 
 public class ViewFrota {
 
@@ -27,9 +30,13 @@ public class ViewFrota {
     private Text txtLocalizacao;
     private Table table;
     private FrotaBanco frotaBanco;
+    
+    private List<Veiculo> veiculosSelecionados;
 
     public ViewFrota() {
         frotaBanco = new FrotaBanco();
+        
+        veiculosSelecionados = new ArrayList<>();
     }
 
     public void open() {
@@ -43,10 +50,19 @@ public class ViewFrota {
             }
         }
     }
+    
+    public static void main(String[] args) {
+		try {
+			ViewFrota window = new ViewFrota();
+			window.open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(597, 770);
+        shell.setSize(786, 782);
         shell.setText("Frota");
 
         Label lblTotalVeiculos = new Label(shell, SWT.NONE);
@@ -106,24 +122,44 @@ public class ViewFrota {
         btnListarFrota.setBounds(349, 258, 75, 25);
         btnListarFrota.setText("Listar");
 
-     
+        Button btnSelecionarVeiculos = new Button(shell, SWT.NONE);
+        btnSelecionarVeiculos.setBounds(230, 258, 110, 25);
+        btnSelecionarVeiculos.setText("Selecionar Veículos");
+
         btnCadastrar.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                int totalVeiculos = Integer.parseInt(txtTotalVeiculos.getText());
-                int totalDisponiveis = Integer.parseInt(txtTotalDisponiveis.getText());
-                int totalEmManutencao = Integer.parseInt(txtTotalEmManutencao.getText());
+                Integer totalVeiculos = Integer.parseInt(txtTotalVeiculos.getText());
+                Integer totalDisponiveis = Integer.parseInt(txtTotalDisponiveis.getText());
+                Integer totalEmManutencao = Integer.parseInt(txtTotalEmManutencao.getText());
                 String localizacao = txtLocalizacao.getText();
 
-                Frota frota = new Frota(totalVeiculos, totalDisponiveis, totalEmManutencao, localizacao);
+                Frota frota = new Frota(totalVeiculos, totalDisponiveis, totalEmManutencao, localizacao,veiculosSelecionados);
+                
                 frotaBanco.incluir(frota);
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Frota cadastrada com sucesso!");
                 box.open();
             }
+            
+            
         });
 
-        
+        btnSelecionarVeiculos.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                // Abre a tela de seleção de veículos
+                ViewSelecionarVeiculos viewVeiculos = new ViewSelecionarVeiculos();
+                List<Veiculo> veiculosSelecionadosTemp = viewVeiculos.open(); // Recebe a lista de veículos selecionados
+
+                if (veiculosSelecionadosTemp != null) {
+                    veiculosSelecionados.clear();
+                    veiculosSelecionados.addAll(veiculosSelecionadosTemp); // Atualiza a lista de veículos selecionados
+                    txtTotalVeiculos.setText(String.valueOf(veiculosSelecionados.size())); // Atualiza o total de veículos
+                }
+            }
+        });
+
         btnListarFrota.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -131,7 +167,7 @@ public class ViewFrota {
                 table.removeAll();
                 for (Frota frota : frotas) {
                     TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(new String[]{
+                    item.setText(new String[] {
                             String.valueOf(frota.getTotalVeiculos()),
                             String.valueOf(frota.getTotalDisponiveis()),
                             String.valueOf(frota.getTotalEmManutencao()),
@@ -140,37 +176,5 @@ public class ViewFrota {
                 }
             }
         });
-//criar botao de deletar, atualizar e consultar 
-
-        btnDeletarFrota.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int selectedIndex = table.getSelectionIndex();
-				if (selectedIndex != -1) {
-					TableItem item = table.getItem(selectedIndex);
-					int idFrota = Integer.parseInt(item.getText(0));
-
-					frotaBanco.deletar(idFrota);
-					MessageBox messageBox = new MessageBox(shell, SWT.OK);
-					messageBox.setMessage("Deletado com sucesso!");
-					messageBox.open();
-
-					btnListarFrota.notifyListeners(SWT.Selection, null);
-				} else {
-					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
-					warningBox.setMessage("Selecione uma Frota na tabela para deletar.");
-					warningBox.open();
-				}
-
-			}
-		});
-
-        
-
-
-
-
-
-
     }
 }

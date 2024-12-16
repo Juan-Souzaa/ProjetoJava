@@ -72,19 +72,34 @@ public class FaturaBanco {
         return faturas;
     }
 
-    public Fatura consultar(String numeroFatura) {
+    public Fatura consultar(Integer numeroFatura) {
         Fatura fatura = null;
         try {
             String sql = "CALL consultar_fatura(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, numeroFatura);
+            statement.setInt(1, numeroFatura);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                fatura = new Fatura();
-                   fatura.setNumeroFatura(rs.getInt("numeroFatura")); 
-                    fatura.setDataEmissao(rs.getDate("dataEmissao").toLocalDate());
-                    fatura.setValorTotal(rs.getDouble("valorTotal"));
-                    fatura.setObservacoes(rs.getString("observacoes"));
+            	fatura = new Fatura();
+                fatura.setNumeroFatura(rs.getInt("idFatura"));
+                fatura.setDataEmissao(rs.getDate("dataEmissao").toLocalDate());
+                fatura.setValorTotal(rs.getDouble("valorTotal"));
+                fatura.setObservacoes(rs.getString("observacoes"));
+                
+                Reserva reserva = new Reserva();
+				Cliente cliente = new Cliente();
+				cliente.setNomeCompleto(rs.getString("nomeCompleto"));
+				reserva.setClienteReserva(cliente);
+				
+				
+				
+				
+				
+                
+                Locacao locacao = new Locacao();
+                locacao.setReservaLocacao(reserva);
+                locacao.setIdLocacao(rs.getInt("idLocacao")); 
+                fatura.setLocacaoFatura(locacao);
             }
             rs.close();
             statement.close();
@@ -96,12 +111,13 @@ public class FaturaBanco {
 
     public void atualizar(Fatura fatura) {
         try {
-            String sql = "CALL atualizar_fatura(?, ?, ?, ?);";
+            String sql = "CALL atualizar_fatura(?, ?, ?, ?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
             statement.setInt(1, fatura.getNumeroFatura());
             statement.setString(2, fatura.getDataEmissao().toString());
             statement.setDouble(3, fatura.getValorTotal());
             statement.setString(4, fatura.getObservacoes());
+            statement.setInt(5, fatura.getLocacaoFatura().getIdLocacao());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

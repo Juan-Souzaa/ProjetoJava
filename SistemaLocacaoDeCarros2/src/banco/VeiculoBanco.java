@@ -48,13 +48,13 @@ public class VeiculoBanco {
                  veiculo.setPlaca(rs.getString(2));
                  veiculo.setChassi(rs.getString(3));
                  veiculo.setCor(rs.getString(4));
-                 veiculo.setAno(rs.getObject(5, LocalDate.class));
+                 veiculo.setAno(rs.getDate(5).toLocalDate());
                  veiculo.setQuilometragem(rs.getDouble(6));
                  veiculo.setStatusDisponibilidade(rs.getBoolean(7));
                  veiculo.setCategoria(rs.getString(8));
                  veiculo.setSeguroAtivo(rs.getBoolean(9));
                  veiculo.setMarca(rs.getString(10));
-                 veiculo.setDataUltimaManutencao(rs.getObject(11, LocalDate.class));
+                 veiculo.setDataUltimaManutencao(rs.getDate(11).toLocalDate());
                  veiculos.add(veiculo);
             }
             rs.close();
@@ -65,27 +65,27 @@ public class VeiculoBanco {
         return veiculos;
     }
 
-    public Veiculo consultar(String idVeiculo) {
+    public Veiculo consultar(int idVeiculo) {
         Veiculo veiculo = null;
         try {
             String sql = "CALL consultar_veiculo(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, idVeiculo);
+            statement.setInt(1, idVeiculo);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 veiculo = new Veiculo();
-                		Veiculo veiculoConsulta = new Veiculo(); 
-                        veiculoConsulta.setIdVeiculo(rs.getInt(1));
-                        veiculoConsulta.setPlaca(rs.getString(2));
-                        veiculoConsulta.setChassi(rs.getString(3));
-                        veiculoConsulta.setCor(rs.getString(4));
-                        veiculoConsulta.setAno(rs.getObject(5, LocalDate.class));
-                        veiculoConsulta.setQuilometragem(rs.getDouble(6));
-                        veiculoConsulta.setStatusDisponibilidade(rs.getBoolean(7));
-                        veiculoConsulta.setCategoria(rs.getString(8));
-                        veiculoConsulta.setSeguroAtivo(rs.getBoolean(9));
-                        veiculoConsulta.setMarca(rs.getString(10));
-                        veiculoConsulta.setDataUltimaManutencao(rs.getObject(11, LocalDate.class));
+                		 
+                        veiculo.setIdVeiculo(rs.getInt("idveiculo"));
+                        veiculo.setPlaca(rs.getString("placa"));
+                        veiculo.setChassi(rs.getString("chassi"));
+                        veiculo.setCor(rs.getString("cor"));
+                        veiculo.setAno(rs.getDate("ano").toLocalDate());
+                        veiculo.setQuilometragem(rs.getDouble("quilometragem"));
+                        veiculo.setStatusDisponibilidade(rs.getBoolean("statusDisponibilidade"));
+                        veiculo.setCategoria(rs.getString("categoria"));
+                        veiculo.setSeguroAtivo(rs.getBoolean("seguroAtivo"));
+                        veiculo.setMarca(rs.getString("marca"));
+                        veiculo.setDataUltimaManutencao(rs.getDate("dataUltimaManutencao").toLocalDate());
                         
                    }
             rs.close();
@@ -98,7 +98,7 @@ public class VeiculoBanco {
 
     public void atualizar(Veiculo veiculo) {
         try {
-            String sql = "CALL atualizar_veiculo(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            String sql = "CALL atualizar_veiculo(?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
             statement.setInt(1, veiculo.getIdVeiculo());
             statement.setString(2, veiculo.getPlaca());
@@ -109,6 +109,8 @@ public class VeiculoBanco {
             statement.setBoolean(7, veiculo.isStatusDisponibilidade());
             statement.setString(8, veiculo.getCategoria());
             statement.setBoolean(9, veiculo.isSeguroAtivo());
+            statement.setString(10, veiculo.getMarca());
+            statement.setString(11, veiculo.getDataUltimaManutencao().toString());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

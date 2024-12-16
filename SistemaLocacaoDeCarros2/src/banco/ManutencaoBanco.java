@@ -75,6 +75,13 @@ public class ManutencaoBanco {
                 manutencao.setTipoManutencao(rs.getString("tipoManutencao")); 
                 manutencao.setCusto(rs.getDouble("custo"));
                 manutencao.setDescricao(rs.getString("descricao")); 
+                
+                Veiculo veiculoManutencao = new Veiculo();
+                veiculoManutencao.setMarca(rs.getString("marca"));
+                veiculoManutencao.setPlaca(rs.getString("placa"));
+                veiculoManutencao.setDataUltimaManutencao(rs.getDate("dataUltimaManutencao").toLocalDate());
+                
+                manutencao.setVeiculomanutencao(veiculoManutencao);
             
             }
             rs.close();
@@ -87,7 +94,7 @@ public class ManutencaoBanco {
 
     public void atualizar(Manutencao manutencao) {
         try {
-            String sql = "CALL atualizar_manutencao(?, ?, ?, ?);";
+            String sql = "CALL atualizar_manutencao(?, ?, ?, ?,?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
           
             statement.setInt(1, manutencao.getIdManutencao());
@@ -95,6 +102,7 @@ public class ManutencaoBanco {
             statement.setString(3, manutencao.getTipoManutencao());
             statement.setDouble(4, manutencao.getCusto());
             statement.setString(5,manutencao.getDescricao());
+            statement.setInt(6, manutencao.getVeiculoManutencao().getIdVeiculo());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

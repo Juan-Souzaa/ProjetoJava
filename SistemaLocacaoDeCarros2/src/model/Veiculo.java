@@ -14,18 +14,20 @@ public class Veiculo {
     private Boolean seguroAtivo;
     private String marca;
     private LocalDate dataUltimaManutencao;
-    private Multa multaVeiculo;
-    private Manutencao manutencaoVeiculo;
+  
 
    
     
     
+  
     
-    public Veiculo(String placa, String chassi, String cor, LocalDate ano, Double quilometragem,
+    
+
+	public Veiculo(Integer idVeiculo, String placa, String chassi, String cor, LocalDate ano, Double quilometragem,
 			Boolean statusDisponibilidade, String categoria, Boolean seguroAtivo, String marca,
-			LocalDate dataUltimaManutencao, Multa multaVeiculo, Manutencao manutencaoVeiculo) {
+			LocalDate dataUltimaManutencao) {
 		super();
-		
+		this.idVeiculo = idVeiculo;
 		this.placa = placa;
 		this.chassi = chassi;
 		this.cor = cor;
@@ -36,11 +38,10 @@ public class Veiculo {
 		this.seguroAtivo = seguroAtivo;
 		this.marca = marca;
 		this.dataUltimaManutencao = dataUltimaManutencao;
-		this.multaVeiculo = multaVeiculo;
-		this.manutencaoVeiculo = manutencaoVeiculo;
 	}
-    
-    
+
+
+
 
 	public Veiculo( String placa, String chassi, String cor, LocalDate ano, Double quilometragem,
 			Boolean statusDisponibilidade, String categoria, Boolean seguroAtivo, String marca,
@@ -159,19 +160,5 @@ public class Veiculo {
         this.dataUltimaManutencao = dataUltimaManutencao;
     }
 
-    public Multa getMultaVeiculo() {
-        return multaVeiculo;
-    }
-
-    public void setMultaVeiculo(Multa multaVeiculo) {
-        this.multaVeiculo = multaVeiculo;
-    }
-
-    public Manutencao getManutencaoVeiculo() {
-        return manutencaoVeiculo;
-    }
-
-    public void setManutencaoVeiculo(Manutencao manutencaoVeiculo) {
-        this.manutencaoVeiculo = manutencaoVeiculo;
-    }
+   
 }

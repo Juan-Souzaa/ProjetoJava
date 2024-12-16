@@ -54,7 +54,7 @@ public class ViewFatura {
 
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(743, 729);
+        shell.setSize(814, 733);
         shell.setText("Fatura");
         
         
@@ -110,9 +110,13 @@ public class ViewFatura {
         btnListarFatura.setText("Listar Faturas");
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(40, 260, 587, 293);
+        table.setBounds(35, 319, 587, 293);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
+        
+        TableColumn tblclmnIdFatura = new TableColumn(table, SWT.NONE);
+        tblclmnIdFatura.setWidth(100);
+        tblclmnIdFatura.setText("Id fatura");
 
         TableColumn tblclmnNumeroFatura = new TableColumn(table, SWT.NONE);
         tblclmnNumeroFatura.setWidth(100);
@@ -170,6 +174,7 @@ public class ViewFatura {
                 for (Fatura fatura : faturas) {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[]{
+                    		String.valueOf(fatura.getNumeroFatura()),
                             String.valueOf(fatura.getLocacaoFatura().getIdLocacao()),
                             fatura.getLocacaoFatura().getReservaLocacao().getClienteReserva().getNomeCompleto(),
                             fatura.getDataEmissao().toString(),
@@ -207,6 +212,127 @@ public class ViewFatura {
     
             }
         });
+         
+         Button btnAtualizarFatura = new Button(shell, SWT.NONE);
+         btnAtualizarFatura.setText("Atualizar Fatura");
+         btnAtualizarFatura.setBounds(429, 210, 150, 30);
+
+         btnAtualizarFatura.addSelectionListener(new SelectionAdapter() {
+             @Override
+             public void widgetSelected(SelectionEvent e) {
+                 TableItem[] selectedItems = table.getSelection();
+
+                 if (selectedItems.length == 0) {
+                     MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                     warningBox.setMessage("Selecione uma fatura na tabela para atualizar.");
+                     warningBox.open();
+                     btnListarFatura.notifyListeners(SWT.Selection, null);
+                     return;
+                 }
+
+                 try {
+                     // Pega os valores selecionados e preenche os campos da tabela
+                     Integer idFatura = Integer.parseInt(selectedItems[0].getText(0));
+                     LocalDate dataEmissao = LocalDate.of(dateEmissao.getYear(), dateEmissao.getMonth() + 1, dateEmissao.getDay());
+                     double valorTotal = Double.parseDouble(txtValorTotal.getText());
+                     String observacoes = txtObservacoes.getText();
+
+                     if (locacaoSelecionada == null) {
+                         MessageBox errorBox = new MessageBox(shell, SWT.ICON_WARNING);
+                         errorBox.setMessage("É necessário selecionar uma locação para atualizar a fatura.");
+                         errorBox.open();
+                         return;
+                     }
+
+                     // Cria o objeto Fatura com os dados preenchidos
+                     Fatura fatura = new Fatura(idFatura, dataEmissao, valorTotal, observacoes, locacaoSelecionada);
+                     faturaBanco.atualizar(fatura);
+
+                     // Exibe mensagem de sucesso
+                     MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+                     successBox.setMessage("Fatura atualizada com sucesso!");
+                     successBox.open();
+
+                     // Atualiza a tabela
+                     btnListarFatura.notifyListeners(SWT.Selection, null);
+                 } catch (Exception ex) {
+                     MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                     errorBox.setMessage("Erro ao atualizar a fatura: " + ex.getMessage());
+                     errorBox.open();
+                 }
+             }
+         });
+
+         Button btnConsultarFaturaId = new Button(shell, SWT.NONE);
+         btnConsultarFaturaId.setText("Consultar Fatura por ID");
+         btnConsultarFaturaId.setBounds(419, 145, 150, 30);
+
+         // Campo para entrada do ID
+         Text txtFaturaId = new Text(shell, SWT.BORDER);
+         txtFaturaId.setBounds(591, 147, 50, 25);
+         txtFaturaId.setVisible(false);
+
+         // Botão para confirmar a consulta
+         Button btnConfirmarFaturaId = new Button(shell, SWT.NONE);
+         btnConfirmarFaturaId.setText("Confirmar ID");
+         btnConfirmarFaturaId.setBounds(585, 184, 150, 30);
+         btnConfirmarFaturaId.setVisible(false);
+
+         // Quando o botão "Consultar Fatura por ID" for clicado
+         btnConsultarFaturaId.addSelectionListener(new SelectionAdapter() {
+             @Override
+             public void widgetSelected(SelectionEvent e) {
+                 txtFaturaId.setVisible(true); // Exibe o campo para inserir o ID
+                 btnConfirmarFaturaId.setVisible(true); // Exibe o botão de confirmação
+             }
+         });
+
+         // Quando o botão "Confirmar ID" for clicado
+         btnConfirmarFaturaId.addSelectionListener(new SelectionAdapter() {
+             @Override
+             public void widgetSelected(SelectionEvent e) {
+                 try {
+                     String idFaturaInput = txtFaturaId.getText(); // Pega o ID inserido
+                     if (idFaturaInput != null && !idFaturaInput.isEmpty()) {
+                         int idFatura = Integer.parseInt(idFaturaInput); // Converte o ID para inteiro
+
+                         Fatura fatura = faturaBanco.consultar(idFatura); // Consulta no banco de dados
+
+                         if (fatura != null) {
+                             // Adiciona os dados da fatura à tabela
+                             table.removeAll();
+                             TableItem item = new TableItem(table, SWT.NONE);
+                             item.setText(new String[]{
+                            		 String.valueOf(fatura.getNumeroFatura()),
+                            		 String.valueOf(fatura.getLocacaoFatura().getIdLocacao()),
+                                     fatura.getLocacaoFatura().getReservaLocacao().getClienteReserva().getNomeCompleto(),
+                                     fatura.getDataEmissao().toString(),
+                                     String.format("%.2f", fatura.getValorTotal()),
+                                     fatura.getObservacoes(),
+                                     String.valueOf(fatura.getNumeroFatura()),
+                             });
+                         } else {
+                             // Exibe mensagem caso a fatura não seja encontrada
+                             MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                             messageBox.setMessage("Fatura não encontrada.");
+                             messageBox.open();
+                         }
+                     } else {
+                         // Exibe mensagem caso o campo de ID esteja vazio
+                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                         messageBox.setMessage("Digite um ID válido.");
+                         messageBox.open();
+                     }
+                 } catch (NumberFormatException ex) {
+                     // Exibe mensagem caso o ID não seja um número válido
+                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                     messageBox.setMessage("ID inválido.");
+                     messageBox.open();
+                 }
+             }
+         });
+
+         
 
         
 

@@ -165,5 +165,52 @@ public class ViewDevolucao {
                 }
             }
         });
+
+        btnAtualizarDevolucao.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selectedItems = table.getSelection();
+
+				if (selectedItems.length == 0) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione uma Devolucao na tabela para atualizar.");
+					warningBox.open();
+					btnListarDevolucao.notifyListeners(SWT.Selection, null);
+					return;
+				}
+
+				try {
+					        devolucao.getDataDevolucao().toString(),
+                            devolucao.getCondicaoVeiculo(),
+                            String.valueOf(devolucao.getTaxaAtraso()),
+                            devolucao.getStatusDevolucao() ? "Sim" : "Não"
+
+					// Atualizando o banco de dados
+					devolucaoBanco.atualizar(fidelidade);
+
+					// Mensagem de sucesso
+					MessageBox box = new MessageBox(shell, SWT.OK);
+					box.setMessage("Fidelidade atualizada com sucesso!");
+					box.open();
+					btnListarFidelidade.notifyListeners(SWT.Selection, null);
+				} catch (Exception ex) {
+					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+					errorBox.setMessage("Erro ao atualizar Fidelidade: " + ex.getMessage());
+					errorBox.open();
+				}
+			}
+		});
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

@@ -20,7 +20,8 @@ public class FrotaBanco {
             statement.setInt(1, frota.getTotalVeiculos());
             statement.setInt(2, frota.getTotalDisponiveis());
             statement.setInt(3, frota.getTotalEmManutencao());
-            statement.setString(4, frota.getLocalizacao());
+            statement.setString(4, frota.getVeiculos();
+            
             statement.execute();
             statement.close();
         } catch (SQLException e) {

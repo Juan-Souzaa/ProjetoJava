@@ -38,7 +38,7 @@ public class FidelidadeBanco {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Fidelidade fidelidade = new Fidelidade();
-                   fidelidade.setIdFidelidade(rs.getString("idFidelidade"));
+                   fidelidade.setIdFidelidade(rs.getInt("idFidelidade"));
                    fidelidade.setPontos(rs.getInt("pontos"));
                    fidelidade.setNivel(rs.getString("nivel"));
                    fidelidade.setDataUltimaAtualizacao(rs.getDate("dataUltimaAtualizacao").toLocalDate()); 
@@ -59,19 +59,25 @@ public class FidelidadeBanco {
         return fidelidades;
     }
 
-    public Fidelidade consultar(String idFidelidade) {
+    public Fidelidade consultar(int idFidelidade) {
         Fidelidade fidelidade = null;
         try {
             String sql = "CALL consultar_fidelidade(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, idFidelidade);
+            statement.setInt(1, idFidelidade);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
             	fidelidade = new Fidelidade();
-                fidelidade.setIdFidelidade(rs.getString("idFidelidade"));
+                fidelidade.setIdFidelidade(rs.getInt("idFidelidade"));
                 fidelidade.setPontos(rs.getInt("pontos"));
                 fidelidade.setNivel(rs.getString("nivel"));
-                fidelidade.setDataUltimaAtualizacao(rs.getDate("dataUltimaAtualizacao").toLocalDate());
+                fidelidade.setDataUltimaAtualizacao(rs.getDate("dataUltimaAtualizacao").toLocalDate()); 
+                
+                Cliente cliente = new Cliente();
+                cliente.setIdUsuario(rs.getInt("idUsuario"));
+                cliente.setNomeCompleto(rs.getString("nomeCompleto"));
+                
+                fidelidade.setClienteFidelidade(cliente);
             }
             rs.close();
             statement.close();
@@ -83,12 +89,13 @@ public class FidelidadeBanco {
 
     public void atualizar(Fidelidade fidelidade) {
         try {
-            String sql = "CALL atualizar_fidelidade(?, ?, ?, ?);";
+            String sql = "CALL atualizar_fidelidade(?, ?, ?, ?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, fidelidade.getIdFidelidade());
+            statement.setInt(1, fidelidade.getIdFidelidade());
             statement.setInt(2, fidelidade.getPontos());
             statement.setString(3, fidelidade.getNivel());
             statement.setString(4, fidelidade.getDataUltimaAtualizacao().toString());
+            statement.setInt(5, fidelidade.getClienteFidelidade().getIdUsuario());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

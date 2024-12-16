@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDate;
 
 public class Fidelidade {
-	private String idFidelidade;
+	private Integer idFidelidade;
 	private Integer pontos;
 	private String nivel;
 	private LocalDate dataUltimaAtualizacao;
@@ -23,12 +23,24 @@ public class Fidelidade {
 	public Fidelidade() {
 	}
 
+	
+	
+	public Fidelidade(Integer idFidelidade, Integer pontos, String nivel, LocalDate dataUltimaAtualizacao,
+			Cliente clienteFidelidade) {
+		super();
+		this.idFidelidade = idFidelidade;
+		this.pontos = pontos;
+		this.nivel = nivel;
+		this.dataUltimaAtualizacao = dataUltimaAtualizacao;
+		this.clienteFidelidade = clienteFidelidade;
+	}
+
 	// Getters e setters
-	public String getIdFidelidade() {
+	public Integer getIdFidelidade() {
 		return idFidelidade;
 	}
 
-	public void setIdFidelidade(String idFidelidade) {
+	public void setIdFidelidade(Integer idFidelidade) {
 		this.idFidelidade = idFidelidade;
 	}
 

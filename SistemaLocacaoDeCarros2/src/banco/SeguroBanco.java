@@ -74,12 +74,12 @@ public class SeguroBanco {
 		return seguros;
 	}
 
-	public Seguro consultar(String idSeguro) {
+	public Seguro consultar(int idSeguro) {
 		Seguro seguro = null;
 		try {
 			String sql = "CALL consultar_seguro(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setString(1, idSeguro);
+			statement.setInt(1, idSeguro);
 			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
 				seguro = new Seguro();
@@ -88,6 +88,22 @@ public class SeguroBanco {
 				seguro.setValorCobertura(rs.getDouble("valorCobertura"));
 				seguro.setFranquia(rs.getDouble("franquia"));
 				seguro.setVigencia(rs.getDate("vigencia").toLocalDate());
+				
+				Reserva reserva = new Reserva();
+				Cliente cliente = new Cliente();
+				cliente.setIdUsuario(rs.getInt("idUsuario"));
+				cliente.setNomeCompleto(rs.getString("nomeCompleto"));
+				reserva.setClienteReserva(cliente);
+				
+				
+				
+				
+				Locacao locacao = new Locacao ();
+				locacao.setIdLocacao(rs.getInt("idLocacao"));
+				locacao.setReservaLocacao(reserva);
+				
+				
+				seguro.setLocacao(locacao);
 			}
 			rs.close();
 			statement.close();
@@ -99,14 +115,14 @@ public class SeguroBanco {
 
 	public void atualizar(Seguro seguro) {
 		try {
-			String sql = "CALL atualizar_seguro(?, ?, ?, ?, ?);";
+			String sql = "CALL atualizar_seguro(?, ?, ?, ?, ?,?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
 			statement.setInt(1, seguro.getIdSeguro());
 			statement.setString(2, seguro.getTipoSeguro());
 			statement.setDouble(3, seguro.getValorCobertura());
 			statement.setDouble(4, seguro.getFranquia());
-
 			statement.setString(5, seguro.getVigencia().toString());
+			statement.setInt(6, seguro.getLocacao().getIdLocacao());
 			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {

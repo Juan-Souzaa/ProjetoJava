@@ -114,10 +114,10 @@ public class ViewMulta {
 
         Button btnListarMulta = new Button(shell, SWT.NONE);
         btnListarMulta.setBounds(385, 230, 105, 25);
-        btnListarMulta.setText("Consultar Multa");
+        btnListarMulta.setText("Listar Multa");
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(41, 280, 902, 276);
+        table.setBounds(79, 356, 902, 276);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
@@ -233,6 +233,126 @@ public class ViewMulta {
                 }
             }
         });
+        
+     // Botão para Consultar Multa por ID
+        Button btnConsultarMultaId = new Button(shell, SWT.NONE);
+        btnConsultarMultaId.setText("Consultar Multa por ID");
+        btnConsultarMultaId.setBounds(367, 282, 150, 30);
+        btnConsultarMultaId.setVisible(true); // Começa visível
+
+        // Text para digitar o ID da Multa
+        Text txtMultaId = new Text(shell, SWT.BORDER);
+        txtMultaId.setBounds(553, 287, 44, 25);
+        txtMultaId.setVisible(false); // Começa invisível
+
+        // Adicionando botão para confirmar a consulta com o ID
+        Button btnConfirmarMultaId = new Button(shell, SWT.NONE);
+        btnConfirmarMultaId.setText("Confirmar ID");
+        btnConfirmarMultaId.setBounds(633, 282, 150, 30);
+        btnConfirmarMultaId.setVisible(false); // Começa invisível
+
+        // Quando o botão "Consultar Multa por ID" for clicado
+        btnConsultarMultaId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                txtMultaId.setVisible(true); // Exibe o campo para inserir o ID
+                btnConfirmarMultaId.setVisible(true); // Exibe o botão de confirmação
+            }
+        });
+
+        // Quando o botão "Confirmar ID" for clicado
+        btnConfirmarMultaId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+                    String idMultaInput = txtMultaId.getText(); // Pega o ID inserido
+                    if (idMultaInput != null && !idMultaInput.isEmpty()) {
+                        int idMulta = Integer.parseInt(idMultaInput); // Converte o ID para inteiro
+
+                        Multa multa = multaBanco.consultar(idMulta); // Consulta no banco de dados
+
+                        if (multa != null) {
+                            // Adiciona os dados da multa à tabela
+                            table.removeAll();
+                            TableItem item = new TableItem(table, SWT.NONE);
+                            item.setText(new String[] {
+                            		String.valueOf(multa.getIdMulta()),
+                                    multa.getMotivo(),
+                                    multa.getDataOcorrencia().toString(),
+                                    multa.getObservacoes(),
+                                    multa.getStatusMulta(),
+                                    multa.getVeiculo().getPlaca(),
+                                    multa.getVeiculo().getChassi(),
+                                    String.valueOf(multa.getValorMulta())
+                            });
+                        } else {
+                            // Exibe mensagem caso a multa não seja encontrada
+                            MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                            messageBox.setMessage("Multa não encontrada.");
+                            messageBox.open();
+                        }
+                    } else {
+                        // Exibe mensagem caso o campo de ID esteja vazio
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                        messageBox.setMessage("Digite um ID válido.");
+                        messageBox.open();
+                    }
+                } catch (NumberFormatException ex) {
+                    // Exibe mensagem caso o ID não seja um número válido
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    messageBox.setMessage("ID inválido.");
+                    messageBox.open();
+                }
+            }
+        });
+
+        // Botão para Atualizar Multa
+        Button btnAtualizarMulta = new Button(shell, SWT.NONE);
+        btnAtualizarMulta.setText("Atualizar Multa");
+        btnAtualizarMulta.setBounds(512, 230, 150, 25);
+        btnAtualizarMulta.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                TableItem[] selectedItems = table.getSelection();
+
+                if (selectedItems.length == 0) {
+                    MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione uma Multa na tabela para atualizar.");
+                    warningBox.open();
+                    btnListarMulta.notifyListeners(SWT.Selection, null);
+                    return;
+                }
+
+                try {
+                    // Obtém os dados selecionados na tabela
+                    Integer idMulta = Integer.parseInt(selectedItems[0].getText(0));
+                    LocalDate dataMulta = LocalDate.of(dateMulta.getYear(), dateMulta.getMonth() + 1, dateMulta.getDay());
+                    String descricao = txtDescricao.getText();
+                    double valor = Double.parseDouble(txtValor.getText());
+                    String statusMulta = textStatusMulta.getText();
+                    String motivoMulta = textMotivoMulta.getText();
+
+                    // Cria o objeto Multa para atualizar
+                    Multa multa = new Multa(idMulta,motivoMulta, valor,dataMulta,statusMulta, descricao, veiculoSelecionado);
+
+                    multaBanco.atualizar(multa);
+
+                    // Mensagem de sucesso
+                    MessageBox box = new MessageBox(shell, SWT.OK);
+                    box.setMessage("Multa atualizada com sucesso!");
+                    box.open();
+
+                    // Atualiza a lista de multas
+                    btnListarMulta.notifyListeners(SWT.Selection, null);
+
+                } catch (Exception ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao atualizar Multa: " + ex.getMessage());
+                    errorBox.open();
+                }
+            }
+        });
+
     }
 }
 

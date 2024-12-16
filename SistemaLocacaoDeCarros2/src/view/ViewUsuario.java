@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Text;
 import banco.AgenteLocacaoBanco;
 import banco.BalconistaBanco;
 import banco.ClienteBanco;
-import banco.UsuarioBanco;
+
 import model.AgenteLocacao;
 import model.Balconista;
 import model.Cliente;

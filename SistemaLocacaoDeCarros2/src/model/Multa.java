@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDate;
 
 public class Multa {
-	private String idMulta;
+	private Integer idMulta;
 	private String motivo;
 	private Double valorMulta;
 	private LocalDate dataOcorrencia;
@@ -24,29 +24,38 @@ public class Multa {
 		this.veiculo = veiculo;
 	}
 
-	public Multa(String idMulta, String motivo, Double valorMulta, LocalDate dataOcorrencia, String statusMulta) {
+
+	
+	
+	
+
+	public Multa(Integer idMulta, String motivo, Double valorMulta, LocalDate dataOcorrencia, String statusMulta,
+			String observacoes, Veiculo veiculo) {
 		super();
 		this.idMulta = idMulta;
 		this.motivo = motivo;
 		this.valorMulta = valorMulta;
 		this.dataOcorrencia = dataOcorrencia;
 		this.statusMulta = statusMulta;
-
+		this.observacoes = observacoes;
+		this.veiculo = veiculo;
 	}
-	
-	
-	
+
+
+
+
+
 
 	public Multa() {
 		super();
 	}
 
 	// Getters e Setters
-	public String getIdMulta() {
+	public Integer getIdMulta() {
 		return idMulta;
 	}
 
-	public void setIdMulta(String idMulta) {
+	public void setIdMulta(Integer idMulta) {
 		this.idMulta = idMulta;
 	}
 

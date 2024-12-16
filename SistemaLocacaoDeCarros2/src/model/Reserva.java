@@ -28,8 +28,11 @@ public class Reserva {
 		this.modeloReserva = veiculo;
 	}
 
+	
+	
+
 	public Reserva(Integer idReserva, LocalDate dataReserva, String statusReserva, LocalDate dataRetirada,
-			LocalDate dataDevolucao, String observacoes) {
+			LocalDate dataDevolucao, String observacoes, Cliente clienteReserva, Modelo modeloReserva) {
 		super();
 		this.idReserva = idReserva;
 		this.dataReserva = dataReserva;
@@ -37,9 +40,12 @@ public class Reserva {
 		this.dataRetirada = dataRetirada;
 		this.dataDevolucao = dataDevolucao;
 		this.observacoes = observacoes;
+		this.clienteReserva = clienteReserva;
+		this.modeloReserva = modeloReserva;
 	}
-	
-	
+
+
+
 
 	public Reserva() {
 		super();

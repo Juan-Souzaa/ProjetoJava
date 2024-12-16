@@ -1,75 +1,75 @@
 package model;
 
+import java.util.List;
+
+
 public class Frota {
-	private Integer totalVeiculos;
-	private Integer totalDisponiveis;
-	private Integer totalEmManutencao;
-	private String localizacao;
+	
+	private Integer idFrota;
+    private Integer totalVeiculos;
+    private Integer totalDisponiveis;
+    private Integer totalEmManutencao;
+    private String localizacao;
+    private List<Veiculo> veiculos;
 
-	
-	private Veiculo veiculo; 
+    public Frota(Integer totalVeiculos, Integer totalDisponiveis, Integer totalEmManutencao, String localizacao, List<Veiculo> veiculos) {
+        this.totalVeiculos = totalVeiculos;
+        this.totalDisponiveis = totalDisponiveis;
+        this.totalEmManutencao = totalEmManutencao;
+        this.localizacao = localizacao;
+        this.veiculos = veiculos;
+    }
 
-	
-	
-	public Frota() {
+    public Frota() {
 		super();
 	}
 
-	public Frota(Integer totalVeiculos, Integer totalDisponiveis, Integer totalEmManutencao, String localizacao,
-			Veiculo veiculo) {
-		this.totalVeiculos = totalVeiculos;
-		this.totalDisponiveis = totalDisponiveis;
-		this.totalEmManutencao = totalEmManutencao;
-		this.localizacao = localizacao;
-		this.veiculo = veiculo;
+	public Integer getIdFrota() {
+		return idFrota;
 	}
 
-	public Frota(Integer totalVeiculos, Integer totalDisponiveis, Integer totalEmManutencao, String localizacao) {
-
-		this.totalVeiculos = totalVeiculos;
-		this.totalDisponiveis = totalDisponiveis;
-		this.totalEmManutencao = totalEmManutencao;
-		this.localizacao = localizacao;
+	public void setIdFrota(Integer idFrota) {
+		this.idFrota = idFrota;
 	}
 
 	// Getters e Setters
-	public Integer getTotalVeiculos() {
-		return totalVeiculos;
-	}
+    public int getTotalVeiculos() {
+        return totalVeiculos;
+    }
 
-	public void setTotalVeiculos(Integer totalVeiculos) {
-		this.totalVeiculos = totalVeiculos;
-	}
+    public void setTotalVeiculos(Integer totalVeiculos) {
+        this.totalVeiculos = totalVeiculos;
+    }
 
-	public Integer getTotalDisponiveis() {
-		return totalDisponiveis;
-	}
+    public int getTotalDisponiveis() {
+        return totalDisponiveis;
+    }
 
-	public void setTotalDisponiveis(Integer totalDisponiveis) {
-		this.totalDisponiveis = totalDisponiveis;
-	}
+    public void setTotalDisponiveis(Integer totalDisponiveis) {
+        this.totalDisponiveis = totalDisponiveis;
+    }
 
-	public Integer getTotalEmManutencao() {
-		return totalEmManutencao;
-	}
+    public int getTotalEmManutencao() {
+        return totalEmManutencao;
+    }
 
-	public void setTotalEmManutencao(Integer totalEmManutencao) {
-		this.totalEmManutencao = totalEmManutencao;
-	}
+    public void setTotalEmManutencao(Integer totalEmManutencao) {
+        this.totalEmManutencao = totalEmManutencao;
+    }
 
-	public String getLocalizacao() {
-		return localizacao;
-	}
+    public String getLocalizacao() {
+        return localizacao;
+    }
 
-	public void setLocalizacao(String localizacao) {
-		this.localizacao = localizacao;
-	}
+    public void setLocalizacao(String localizacao) {
+        this.localizacao = localizacao;
+    }
 
-	public Veiculo getVeiculo() {
-		return veiculo;
-	}
+    public List<Veiculo> getVeiculos() {
+        return veiculos;
+    }
 
-	public void setVeiculo(Veiculo veiculo) {
-		this.veiculo = veiculo;
-	}
+    public void setVeiculos(List<Veiculo> veiculos) {
+        this.veiculos = veiculos;
+    }
 }

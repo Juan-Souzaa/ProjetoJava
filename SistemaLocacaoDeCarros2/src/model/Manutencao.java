@@ -24,15 +24,22 @@ public class Manutencao {
 
 	
 
+
+
+
 	public Manutencao(Integer idManutencao, LocalDate dataManutencao, String tipoManutencao, Double custo,
-			String descricao) {
+			String descricao, Veiculo veiculoManutencao) {
 		super();
 		this.idManutencao = idManutencao;
 		this.dataManutencao = dataManutencao;
 		this.tipoManutencao = tipoManutencao;
 		this.custo = custo;
 		this.descricao = descricao;
+		this.veiculoManutencao = veiculoManutencao;
 	}
+
+
+
 
 
 

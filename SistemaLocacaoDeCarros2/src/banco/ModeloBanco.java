@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Modelo;
-import model.Veiculo;
+
 
 public class ModeloBanco {
     private DBConnection connection;
@@ -61,21 +61,23 @@ public class ModeloBanco {
         return modelos;
     }
 
-    public Modelo consultar(String nomeModelo) {
+    public Modelo consultar(int nomeModelo) {
         Modelo modelo = null;
         try {
             String sql = "CALL consultar_modelo(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setString(1, nomeModelo);
+            statement.setInt(1, nomeModelo);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-            	Modelo modeloConsulta = new Modelo();
-                modeloConsulta.setNomeModelo(rs.getString("nomeModelo"));
-                modeloConsulta.setValorDiaria(rs.getDouble("valorDiaria"));
-                modeloConsulta.setCategoria(rs.getString("categoria"));
-                modeloConsulta.setCapacidadePassageiros(rs.getInt("capacidadePassageiros"));
-                modeloConsulta.setTipoCombustivel(rs.getString("tipoCombustivel"));
-                modeloConsulta.setConsumoMedio(rs.getDouble("consumoMedio"));
+            	modelo = new Modelo();
+            	modelo.setIdModelo(rs.getInt("idModelo"));
+                modelo.setNomeModelo(rs.getString("nomeModelo"));
+                modelo.setValorDiaria(rs.getDouble("valorDiaria"));
+                modelo.setCategoria(rs.getString("categoria"));
+                modelo.setCapacidadePassageiros(rs.getInt("capacidadePassageiros"));
+                modelo.setTipoCombustivel(rs.getString("tipoCombustivel"));
+                modelo.setConsumoMedio(rs.getDouble("consumoMedio"));
+               
            
             }
             rs.close();
@@ -88,16 +90,20 @@ public class ModeloBanco {
 
     public void atualizar(Modelo modelo) {
         try {
-            String sql = "CALL atualizar_modelo(?, ?, ?, ?, ?, ?);";
+            String sql = "CALL atualizar_modelo(?, ?, ?, ?, ?, ?,?,?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-           
-            statement.setString(1, modelo.getNomeModelo());
-            statement.setDouble(2, modelo.getValorDiaria());
-            statement.setString(3, modelo.getCategoria());
-            statement.setInt(4, modelo.getCapacidadePassageiros());
-            statement.setString(5, modelo.getTipoCombustivel());
-            statement.setDouble(6, modelo.getConsumoMedio());
-            statement.setInt(7, modelo.getVeiculo().getIdVeiculo());
+            statement.setInt(1, modelo.getIdModelo());
+            statement.setString(2, modelo.getNomeModelo());
+            statement.setDouble(3, modelo.getValorDiaria());
+            statement.setString(4, modelo.getCategoria());
+            statement.setInt(5, modelo.getCapacidadePassageiros());
+            statement.setString(6, modelo.getTipoCombustivel());
+            statement.setDouble(7, modelo.getConsumoMedio());
+            statement.setInt(8, modelo.getVeiculo().getIdVeiculo());
+            
+            statement.executeUpdate();
+            statement.close();
+            
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao atualizar modelo: " + e.getMessage(), e);
         }

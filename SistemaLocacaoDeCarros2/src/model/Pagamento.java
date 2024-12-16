@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDate;
 
 public class Pagamento {
-	private String idPagamento;
+	private Integer idPagamento;
 	private Double valor;
 	private String metodoPagamento;
 	private LocalDate dataPagamento;
@@ -27,16 +27,31 @@ public class Pagamento {
 	
 	
 
+	public Pagamento(Integer idPagamento, Double valor, String metodoPagamento, LocalDate dataPagamento, String status,
+			String descricao, Fatura fatura) {
+		super();
+		this.idPagamento = idPagamento;
+		this.valor = valor;
+		this.metodoPagamento = metodoPagamento;
+		this.dataPagamento = dataPagamento;
+		this.status = status;
+		this.descricao = descricao;
+		this.fatura = fatura;
+	}
+
+
+
+
 	public Pagamento() {
 		super();
 	}
 
 	// Getters e Setters
-	public String getIdPagamento() {
+	public Integer getIdPagamento() {
 		return idPagamento;
 	}
 
-	public void setIdPagamento(String idPagamento) {
+	public void setIdPagamento(Integer idPagamento) {
 		this.idPagamento = idPagamento;
 	}
 

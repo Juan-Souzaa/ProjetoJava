@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Text;
 import banco.SeguroBanco;
 import model.Locacao;
 import model.Seguro;
+
+
 import org.eclipse.swt.widgets.DateTime;
 
 public class ViewSeguro {
@@ -124,7 +126,7 @@ public class ViewSeguro {
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
-        table.setBounds(82, 356, 851, 200);
+        table.setBounds(23, 380, 851, 200);
 
         TableColumn tblclmnIdSeguro = new TableColumn(table, SWT.CENTER);
         tblclmnIdSeguro.setWidth(106);
@@ -132,7 +134,7 @@ public class ViewSeguro {
         
         TableColumn tblclmnIdLocacao = new TableColumn(table, SWT.NONE);
         tblclmnIdLocacao.setWidth(100);
-        tblclmnIdLocacao.setText("Id Locacao");
+        tblclmnIdLocacao.setText("Id Seguro");
         
         TableColumn tblclmnNome = new TableColumn(table, SWT.NONE);
         tblclmnNome.setWidth(100);
@@ -154,9 +156,7 @@ public class ViewSeguro {
         tblclmnVigencia.setWidth(131);
         tblclmnVigencia.setText("Vigência");
         
-        TableColumn tblclmnIdseguro = new TableColumn(table, SWT.NONE);
-        tblclmnIdseguro.setWidth(0);
-        tblclmnIdseguro.setText("idseguro");
+        
         
         
         
@@ -189,7 +189,7 @@ public class ViewSeguro {
 				int selectedIndex = table.getSelectionIndex();
 				if (selectedIndex != -1) {
 					TableItem item = table.getItem(selectedIndex);
-					int idSeguro = Integer.parseInt(item.getText(7));
+					int idSeguro = Integer.parseInt(item.getText(1));
 
 					seguroBanco.deletar(idSeguro);
 					MessageBox messageBox = new MessageBox(shell, SWT.OK);
@@ -218,13 +218,13 @@ public class ViewSeguro {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[]{
                             String.valueOf(seguro.getLocacao().getReservaLocacao().getClienteReserva().getIdUsuario()),
-                            String.valueOf(seguro.getLocacao().getIdLocacao()),
+                            String.valueOf(seguro.getIdSeguro()),
                             seguro.getLocacao().getReservaLocacao().getClienteReserva().getNomeCompleto(),
                             seguro.getTipoSeguro(),
                             String.format("%.2f", seguro.getValorCobertura()),
                             String.format("%.2f", seguro.getFranquia()),
                             seguro.getVigencia().toString(),
-                            String.valueOf(seguro.getIdSeguro()),
+                            
                             
                             
                     });
@@ -232,5 +232,124 @@ public class ViewSeguro {
             }
         });
         
+        Button btnAtualizarSeguro = new Button(shell, SWT.NONE);
+        btnAtualizarSeguro.setText("Atualizar Seguro");
+        btnAtualizarSeguro.setBounds(57, 260, 150, 25);
+        btnAtualizarSeguro.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	
+            	 TableItem[] selectedItems = table.getSelection();
+                 
+                 if (selectedItems.length == 0) {
+                     MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                     warningBox.setMessage("Selecione um Seguro na tabela para atualizar.");
+                     warningBox.open();
+                     btnListarSeguro.notifyListeners(SWT.Selection, null);
+                     
+                     return;
+                 }
+                try {
+                    // Pegando os dados da interface
+                    int idSeguro = Integer.parseInt(selectedItems[0].getText(1)); // Aqui você pega o ID do Seguro que será atualizado
+                    String tipoSeguro = textTipoSeguro.getText();
+                    Double valorCobertura = Double.parseDouble(textValorCobertura.getText());
+                    Double franquia = Double.parseDouble(textFranquia.getText());
+                    LocalDate vigencia = LocalDate.of(dateVigencia.getYear(), dateVigencia.getMonth() + 1, dateVigencia.getDay());
+
+                    // Criando o objeto de Seguro com os dados
+                    Seguro seguro = new Seguro(idSeguro, tipoSeguro, valorCobertura, franquia, vigencia, locacaoSelecionada);
+                    
+                    // Chamando o método de atualização do banco de dados
+                    seguroBanco.atualizar(seguro);
+                    
+                    // Mensagem de sucesso
+                    MessageBox box = new MessageBox(shell, SWT.OK);
+                    box.setMessage("Seguro atualizado com sucesso!");
+                    box.open();
+                    btnListarSeguro.notifyListeners(SWT.Selection, null);
+                    
+                } catch (Exception ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao atualizar seguro: " + ex.getMessage());
+                    errorBox.open();
+                }
+            }
+        });
+     // Adicionando o botão para exibir o campo de ID do Seguro
+        Button btnConsultarSeguroId = new Button(shell, SWT.NONE);
+        btnConsultarSeguroId.setText("Consultar Seguro por ID");
+        btnConsultarSeguroId.setBounds(331, 257, 150, 30);
+        btnConsultarSeguroId.setVisible(false); // Começa invisível
+
+        // Text para digitar o ID do Seguro
+        Text txtSeguroId = new Text(shell, SWT.BORDER);
+        txtSeguroId.setBounds(497, 256, 100, 25);
+        txtSeguroId.setVisible(false); // Começa invisível
+
+        // Adicionando botão para confirmar a consulta com o ID
+        Button btnConfirmarSeguroId = new Button(shell, SWT.NONE);
+        btnConfirmarSeguroId.setText("Confirmar ID");
+        btnConfirmarSeguroId.setBounds(603, 257, 150, 30);
+        btnConfirmarSeguroId.setVisible(false); // Começa invisível
+
+        // Quando o botão "Consultar Seguro por ID" for clicado
+        btnConsultarSeguroId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                txtSeguroId.setVisible(true); // Exibe o campo para inserir o ID
+                btnConfirmarSeguroId.setVisible(true); // Exibe o botão de confirmação
+            }
+        });
+
+        // Quando o botão "Confirmar ID" for clicado
+        btnConfirmarSeguroId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+                    String idSeguroInput = txtSeguroId.getText(); // Pega o ID inserido
+                    if (idSeguroInput != null && !idSeguroInput.isEmpty()) {
+                        int idSeguro = Integer.parseInt(idSeguroInput); // Converte o ID para inteiro
+
+                        Seguro seguro = seguroBanco.consultar(idSeguro); // Consulta no banco de dados
+
+                        if (seguro != null) {
+                            // Adiciona os dados do seguro à tabela
+                            table.removeAll();
+                            TableItem item = new TableItem(table, SWT.NONE);
+                            item.setText(new String[] {
+                            		String.valueOf(seguro.getLocacao().getReservaLocacao().getClienteReserva().getIdUsuario()),
+                            		String.valueOf(seguro.getIdSeguro()),
+                                    seguro.getLocacao().getReservaLocacao().getClienteReserva().getNomeCompleto(),
+                                    seguro.getTipoSeguro(),
+                                    String.format("%.2f", seguro.getValorCobertura()),
+                                    String.format("%.2f", seguro.getFranquia()),
+                                    seguro.getVigencia().toString(),
+                                    
+                            });
+                        } else {
+                            // Exibe mensagem caso o seguro não seja encontrado
+                            MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                            messageBox.setMessage("Seguro não encontrado.");
+                            messageBox.open();
+                        }
+                    } else {
+                        // Exibe mensagem caso o campo de ID esteja vazio
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                        messageBox.setMessage("Digite um ID válido.");
+                        messageBox.open();
+                    }
+                } catch (NumberFormatException ex) {
+                    // Exibe mensagem caso o ID não seja um número válido
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    messageBox.setMessage("ID inválido.");
+                    messageBox.open();
+                    
+                }
+            }
+        });
+
+        // Exibe o botão de "Consultar Seguro por ID" quando necessário
+        btnConsultarSeguroId.setVisible(true); 
     }
 }

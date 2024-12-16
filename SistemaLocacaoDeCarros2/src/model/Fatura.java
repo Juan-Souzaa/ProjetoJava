@@ -23,6 +23,20 @@ public class Fatura {
 	}
 
 	
+	
+
+	public Fatura(Integer numeroFatura, LocalDate dataEmissao, Double valorTotal, String observacoes,
+			Locacao locacaoFatura) {
+		super();
+		this.numeroFatura = numeroFatura;
+		this.dataEmissao = dataEmissao;
+		this.valorTotal = valorTotal;
+		this.observacoes = observacoes;
+		this.locacaoFatura = locacaoFatura;
+	}
+
+
+
 
 	public Fatura() {
 		

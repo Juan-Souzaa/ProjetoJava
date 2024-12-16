@@ -24,6 +24,19 @@ public class Seguro {
 
 	
 
+	public Seguro(Integer idSeguro, String tipoSeguro, Double valorCobertura, Double franquia, LocalDate vigencia,
+			Locacao locacao) {
+		super();
+		this.idSeguro = idSeguro;
+		this.tipoSeguro = tipoSeguro;
+		this.valorCobertura = valorCobertura;
+		this.franquia = franquia;
+		this.vigencia = vigencia;
+		this.locacao = locacao;
+	}
+
+
+
 	public Seguro() {
 		super();
 	}

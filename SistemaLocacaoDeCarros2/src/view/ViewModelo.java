@@ -136,7 +136,7 @@ public class ViewModelo {
 
         Button btnDeletarModelo = new Button(shell, SWT.NONE);
         btnDeletarModelo.setText("Deletar Modelo");
-        btnDeletarModelo.setBounds(339, 299, 134, 25);
+        btnDeletarModelo.setBounds(264, 296, 134, 25);
 
         Button btnListarModelo = new Button(shell, SWT.NONE);
         btnListarModelo.setText("Listar Modelo");
@@ -185,11 +185,11 @@ public class ViewModelo {
                      box.open();
                      return;}
                 String modeloVeiculo = textModeloVeiculo.getText();
-                double valorDiaria = Double.parseDouble(textValorDiaria.getText());
+                Double valorDiaria = Double.parseDouble(textValorDiaria.getText());
                 String categoria = textCategoria.getText();
-                int capacidadePassageiros = Integer.parseInt(textCapacidadePassageiro.getText());
+                Integer capacidadePassageiros = Integer.parseInt(textCapacidadePassageiro.getText());
                 String tipoCombustivel = textTipoCombustivel.getText();
-                double consumoMedio = Double.parseDouble(textConsumoMedio.getText());
+                Double consumoMedio = Double.parseDouble(textConsumoMedio.getText());
 
                 Modelo modelo = new Modelo(modeloVeiculo, valorDiaria, categoria, capacidadePassageiros, tipoCombustivel, consumoMedio, veiculoSelecionado);
                 modeloBanco.incluir(modelo);
@@ -257,5 +257,123 @@ public class ViewModelo {
                 }
             }
         });
+        
+        Button btnConsultarModeloId = new Button(shell, SWT.NONE);
+        btnConsultarModeloId.setText("Consultar Modelo por ID");
+        btnConsultarModeloId.setBounds(381, 257, 150, 30);
+        btnConsultarModeloId.setVisible(true); // Começa invisível
+
+        // Text para digitar o ID do Modelo
+        Text txtModeloId = new Text(shell, SWT.BORDER);
+        txtModeloId.setBounds(553, 256, 44, 25);
+        txtModeloId.setVisible(false); // Começa invisível
+
+        // Adicionando botão para confirmar a consulta com o ID
+        Button btnConfirmarModeloId = new Button(shell, SWT.NONE);
+        btnConfirmarModeloId.setText("Confirmar ID");
+        btnConfirmarModeloId.setBounds(603, 257, 150, 30);
+        btnConfirmarModeloId.setVisible(false); // Começa invisível
+
+        // Quando o botão "Consultar Modelo por ID" for clicado
+        btnConsultarModeloId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                txtModeloId.setVisible(true); // Exibe o campo para inserir o ID
+                btnConfirmarModeloId.setVisible(true); // Exibe o botão de confirmação
+            }
+        });
+
+        // Quando o botão "Confirmar ID" for clicado
+        btnConfirmarModeloId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+                    String idModeloInput = txtModeloId.getText(); // Pega o ID inserido
+                    if (idModeloInput != null && !idModeloInput.isEmpty()) {
+                        int idModelo = Integer.parseInt(idModeloInput); // Converte o ID para inteiro
+
+                        Modelo modelo = modeloBanco.consultar(idModelo); // Consulta no banco de dados
+
+                        if (modelo != null) {
+                            // Adiciona os dados do modelo à tabela
+                            table.removeAll();
+                            TableItem item = new TableItem(table, SWT.NONE);
+                            item.setText(new String[] {
+                            		modelo.getIdModelo().toString(),
+                                    modelo.getNomeModelo(),
+                                    String.valueOf(modelo.getValorDiaria()),
+                                    modelo.getCategoria(),
+                                    String.valueOf(modelo.getCapacidadePassageiros()),
+                                    modelo.getTipoCombustivel(),
+                                    String.valueOf(modelo.getConsumoMedio())
+                            });
+                        } else {
+                            // Exibe mensagem caso o modelo não seja encontrado
+                            MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                            messageBox.setMessage("Modelo não encontrado.");
+                            messageBox.open();
+                        }
+                    } else {
+                        // Exibe mensagem caso o campo de ID esteja vazio
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                        messageBox.setMessage("Digite um ID válido.");
+                        messageBox.open();
+                    }
+                } catch (NumberFormatException ex) {
+                    // Exibe mensagem caso o ID não seja um número válido
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    messageBox.setMessage("ID inválido.");
+                    messageBox.open();
+                }
+            }
+        });
+        
+        Button btnAtualizarModelo = new Button(shell, SWT.NONE);
+        btnAtualizarModelo.setText("Atualizar Modelo");
+        btnAtualizarModelo.setBounds(422, 299, 150, 25);
+        btnAtualizarModelo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                
+                TableItem[] selectedItems = table.getSelection();
+                
+                if (selectedItems.length == 0) {
+                    MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione um Modelo na tabela para atualizar.");
+                    warningBox.open();
+                    btnListarModelo.notifyListeners(SWT.Selection, null);
+                    return;
+                }
+
+                try {
+                    Integer idModelo = Integer.parseInt(selectedItems[0].getText(0));
+
+                    String modeloVeiculo = textModeloVeiculo.getText();
+                    Double valorDiaria = Double.parseDouble(textValorDiaria.getText());
+                    String categoria = textCategoria.getText();
+                    Integer capacidadePassageiros = Integer.parseInt(textCapacidadePassageiro.getText());
+                    String tipoCombustivel = textTipoCombustivel.getText();
+                    Double consumoMedio = Double.parseDouble(textConsumoMedio.getText());
+
+                    Modelo modelo = new Modelo(idModelo,modeloVeiculo, valorDiaria, categoria, capacidadePassageiros, tipoCombustivel, consumoMedio, veiculoSelecionado);
+
+                   
+
+                    modeloBanco.atualizar(modelo);
+                    
+                    // Mensagem de sucesso
+                    MessageBox box = new MessageBox(shell, SWT.OK);
+                    box.setMessage("Modelo atualizado com sucesso!");
+                    box.open();
+                    btnListarModelo.notifyListeners(SWT.Selection, null);
+                } catch (Exception ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao atualizar Modelo: " + ex.getMessage());
+                    errorBox.open();
+                }
+            }
+        });
+
+
     }
 }

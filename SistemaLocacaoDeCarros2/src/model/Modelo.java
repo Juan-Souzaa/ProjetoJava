@@ -27,15 +27,19 @@ public class Modelo {
 		super();
 	}
 
-	public Modelo(String nomeModelo, Double valorDiaria, String categoria, Integer capacidadePassageiros,
-			String tipoCombustivel, Double consumoMedio) {
+	
+
+	public Modelo(Integer idModelo, String nomeModelo, Double valorDiaria, String categoria,
+			Integer capacidadePassageiros, String tipoCombustivel, Double consumoMedio, Veiculo veiculo) {
 		super();
+		this.idModelo = idModelo;
 		this.nomeModelo = nomeModelo;
 		this.valorDiaria = valorDiaria;
 		this.categoria = categoria;
 		this.capacidadePassageiros = capacidadePassageiros;
 		this.tipoCombustivel = tipoCombustivel;
 		this.consumoMedio = consumoMedio;
+		this.veiculo = veiculo;
 	}
 
 	public Integer getIdModelo() {

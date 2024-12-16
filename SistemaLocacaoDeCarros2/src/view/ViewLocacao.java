@@ -322,8 +322,126 @@ public class ViewLocacao {
     		});
         
 
+        Button btnAtualizarLocacao = new Button(shell, SWT.NONE);
+        btnAtualizarLocacao.setText("Atualizar Locação");
+        btnAtualizarLocacao.setBounds(400, 325, 150, 25);
+        btnAtualizarLocacao.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                TableItem[] selectedItems = table.getSelection();
+
+                if (selectedItems.length == 0) {
+                    MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione uma Locação na tabela para atualizar.");
+                    warningBox.open();
+                    btnListarLocacao.notifyListeners(SWT.Selection, null);
+                    return;
+                }
+
+                try {
+                    // Obtém os dados selecionados
+                    Integer idLocacao = Integer.parseInt(selectedItems[0].getText(0));
+
+                  
+                    LocalDate dataLocacao = LocalDate.of(dateLocacao.getYear(), dateLocacao.getMonth() + 1, dateLocacao.getDay());
+                    LocalDate dataDevolucaoPrevista = LocalDate.of(dateDevolucaoPrevista.getYear(), dateDevolucaoPrevista.getMonth() + 1, dateDevolucaoPrevista.getDay());
+                    LocalDate dataDevolucao = LocalDate.of(dateDevolucao.getYear(), dateDevolucao.getMonth() + 1, dateDevolucao.getDay());
+                    double valorTotal = Double.parseDouble(txtValorTotal.getText());
+                    String tipoLocacao = txtTipoLocacao.getText();
+                    String observacoes = txtObservacoes.getText();
+
+                    Locacao locacao = new Locacao(idLocacao, dataLocacao, dataDevolucaoPrevista, dataDevolucao, valorTotal, tipoLocacao, observacoes,veiculoSelecionado,reservaSelecionada);
+                    
+
+                    // Atualiza no banco
+                    locacaoBanco.atualizar(locacao);
+
+                    // Mensagem de sucesso
+                    MessageBox box = new MessageBox(shell, SWT.OK);
+                    box.setMessage("Locação atualizada com sucesso!");
+                    box.open();
+
+                    // Atualiza a tabela
+                    btnListarLocacao.notifyListeners(SWT.Selection, null);
+                } catch (Exception ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao atualizar Locação: " + ex.getMessage());
+                    errorBox.open();
+                }
+            }
+        });
 
 
+        Button btnConsultarLocacaoId = new Button(shell, SWT.NONE);
+        btnConsultarLocacaoId.setText("Consultar Locação por ID");
+        btnConsultarLocacaoId.setBounds(600, 325, 150, 25);
+        btnConsultarLocacaoId.setVisible(true);
+
+        // Text para digitar o ID da Locação
+        Text txtLocacaoId = new Text(shell, SWT.BORDER);
+        txtLocacaoId.setBounds(780, 325, 100, 25);
+        txtLocacaoId.setVisible(false);
+
+        // Botão para confirmar a consulta
+        Button btnConfirmarLocacaoId = new Button(shell, SWT.NONE);
+        btnConfirmarLocacaoId.setText("Confirmar ID");
+        btnConfirmarLocacaoId.setBounds(900, 325, 150, 25);
+        btnConfirmarLocacaoId.setVisible(false);
+
+        // Quando o botão "Consultar Locação por ID" for clicado
+        btnConsultarLocacaoId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                txtLocacaoId.setVisible(true);
+                btnConfirmarLocacaoId.setVisible(true);
+            }
+        });
+
+        // Quando o botão "Confirmar ID" for clicado
+        btnConfirmarLocacaoId.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+                    String idLocacaoInput = txtLocacaoId.getText();
+                    if (idLocacaoInput != null && !idLocacaoInput.isEmpty()) {
+                        int idLocacao = Integer.parseInt(idLocacaoInput);
+
+                        Locacao locacao = locacaoBanco.consultar(idLocacao);
+
+                        if (locacao != null) {
+                            // Atualiza os dados na tabela
+                            table.removeAll();
+                            TableItem item = new TableItem(table, SWT.NONE);
+                            item.setText(new String[]{
+                            		String.valueOf(locacao.getIdLocacao()), // ID da locação
+                                    locacao.getReservaLocacao().getClienteReserva().getNomeCompleto(), // Nome do cliente (da reserva)
+                                    locacao.getDataLocacao().toString(), // Data da locação
+                                    locacao.getDataDevolucaoPrevista().toString(), // Data de devolução prevista
+                                    locacao.getDataDevolucaoReal() != null ? locacao.getDataDevolucaoReal().toString() : "Não devolvido", // Data de devolução real
+                                    String.valueOf(locacao.getValorTotal()), // Valor total
+                                    locacao.getTipoLocacao(), // Tipo de locação
+                                    locacao.getObservacoes(), // Observações
+                                    
+                                    locacao.getVeiculoLocacao().getPlaca(), // Placa do veículo
+                                    locacao.getVeiculoLocacao().getCategoria() // Categoria do veículo
+                            });
+                        } else {
+                            MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                            messageBox.setMessage("Locação não encontrada.");
+                            messageBox.open();
+                        }
+                    } else {
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                        messageBox.setMessage("Digite um ID válido.");
+                        messageBox.open();
+                    }
+                } catch (NumberFormatException ex) {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    messageBox.setMessage("ID inválido.");
+                    messageBox.open();
+                }
+            }
+        });
 
 
     }

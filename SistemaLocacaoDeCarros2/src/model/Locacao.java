@@ -33,8 +33,11 @@ public class Locacao {
 	
 	}
 
+	
+
 	public Locacao(Integer idLocacao, LocalDate dataLocacao, LocalDate dataDevolucaoPrevista,
-			LocalDate dataDevolucaoReal, Double valorTotal, String tipoLocacao, String observacoes) {
+			LocalDate dataDevolucaoReal, Double valorTotal, String tipoLocacao, String observacoes,
+			Veiculo veiculoLocacao, Reserva reservaLocacao) {
 		super();
 		this.idLocacao = idLocacao;
 		this.dataLocacao = dataLocacao;
@@ -43,7 +46,11 @@ public class Locacao {
 		this.valorTotal = valorTotal;
 		this.tipoLocacao = tipoLocacao;
 		this.observacoes = observacoes;
+		this.veiculoLocacao = veiculoLocacao;
+		this.reservaLocacao = reservaLocacao;
 	}
+
+
 
 	public Locacao() {
 		super();

@@ -110,7 +110,31 @@ public class LocacaoBanco {
                 locacao.setValorTotal(rs.getDouble("valorTotal"));
                 locacao.setTipoLocacao(rs.getString("tipoLocacao"));
                 locacao.setObservacoes(rs.getString("observacoes"));
-                locacao.setClienteLocacao((Cliente) rs.getObject("clienteLocacao"));
+                // Criando e associando a reserva à locação
+                Reserva reserva = new Reserva();
+                
+                reserva.setDataReserva(rs.getDate("dataReserva").toLocalDate());
+                
+                reserva.setDataRetirada(rs.getDate("dataRetirada").toLocalDate());
+               
+               
+                
+                // Adicionando cliente à reserva (cliente vem de usuário)
+                Cliente cliente = new Cliente();
+                cliente.setNomeCompleto(rs.getString("nomeCompleto"));
+                reserva.setClienteReserva(cliente); // Atribuindo o cliente à reserva
+                
+                // Adicionando a reserva à locação
+                locacao.setReservaLocacao(reserva);
+                
+                // Criando e associando o veículo à locação
+                Veiculo veiculo = new Veiculo();
+                veiculo.setPlaca(rs.getString("veiculoPlaca"));
+                veiculo.setCategoria(rs.getString("veiculoCategoria"));
+                locacao.setVeiculoLocacao(veiculo); // Associando o veículo à locação
+                
+               
+             
             }
             rs.close();
             statement.close();
@@ -131,7 +155,7 @@ public class LocacaoBanco {
             statement.setDouble(5, locacao.getValorTotal());
             statement.setString(6, locacao.getTipoLocacao());
             statement.setString(7, locacao.getObservacoes());
-            statement.setInt(8, locacao.getClienteLocacao().getIdCliente());
+            statement.setInt(8, locacao.getReservaLocacao().getIdReserva());
             statement.setInt(9, locacao.getVeiculoLocacao().getIdVeiculo());
             statement.executeUpdate();
             statement.close();
