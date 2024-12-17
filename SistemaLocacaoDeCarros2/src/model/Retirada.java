@@ -1,24 +1,78 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 public class Retirada {
+	private Integer idRetirada;
 	private LocalDate dataRetirada;
 	private String localRetirada;
 	private Boolean documentosVerificados;
-	private String statusRetirada;
+	private Boolean statusRetirada;
 
 	// Relacionamento
 	
+	
+	private Locacao locacaoRetirada;
+	
+	
+	
+	
+	
+	
+	
+	
 
-	public Retirada(LocalDate dataRetirada, String localRetirada, Boolean documentosVerificados, String statusRetirada) {
+
+
+	public Retirada(LocalDate dataRetirada, String localRetirada, Boolean documentosVerificados, Boolean statusRetirada,
+			Locacao locacaoRetirada) {
+		super();
 		this.dataRetirada = dataRetirada;
 		this.localRetirada = localRetirada;
 		this.documentosVerificados = documentosVerificados;
 		this.statusRetirada = statusRetirada;
-	
+		this.locacaoRetirada = locacaoRetirada;
 	}
+
+
+
+	public Retirada(Integer idRetirada, LocalDate dataRetirada, String localRetirada, Boolean documentosVerificados,
+			Boolean statusRetirada, Locacao locacaoRetirada) {
+		super();
+		this.idRetirada = idRetirada;
+		this.dataRetirada = dataRetirada;
+		this.localRetirada = localRetirada;
+		this.documentosVerificados = documentosVerificados;
+		this.statusRetirada = statusRetirada;
+		this.locacaoRetirada = locacaoRetirada;
+	}
+
+
+
+	public Integer getIdRetirada() {
+		return idRetirada;
+	}
+
+
+
+	public void setIdRetirada(Integer idRetirada) {
+		this.idRetirada = idRetirada;
+	}
+
+
+
+	public Locacao getLocacaoRetirada() {
+		return locacaoRetirada;
+	}
+
+
+
+	public void setLocacaoRetirada(Locacao locacaoRetirada) {
+		this.locacaoRetirada = locacaoRetirada;
+	}
+
+
 
 	public Retirada() {
 	}
@@ -50,11 +104,11 @@ public class Retirada {
 		this.documentosVerificados = documentosVerificados;
 	}
 
-	public String getStatusRetirada() {
+	public Boolean getStatusRetirada() {
 		return statusRetirada;
 	}
 
-	public void setStatusRetirada(String statusRetirada) {
+	public void setStatusRetirada(Boolean statusRetirada) {
 		this.statusRetirada = statusRetirada;
 	}
 

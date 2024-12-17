@@ -59,32 +59,32 @@ public class FidelidadeBanco {
         return fidelidades;
     }
 
-    public Fidelidade consultar(int idFidelidade) {
-        Fidelidade fidelidade = null;
+    public Fidelidade consultar(Fidelidade fidelidade) {
+        Fidelidade fidelidadeConsultar = null;
         try {
             String sql = "CALL consultar_fidelidade(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idFidelidade);
+            statement.setInt(1, fidelidade.getIdFidelidade());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-            	fidelidade = new Fidelidade();
-                fidelidade.setIdFidelidade(rs.getInt("idFidelidade"));
-                fidelidade.setPontos(rs.getInt("pontos"));
-                fidelidade.setNivel(rs.getString("nivel"));
-                fidelidade.setDataUltimaAtualizacao(rs.getDate("dataUltimaAtualizacao").toLocalDate()); 
+            	fidelidadeConsultar = new Fidelidade();
+                fidelidadeConsultar.setIdFidelidade(rs.getInt("idFidelidade"));
+                fidelidadeConsultar.setPontos(rs.getInt("pontos"));
+                fidelidadeConsultar.setNivel(rs.getString("nivel"));
+                fidelidadeConsultar.setDataUltimaAtualizacao(rs.getDate("dataUltimaAtualizacao").toLocalDate()); 
                 
                 Cliente cliente = new Cliente();
                 cliente.setIdUsuario(rs.getInt("idUsuario"));
                 cliente.setNomeCompleto(rs.getString("nomeCompleto"));
                 
-                fidelidade.setClienteFidelidade(cliente);
+                fidelidadeConsultar.setClienteFidelidade(cliente);
             }
             rs.close();
             statement.close();
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao consultar fidelidade: " + e.getMessage(), e);
         }
-        return fidelidade;
+        return fidelidadeConsultar;
     }
 
     public void atualizar(Fidelidade fidelidade) {
@@ -103,11 +103,11 @@ public class FidelidadeBanco {
         }
     }
 
-    public void deletar(int idFidelidade) {
+    public void deletar(Fidelidade fidelidade) {
         try {
             String sql = "CALL deletar_fidelidade(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idFidelidade);
+            statement.setInt(1, fidelidade.getIdFidelidade());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

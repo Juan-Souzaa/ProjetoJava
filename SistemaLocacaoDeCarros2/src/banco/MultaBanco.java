@@ -63,34 +63,34 @@ public class MultaBanco {
 		return multas;
 	}
 
-	public Multa consultar(Integer idMulta) {
-		Multa multa = null;
+	public Multa consultar(Multa multa) {
+		Multa multaConsultar = null;
 		try {
 			String sql = "CALL consultar_multa(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idMulta);
+			statement.setInt(1, multa.getIdMulta());
 			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
-				multa = new Multa();
-				multa.setIdMulta(rs.getInt("idMulta"));
-				multa.setMotivo(rs.getString("motivo"));
-				multa.setValorMulta(rs.getDouble("valorMulta"));
-				multa.setDataOcorrencia(rs.getDate("dataOcorrencia").toLocalDate());
-				multa.setStatusMulta(rs.getString("statusMulta"));
-				multa.setObservacoes(rs.getString("observacoes"));
+				multaConsultar = new Multa();
+				multaConsultar.setIdMulta(rs.getInt("idMulta"));
+				multaConsultar.setMotivo(rs.getString("motivo"));
+				multaConsultar.setValorMulta(rs.getDouble("valorMulta"));
+				multaConsultar.setDataOcorrencia(rs.getDate("dataOcorrencia").toLocalDate());
+				multaConsultar.setStatusMulta(rs.getString("statusMulta"));
+				multaConsultar.setObservacoes(rs.getString("observacoes"));
 
 				Veiculo veiculoMulta = new Veiculo();
 				veiculoMulta.setChassi(rs.getString("chassi"));
 				veiculoMulta.setPlaca(rs.getString("placa"));
 
-				multa.setVeiculo(veiculoMulta);
+				multaConsultar.setVeiculo(veiculoMulta);
 			}
 			rs.close();
 			statement.close();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao consultar multa: " + e.getMessage(), e);
 		}
-		return multa;
+		return multaConsultar;
 	}
 
 	public void atualizar(Multa multa) {
@@ -111,11 +111,11 @@ public class MultaBanco {
 		}
 	}
 
-	public void deletar(Integer idMulta) {
+	public void deletar(Multa multa) {
 		try {
 			String sql = "CALL deletar_multa(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idMulta);
+			statement.setInt(1, multa.getIdMulta());
 			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {

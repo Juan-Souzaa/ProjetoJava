@@ -69,9 +69,9 @@ public class ViewSeguro {
         btnSelecionarLocacao.setBounds(229, 8, 150, 25);
         btnSelecionarLocacao.setText("Selecionar Locacao");
 
-        Label lblVeiculoSelecionado = new Label(shell, SWT.NONE);
-        lblVeiculoSelecionado.setBounds(23, 13, 200, 25);
-        lblVeiculoSelecionado.setText("Nenhuma Locacao selecionada");
+        Label lblLocacaoSelecionado = new Label(shell, SWT.NONE);
+        lblLocacaoSelecionado.setBounds(23, 13, 200, 25);
+        lblLocacaoSelecionado.setText("Nenhuma Locacao selecionada");
 
         // Ação do botão selecionar veículo
         btnSelecionarLocacao.addSelectionListener(new SelectionAdapter() {
@@ -80,7 +80,7 @@ public class ViewSeguro {
                 ViewSelecionarLocacao viewSelecionarLocacao = new ViewSelecionarLocacao();
                 locacaoSelecionada = viewSelecionarLocacao.open();
                 if (locacaoSelecionada != null) {
-                    lblVeiculoSelecionado.setText("Veículo: " + locacaoSelecionada.getReservaLocacao().getClienteReserva().getNomeCompleto());
+                    lblLocacaoSelecionado.setText("Locação do CLiente :" + locacaoSelecionada.getReservaLocacao().getClienteReserva().getNomeCompleto());
                     // Aqui você pode associar o objeto veiculoSelecionado ao modelo
                 }
             }

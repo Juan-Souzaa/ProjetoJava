@@ -162,9 +162,24 @@ public class ViewManutencao {
         btnCadastrarManutencao.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                if (veiculoSelecionado == null) {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    messageBox.setMessage("Por favor, selecione um veículo.");
+                    messageBox.open();
+                    return;
+                }
+
+             
+                if (txtDescricao.getText().isEmpty() || txtCusto.getText().isEmpty() || textTipoManu.getText().isEmpty()) {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    messageBox.setMessage("Por favor, preencha todos os campos.");
+                    messageBox.open();
+                    return;
+                }
+            	
                 LocalDate dataManutencao = LocalDate.of(dateManutencao.getYear(), dateManutencao.getMonth() + 1, dateManutencao.getDay());
                 String descricao = txtDescricao.getText();
-                double custo = Double.parseDouble(txtCusto.getText());
+                Double custo = Double.parseDouble(txtCusto.getText());
                 String tipoManu = textTipoManu.getText();
 
                 Manutencao manutencao = new Manutencao(dataManutencao, tipoManu, custo, descricao, veiculoSelecionado);
@@ -173,6 +188,7 @@ public class ViewManutencao {
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Manutenção cadastrada com sucesso!");
                 box.open();
+                btnListarManutencao.notifyListeners(SWT.Selection, null);
             }
         });
 
@@ -211,7 +227,10 @@ public class ViewManutencao {
 
                 try {
                     Integer idManutencao = Integer.parseInt(selectedItems[0].getText(0));
-                    manutencaoBanco.deletar(idManutencao);
+                    
+                    Manutencao manutencaoDeletar = new Manutencao();
+                    manutencaoDeletar.setIdManutencao(idManutencao);
+                    manutencaoBanco.deletar(manutencaoDeletar);
                     MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
                     successBox.setMessage("Manutenção deletada com sucesso!");
                     successBox.open();
@@ -238,23 +257,36 @@ public class ViewManutencao {
                     btnListarManutencao.notifyListeners(SWT.Selection, null);
                     return;
                 }
+                
+                if (veiculoSelecionado == null) {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    messageBox.setMessage("Por favor, selecione um veículo.");
+                    messageBox.open();
+                    return;
+                }
+
+                if (txtDescricao.getText().isEmpty() || txtCusto.getText().isEmpty() || textTipoManu.getText().isEmpty()) {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    messageBox.setMessage("Por favor, preencha todos os campos.");
+                    messageBox.open();
+                    return;
+                }
 
                 try {
                     Integer idManutencao = Integer.parseInt(selectedItems[0].getText(0));
 
                     LocalDate dataManutencao = LocalDate.of(dateManutencao.getYear(), dateManutencao.getMonth() + 1, dateManutencao.getDay());
                     String descricao = txtDescricao.getText();
-                    double custo = Double.parseDouble(txtCusto.getText());
+                    Double custo = Double.parseDouble(txtCusto.getText());
                     String tipoManu = textTipoManu.getText();
 
                     Manutencao manutencao = new Manutencao(idManutencao, dataManutencao, tipoManu, custo, descricao, veiculoSelecionado);
 
                    
 
-                    // Atualizando no banco de dados
                     manutencaoBanco.atualizar(manutencao);
 
-                    // Mensagem de sucesso
+                    
                     MessageBox box = new MessageBox(shell, SWT.OK);
                     box.setMessage("Manutenção atualizada com sucesso!");
                     box.open();
@@ -267,45 +299,49 @@ public class ViewManutencao {
             }
         });
 
-        // Botão para Consultar Manutenção por ID
+        
         Button btnConsultarManutencaoId = new Button(shell, SWT.NONE);
         btnConsultarManutencaoId.setText("Consultar Manutenção por ID");
         btnConsultarManutencaoId.setBounds(565, 227, 165, 30);
-        btnConsultarManutencaoId.setVisible(true); // Começa visível
+        btnConsultarManutencaoId.setVisible(true); 
 
-        // Text para digitar o ID da Manutenção
+      
         Text txtManutencaoId = new Text(shell, SWT.BORDER);
         txtManutencaoId.setBounds(736, 227, 44, 25);
-        txtManutencaoId.setVisible(false); // Começa invisível
+        txtManutencaoId.setVisible(false); 
 
-        // Adicionando botão para confirmar a consulta com o ID
+     
         Button btnConfirmarManutencaoId = new Button(shell, SWT.NONE);
         btnConfirmarManutencaoId.setText("Confirmar ID");
         btnConfirmarManutencaoId.setBounds(786, 227, 150, 30);
-        btnConfirmarManutencaoId.setVisible(false); // Começa invisível
+        btnConfirmarManutencaoId.setVisible(false); 
 
-        // Quando o botão "Consultar Manutenção por ID" for clicado
+        
         btnConsultarManutencaoId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                txtManutencaoId.setVisible(true); // Exibe o campo para inserir o ID
-                btnConfirmarManutencaoId.setVisible(true); // Exibe o botão de confirmação
+                txtManutencaoId.setVisible(true); 
+                btnConfirmarManutencaoId.setVisible(true); 
             }
         });
 
-        // Quando o botão "Confirmar ID" for clicado
+        
         btnConfirmarManutencaoId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    String idManutencaoInput = txtManutencaoId.getText(); // Pega o ID inserido
+                    String idManutencaoInput = txtManutencaoId.getText(); 
                     if (idManutencaoInput != null && !idManutencaoInput.isEmpty()) {
-                        int idManutencao = Integer.parseInt(idManutencaoInput); // Converte o ID para inteiro
+                        Integer idManutencao = Integer.parseInt(idManutencaoInput); 
+                        
+                        
+                        Manutencao manutencaoConsultar = new Manutencao();
+                       manutencaoConsultar.setIdManutencao(idManutencao);
 
-                        Manutencao manutencao = manutencaoBanco.consultar(idManutencao); // Consulta no banco de dados
+                        Manutencao manutencao = manutencaoBanco.consultar(manutencaoConsultar); 
 
                         if (manutencao != null) {
-                            // Adiciona os dados da manutenção à tabela
+                            
                             table.removeAll();
                             TableItem item = new TableItem(table, SWT.NONE);
                             item.setText(new String[]{
@@ -319,19 +355,19 @@ public class ViewManutencao {
                                     String.valueOf(manutencao.getCusto())
                             });
                         } else {
-                            // Exibe mensagem caso a manutenção não seja encontrada
+                          
                             MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
                             messageBox.setMessage("Manutenção não encontrada.");
                             messageBox.open();
                         }
                     } else {
-                        // Exibe mensagem caso o campo de ID esteja vazio
+                       
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                         messageBox.setMessage("Digite um ID válido.");
                         messageBox.open();
                     }
                 } catch (NumberFormatException ex) {
-                    // Exibe mensagem caso o ID não seja um número válido
+                    
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                     messageBox.setMessage("ID inválido.");
                     messageBox.open();
@@ -339,7 +375,7 @@ public class ViewManutencao {
             }
         });
 
-        // Exibe o botão de "Consultar Manutenção por ID" quando necessário
+        
         btnConsultarManutencaoId.setVisible(true);
 
     }

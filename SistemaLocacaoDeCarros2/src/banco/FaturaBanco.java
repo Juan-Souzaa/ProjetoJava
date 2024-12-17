@@ -72,19 +72,19 @@ public class FaturaBanco {
         return faturas;
     }
 
-    public Fatura consultar(Integer numeroFatura) {
-        Fatura fatura = null;
+    public Fatura consultar(Fatura fatura) {
+        Fatura faturaConsulta = null;
         try {
             String sql = "CALL consultar_fatura(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, numeroFatura);
+            statement.setInt(1, fatura.getNumeroFatura());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-            	fatura = new Fatura();
-                fatura.setNumeroFatura(rs.getInt("idFatura"));
-                fatura.setDataEmissao(rs.getDate("dataEmissao").toLocalDate());
-                fatura.setValorTotal(rs.getDouble("valorTotal"));
-                fatura.setObservacoes(rs.getString("observacoes"));
+            	faturaConsulta = new Fatura();
+                faturaConsulta.setNumeroFatura(rs.getInt("idFatura"));
+                faturaConsulta.setDataEmissao(rs.getDate("dataEmissao").toLocalDate());
+                faturaConsulta.setValorTotal(rs.getDouble("valorTotal"));
+                faturaConsulta.setObservacoes(rs.getString("observacoes"));
                 
                 Reserva reserva = new Reserva();
 				Cliente cliente = new Cliente();
@@ -99,14 +99,14 @@ public class FaturaBanco {
                 Locacao locacao = new Locacao();
                 locacao.setReservaLocacao(reserva);
                 locacao.setIdLocacao(rs.getInt("idLocacao")); 
-                fatura.setLocacaoFatura(locacao);
+                faturaConsulta.setLocacaoFatura(locacao);
             }
             rs.close();
             statement.close();
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao consultar fatura: " + e.getMessage(), e);
         }
-        return fatura;
+        return faturaConsulta;
     }
 
     public void atualizar(Fatura fatura) {
@@ -125,11 +125,11 @@ public class FaturaBanco {
         }
     }
 
-    public void deletar(int numeroFatura) {
+    public void deletar(Fatura fatura) {
         try {
             String sql = "CALL deletar_fatura(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, numeroFatura);
+            statement.setInt(1, fatura.getNumeroFatura());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

@@ -94,23 +94,23 @@ public class LocacaoBanco {
     }
 
 
-    public Locacao consultar(int idLocacao) {
-        Locacao locacao = null;
+    public Locacao consultar(Locacao locacao) {
+        Locacao locacaoConsultar = null;
         try {
             String sql = "CALL consultar_locacao(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idLocacao);
+            statement.setInt(1, locacao.getIdLocacao());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-            	locacao = new Locacao();
-            	locacao.setIdLocacao(rs.getInt("idLocacao"));
-                locacao.setDataLocacao(rs.getDate("dataLocacao").toLocalDate());
-                locacao.setDataDevolucaoPrevista(rs.getDate("dataDevolucaoPrevista").toLocalDate());
-                locacao.setDataDevolucaoReal(rs.getDate("dataDevolucaoReal").toLocalDate());
-                locacao.setValorTotal(rs.getDouble("valorTotal"));
-                locacao.setTipoLocacao(rs.getString("tipoLocacao"));
-                locacao.setObservacoes(rs.getString("observacoes"));
-                // Criando e associando a reserva à locação
+            	locacaoConsultar = new Locacao();
+            	locacaoConsultar.setIdLocacao(rs.getInt("idLocacao"));
+                locacaoConsultar.setDataLocacao(rs.getDate("dataLocacao").toLocalDate());
+                locacaoConsultar.setDataDevolucaoPrevista(rs.getDate("dataDevolucaoPrevista").toLocalDate());
+                locacaoConsultar.setDataDevolucaoReal(rs.getDate("dataDevolucaoReal").toLocalDate());
+                locacaoConsultar.setValorTotal(rs.getDouble("valorTotal"));
+                locacaoConsultar.setTipoLocacao(rs.getString("tipoLocacao"));
+                locacaoConsultar.setObservacoes(rs.getString("observacoes"));
+               
                 Reserva reserva = new Reserva();
                 
                 reserva.setDataReserva(rs.getDate("dataReserva").toLocalDate());
@@ -119,19 +119,19 @@ public class LocacaoBanco {
                
                
                 
-                // Adicionando cliente à reserva (cliente vem de usuário)
+                
                 Cliente cliente = new Cliente();
                 cliente.setNomeCompleto(rs.getString("nomeCompleto"));
-                reserva.setClienteReserva(cliente); // Atribuindo o cliente à reserva
+                reserva.setClienteReserva(cliente); 
                 
-                // Adicionando a reserva à locação
-                locacao.setReservaLocacao(reserva);
+               
+                locacaoConsultar.setReservaLocacao(reserva);
                 
-                // Criando e associando o veículo à locação
+               
                 Veiculo veiculo = new Veiculo();
                 veiculo.setPlaca(rs.getString("veiculoPlaca"));
                 veiculo.setCategoria(rs.getString("veiculoCategoria"));
-                locacao.setVeiculoLocacao(veiculo); // Associando o veículo à locação
+                locacaoConsultar.setVeiculoLocacao(veiculo); 
                 
                
              
@@ -141,7 +141,7 @@ public class LocacaoBanco {
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao consultar locação: " + e.getMessage(), e);
         }
-        return locacao;
+        return locacaoConsultar;
     }
 
     public void atualizar(Locacao locacao) {
@@ -164,11 +164,11 @@ public class LocacaoBanco {
         }
     }
 
-    public void deletar(int idLocacao) {
+    public void deletar(Locacao locacao) {
         try {
             String sql = "CALL deletar_locacao(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idLocacao);
+            statement.setInt(1, locacao.getIdLocacao());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

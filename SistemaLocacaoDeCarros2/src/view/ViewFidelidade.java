@@ -128,25 +128,7 @@ public class ViewFidelidade {
 		tblclmnDataUltimaAtualizacao.setWidth(156);
 		tblclmnDataUltimaAtualizacao.setText("Última Atualização");
 
-		Button btnCadastrarFidelidade = new Button(shell, SWT.NONE);
-		btnCadastrarFidelidade.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Integer pontos = Integer.parseInt(txtPontos.getText());
-				String nivel = txtNivel.getText();
-				LocalDate dataUltimaAtt = LocalDate.of(dateUltimaAtualizacao.getYear(),
-						dateUltimaAtualizacao.getMonth() + 1, dateUltimaAtualizacao.getDay());
-
-				Fidelidade fidelidade = new Fidelidade(pontos, nivel, dataUltimaAtt, clienteSelecionado);
-				fidelidadeBanco.incluir(fidelidade);
-
-				MessageBox box = new MessageBox(shell, SWT.OK);
-				box.setMessage("Fidelidade cadastrada com sucesso!");
-				box.open();
-			}
-		});
-		btnCadastrarFidelidade.setBounds(25, 256, 128, 25);
-		btnCadastrarFidelidade.setText("Cadastrar Fidelidade");
+		
 
 		Button btnDeletarFidelidade = new Button(shell, SWT.NONE);
 		btnDeletarFidelidade.setBounds(199, 256, 110, 25);
@@ -155,10 +137,61 @@ public class ViewFidelidade {
 		Button btnListarFidelidade = new Button(shell, SWT.NONE);
 		btnListarFidelidade.setBounds(332, 256, 128, 25);
 		btnListarFidelidade.setText("Consultar Fidelidade");
-		
+
 		Button btnAtualizarFidelidade = new Button(shell, SWT.NONE);
 		btnAtualizarFidelidade.setBounds(475, 256, 110, 25);
 		btnAtualizarFidelidade.setText("Atualizar Fidelidade");
+
+		Button btnCadastrarFidelidade = new Button(shell, SWT.NONE);
+		btnCadastrarFidelidade.setBounds(25, 256, 128, 25);
+		btnCadastrarFidelidade.setText("Cadastrar Fidelidade");
+		btnCadastrarFidelidade.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				if (clienteSelecionado == null) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione um cliente antes de cadastrar a fidelidade.");
+					warningBox.open();
+					return;
+				}
+
+				
+				String pontosText = txtPontos.getText().trim();
+				if (!pontosText.matches("\\d+")) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("O campo 'Pontos' deve conter um número válido.");
+					warningBox.open();
+					return;
+				}
+				Integer pontos = Integer.parseInt(pontosText);
+
+				
+				String nivel = txtNivel.getText().trim();
+				if (nivel.isEmpty()) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("O campo 'Nível' não pode estar vazio.");
+					warningBox.open();
+					return;
+				}
+
+				
+				LocalDate dataUltimaAtt = LocalDate.of(dateUltimaAtualizacao.getYear(),
+						dateUltimaAtualizacao.getMonth() + 1, dateUltimaAtualizacao.getDay());
+
+			
+				Fidelidade fidelidade = new Fidelidade(pontos, nivel, dataUltimaAtt, clienteSelecionado);
+				fidelidadeBanco.incluir(fidelidade);
+
+				MessageBox box = new MessageBox(shell, SWT.OK);
+				box.setMessage("Fidelidade cadastrada com sucesso!");
+				box.open();
+				btnListarFidelidade.notifyListeners(SWT.Selection, null);
+
+				txtPontos.setText("");
+				txtNivel.setText("");
+			}
+		});
 
 		btnDeletarFidelidade.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -166,9 +199,13 @@ public class ViewFidelidade {
 				int selectedIndex = table.getSelectionIndex();
 				if (selectedIndex != -1) {
 					TableItem item = table.getItem(selectedIndex);
-					int idFidelidade = Integer.parseInt(item.getText(0));
+					Integer idFidelidade = Integer.parseInt(item.getText(0));
+					
+					
+					Fidelidade fidelidadeDeletar = new Fidelidade();
+					fidelidadeDeletar.setIdFidelidade(idFidelidade);
 
-					fidelidadeBanco.deletar(idFidelidade);
+					fidelidadeBanco.deletar(fidelidadeDeletar);
 					MessageBox messageBox = new MessageBox(shell, SWT.OK);
 					messageBox.setMessage(" Deletado com sucesso!");
 					messageBox.open();
@@ -182,7 +219,7 @@ public class ViewFidelidade {
 
 			}
 		});
-//listar
+
 		btnListarFidelidade.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -210,22 +247,43 @@ public class ViewFidelidade {
 					warningBox.open();
 					btnListarFidelidade.notifyListeners(SWT.Selection, null);
 					return;
+
 				}
 
+				if (clienteSelecionado == null) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("Selecione um cliente antes de atualizar a fidelidade.");
+					warningBox.open();
+					return;
+				}
+
+				String pontosText = txtPontos.getText().trim();
+				if (!pontosText.matches("\\d+")) {
+					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+					warningBox.setMessage("O campo 'Pontos' deve conter um número válido.");
+					warningBox.open();
+					return;
+				}
 				try {
 					Integer idFidelidade = Integer.parseInt(selectedItems[0].getText(0));
-					Integer pontos = Integer.parseInt(txtPontos.getText());
+					Integer pontos = Integer.parseInt((pontosText));
 					String nivel = txtNivel.getText();
+					if (nivel.isEmpty()) {
+						MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+						warningBox.setMessage("O campo 'Nível' não pode estar vazio.");
+						warningBox.open();
+						return;
+					}
 					LocalDate dataUltimaAtt = LocalDate.of(dateUltimaAtualizacao.getYear(),
 							dateUltimaAtualizacao.getMonth() + 1, dateUltimaAtualizacao.getDay());
 
-					Fidelidade fidelidade = new Fidelidade(idFidelidade, pontos, nivel, dataUltimaAtt, clienteSelecionado);
-					
+					Fidelidade fidelidade = new Fidelidade(idFidelidade, pontos, nivel, dataUltimaAtt,
+							clienteSelecionado);
 
-					// Atualizando o banco de dados
+					
 					fidelidadeBanco.atualizar(fidelidade);
 
-					// Mensagem de sucesso
+					
 					MessageBox box = new MessageBox(shell, SWT.OK);
 					box.setMessage("Fidelidade atualizada com sucesso!");
 					box.open();
@@ -238,77 +296,72 @@ public class ViewFidelidade {
 			}
 		});
 
-
-
-
-
-		// Botão para consultar Fidelidade por ID
+		
 		Button btnConsultarFidelidadeId = new Button(shell, SWT.NONE);
 		btnConsultarFidelidadeId.setText("Consultar Fidelidade por ID");
 		btnConsultarFidelidadeId.setBounds(348, 201, 200, 30);
 
-		// Campo para digitar o ID da Fidelidade
+		
 		Text txtFidelidadeId = new Text(shell, SWT.BORDER);
 		txtFidelidadeId.setBounds(554, 206, 100, 25);
-		txtFidelidadeId.setVisible(false); // Começa invisível
+		txtFidelidadeId.setVisible(false); 
 
-		// Botão para confirmar a consulta
+
 		Button btnConfirmarFidelidadeId = new Button(shell, SWT.NONE);
 		btnConfirmarFidelidadeId.setText("Confirmar ID");
 		btnConfirmarFidelidadeId.setBounds(717, 201, 150, 30);
-		btnConfirmarFidelidadeId.setVisible(false); // Começa invisível
+		btnConfirmarFidelidadeId.setVisible(false); 
 
-		// Quando o botão "Consultar Fidelidade por ID" for clicado
+		
 		btnConsultarFidelidadeId.addSelectionListener(new SelectionAdapter() {
-		    @Override
-		    public void widgetSelected(SelectionEvent e) {
-		        txtFidelidadeId.setVisible(true); // Exibe o campo para inserir o ID
-		        btnConfirmarFidelidadeId.setVisible(true); // Exibe o botão de confirmação
-		    }
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				txtFidelidadeId.setVisible(true); 
+				btnConfirmarFidelidadeId.setVisible(true); 
+			}
 		});
 
-		// Quando o botão "Confirmar ID" for clicado
+	
 		btnConfirmarFidelidadeId.addSelectionListener(new SelectionAdapter() {
-		    @Override
-		    public void widgetSelected(SelectionEvent e) {
-		        try {
-		            String idFidelidadeInput = txtFidelidadeId.getText(); // Pega o ID inserido
-		            if (idFidelidadeInput != null && !idFidelidadeInput.isEmpty()) {
-		                int idFidelidade = Integer.parseInt(idFidelidadeInput); // Converte o ID para inteiro
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					String idFidelidadeInput = txtFidelidadeId.getText(); 
+					if (idFidelidadeInput != null && !idFidelidadeInput.isEmpty()) {
+						Integer idFidelidade = Integer.parseInt(idFidelidadeInput); 
 
-		                // Chama o método para consultar fidelidade
-		                Fidelidade fidelidade = fidelidadeBanco.consultar(idFidelidade); 
+						Fidelidade fidelidadeConsultar = new Fidelidade();
+						fidelidadeConsultar.setIdFidelidade(idFidelidade);
+						Fidelidade fidelidade = fidelidadeBanco.consultar(fidelidadeConsultar);
 
-		                if (fidelidade != null) {
-		                    // Adiciona os dados da fidelidade à tabela
-		                    table.removeAll();
-		                    TableItem item = new TableItem(table, SWT.NONE);
-		                    item.setText(new String[] {
-		                    		String.valueOf(fidelidade.getIdFidelidade()),
-									fidelidade.getClienteFidelidade().getNomeCompleto(), String.valueOf(fidelidade.getPontos()),
-									fidelidade.getNivel(), fidelidade.getDataUltimaAtualizacao().toString(), 
-		                    });
-		                } else {
-		                    // Exibe mensagem caso a fidelidade não seja encontrada
-		                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
-		                    messageBox.setMessage("Fidelidade não encontrada.");
-		                    messageBox.open();
-		                }
-		            } else {
-		                // Exibe mensagem caso o campo de ID esteja vazio
-		                MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
-		                messageBox.setMessage("Digite um ID válido.");
-		                messageBox.open();
-		            }
-		        } catch (NumberFormatException ex) {
-		            // Exibe mensagem caso o ID não seja um número válido
-		            MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
-		            messageBox.setMessage("ID inválido.");
-		            messageBox.open();
-		        }
-		    }
+						if (fidelidade != null) {
+							
+							table.removeAll();
+							TableItem item = new TableItem(table, SWT.NONE);
+							item.setText(new String[] { String.valueOf(fidelidade.getIdFidelidade()),
+									fidelidade.getClienteFidelidade().getNomeCompleto(),
+									String.valueOf(fidelidade.getPontos()), fidelidade.getNivel(),
+									fidelidade.getDataUltimaAtualizacao().toString(), });
+						} else {
+							
+							MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+							messageBox.setMessage("Fidelidade não encontrada.");
+							messageBox.open();
+						}
+					} else {
+						
+						MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+						messageBox.setMessage("Digite um ID válido.");
+						messageBox.open();
+					}
+				} catch (NumberFormatException ex) {
+				
+					MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+					messageBox.setMessage("ID inválido.");
+					messageBox.open();
+				}
+			}
 		});
-
 
 	}
 }

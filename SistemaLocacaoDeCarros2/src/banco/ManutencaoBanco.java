@@ -61,27 +61,27 @@ public class ManutencaoBanco {
         return manutencoes;
     }
 
-    public Manutencao consultar(Integer idManutencao) {
-        Manutencao manutencao = null;
+    public Manutencao consultar(Manutencao manutencao) {
+        Manutencao manutencaoConsultar = null;
         try {
             String sql = "CALL consultar_manutencao(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idManutencao);
+            statement.setInt(1, manutencao.getIdManutencao());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-            	manutencao = new Manutencao();
-                manutencao.setIdManutencao(rs.getInt("idManutencao")); 
-                manutencao.setDataManutencao(rs.getDate("dataManutencao").toLocalDate());
-                manutencao.setTipoManutencao(rs.getString("tipoManutencao")); 
-                manutencao.setCusto(rs.getDouble("custo"));
-                manutencao.setDescricao(rs.getString("descricao")); 
+            	manutencaoConsultar = new Manutencao();
+                manutencaoConsultar.setIdManutencao(rs.getInt("idManutencao")); 
+                manutencaoConsultar.setDataManutencao(rs.getDate("dataManutencao").toLocalDate());
+                manutencaoConsultar.setTipoManutencao(rs.getString("tipoManutencao")); 
+                manutencaoConsultar.setCusto(rs.getDouble("custo"));
+                manutencaoConsultar.setDescricao(rs.getString("descricao")); 
                 
                 Veiculo veiculoManutencao = new Veiculo();
                 veiculoManutencao.setMarca(rs.getString("marca"));
                 veiculoManutencao.setPlaca(rs.getString("placa"));
                 veiculoManutencao.setDataUltimaManutencao(rs.getDate("dataUltimaManutencao").toLocalDate());
                 
-                manutencao.setVeiculomanutencao(veiculoManutencao);
+                manutencaoConsultar.setVeiculomanutencao(veiculoManutencao);
             
             }
             rs.close();
@@ -89,7 +89,7 @@ public class ManutencaoBanco {
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao consultar manutenção: " + e.getMessage(), e);
         }
-        return manutencao;
+        return manutencaoConsultar;
     }
 
     public void atualizar(Manutencao manutencao) {
@@ -110,11 +110,11 @@ public class ManutencaoBanco {
         }
     }
 
-    public void deletar(Integer idManutencao) {
+    public void deletar(Manutencao manutencao) {
         try {
             String sql = "CALL deletar_manutencao(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idManutencao);
+            statement.setInt(1, manutencao.getIdManutencao());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

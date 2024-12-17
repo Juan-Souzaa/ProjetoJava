@@ -18,12 +18,15 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import banco.DevolucaoBanco;
+
 import model.Devolucao;
+import model.Locacao;
 
 public class ViewDevolucao {
     private DevolucaoBanco devolucaoBanco;
     protected Shell shell;
     private Table table;
+    private Locacao locacaoSelecionada;
 
     public ViewDevolucao() {
         this.devolucaoBanco = new DevolucaoBanco();
@@ -40,56 +43,99 @@ public class ViewDevolucao {
             }
         }
     }
+    public static void main(String[] args) {
+        try {
+            ViewDevolucao window = new ViewDevolucao();
+            window.open();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    
 
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(600, 600);
+        shell.setSize(854, 707);
         shell.setText("Devolução - Locadora");
+        
+        
+        Button btnSelecionarLocacao = new Button(shell, SWT.NONE);
+        btnSelecionarLocacao.setBounds(265, 40, 150, 25);
+        btnSelecionarLocacao.setText("Selecionar Locacao");
+
+        Label lblLocacaoSelecionado = new Label(shell, SWT.NONE);
+        lblLocacaoSelecionado.setBounds(32, 45, 200, 25);
+        lblLocacaoSelecionado.setText("Nenhuma Locacao selecionada");
+
+        // Ação do botão selecionar veículo
+        btnSelecionarLocacao.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ViewSelecionarLocacao viewSelecionarLocacao = new ViewSelecionarLocacao();
+                locacaoSelecionada = viewSelecionarLocacao.open();
+                if (locacaoSelecionada != null) {
+                    lblLocacaoSelecionado.setText("Locação do CLiente :" + locacaoSelecionada.getReservaLocacao().getClienteReserva().getNomeCompleto());
+                   
+                }
+            }
+        });
+
 
         Label lblDataDevolucao = new Label(shell, SWT.NONE);
         lblDataDevolucao.setText("Data da Devolução:");
-        lblDataDevolucao.setBounds(20, 30, 120, 15);
+        lblDataDevolucao.setBounds(32, 97, 120, 15);
 
         DateTime dateDevolucao = new DateTime(shell, SWT.BORDER);
-        dateDevolucao.setBounds(140, 30, 120, 24);
+        dateDevolucao.setBounds(165, 88, 120, 24);
 
         Label lblCondicao = new Label(shell, SWT.NONE);
         lblCondicao.setText("Condição do Veículo:");
-        lblCondicao.setBounds(20, 80, 120, 15);
+        lblCondicao.setBounds(32, 156, 120, 15);
 
         Text txtCondicao = new Text(shell, SWT.BORDER);
-        txtCondicao.setBounds(140, 80, 300, 60);
+        txtCondicao.setBounds(159, 147, 300, 37);
 
         Label lblTaxaAtraso = new Label(shell, SWT.NONE);
         lblTaxaAtraso.setText("Taxa de Atraso:");
-        lblTaxaAtraso.setBounds(20, 160, 120, 15);
+        lblTaxaAtraso.setBounds(32, 245, 120, 15);
 
         Text txtTaxaAtraso = new Text(shell, SWT.BORDER);
-        txtTaxaAtraso.setBounds(140, 160, 120, 30);
+        txtTaxaAtraso.setBounds(165, 230, 120, 30);
 
         Label lblStatus = new Label(shell, SWT.NONE);
         lblStatus.setText("Status da Devolução:");
-        lblStatus.setBounds(20, 210, 120, 15);
-
-        Text txtStatus = new Text(shell, SWT.BORDER);
-        txtStatus.setBounds(140, 210, 120, 30);
+        lblStatus.setBounds(32, 281, 120, 15);
 
         Button btnCadastrarDevolucao = new Button(shell, SWT.NONE);
-        btnCadastrarDevolucao.setBounds(20, 260, 120, 30);
+        btnCadastrarDevolucao.setBounds(44, 331, 120, 30);
         btnCadastrarDevolucao.setText("Cadastrar Devolução");
 
         Button btnConsultarDevolucao = new Button(shell, SWT.NONE);
-        btnConsultarDevolucao.setBounds(160, 260, 120, 30);
+        btnConsultarDevolucao.setBounds(225, 331, 120, 30);
         btnConsultarDevolucao.setText("Consultar Devolução");
 
         Button btnDeletarDevolucao = new Button(shell, SWT.NONE);
-        btnDeletarDevolucao.setBounds(300, 260, 120, 30);
+        btnDeletarDevolucao.setBounds(384, 331, 120, 30);
         btnDeletarDevolucao.setText("Deletar Devolução");
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(20, 300, 500, 200);
+        table.setBounds(20, 391, 786, 223);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
+        
+        TableColumn tblclmnIdDevolucao = new TableColumn(table, SWT.NONE);
+        tblclmnIdDevolucao.setWidth(100);
+        tblclmnIdDevolucao.setText("ID Devolucao");
+        
+        TableColumn tblclmnIdLocacao = new TableColumn(table, SWT.NONE);
+        tblclmnIdLocacao.setWidth(100);
+        tblclmnIdLocacao.setText("iD Locacao");
+        
+        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+        tblclmnNewColumn.setWidth(100);
+        tblclmnNewColumn.setText("Nome");
 
         TableColumn tblclmnData = new TableColumn(table, SWT.NONE);
         tblclmnData.setWidth(100);
@@ -106,21 +152,64 @@ public class ViewDevolucao {
         TableColumn tblclmnStatus = new TableColumn(table, SWT.NONE);
         tblclmnStatus.setWidth(150);
         tblclmnStatus.setText("Status da Devolução");
+        
+        Button btnDevolvido = new Button(shell, SWT.RADIO);
+        btnDevolvido.setBounds(175, 280, 90, 16);
+        btnDevolvido.setText("Concluida");
+        
+        Button btnNaoDevolvida = new Button(shell, SWT.RADIO);
+        btnNaoDevolvida.setBounds(302, 281, 90, 16);
+        btnNaoDevolvida.setText("A concluir");
+        
+        Button btnAtualizar = new Button(shell, SWT.NONE);
+        btnAtualizar.setBounds(523, 336, 75, 25);
+        btnAtualizar.setText("Atualizar");
+        
+        Button btnBuscarPorID = new Button(shell, SWT.NONE);
+        btnBuscarPorID.setBounds(463, 245, 150, 30);
+        btnBuscarPorID.setText("Buscar por ID");
+
+        
+        Text txtBuscarID = new Text(shell, SWT.BORDER);
+        txtBuscarID.setBounds(634, 242, 50, 25);
+
+      
+        Button btnConfirmarBuscarID = new Button(shell, SWT.NONE);
+        btnConfirmarBuscarID.setBounds(706, 245, 100, 30);
+        btnConfirmarBuscarID.setText("Confirmar");
+        btnConfirmarBuscarID.setVisible(false);
+        txtBuscarID.setVisible(false);
 
       
         btnCadastrarDevolucao.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+            	
+                if (locacaoSelecionada == null) {
+                    MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione uma locação antes de cadastrar a devolução.");
+                    warningBox.open();
+                    return;
+                }
+
                 String condicao = txtCondicao.getText();
-                double taxaAtraso = Double.parseDouble(txtTaxaAtraso.getText());
-               
+                Double taxaAtraso = Double.parseDouble(txtTaxaAtraso.getText());
+                Boolean statusDevolucao = btnDevolvido.getSelection();
                 LocalDate dataDevolucao = LocalDate.of(dateDevolucao.getYear(), dateDevolucao.getMonth() + 1, dateDevolucao.getDay());
 
-                Devolucao devolucao = new Devolucao(dataDevolucao, condicao, taxaAtraso,true);
+                Devolucao devolucao = new Devolucao(dataDevolucao, condicao, taxaAtraso,statusDevolucao,locacaoSelecionada);
                 devolucaoBanco.incluir(devolucao);
                 MessageBox messageBox = new MessageBox(shell, SWT.OK);
                 messageBox.setMessage("Devolução cadastrada com sucesso!");
                 messageBox.open();
+                btnConsultarDevolucao.notifyListeners(SWT.Selection, null);
+                
+                
+                txtCondicao.setText("");
+                txtTaxaAtraso.setText("");
+              
+                btnDevolvido.setSelection(false);
+                btnNaoDevolvida.setSelection(false);
             }
         });
 
@@ -133,10 +222,13 @@ public class ViewDevolucao {
                 for (Devolucao devolucao : devolucoes) {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[]{
-                            devolucao.getDataDevolucao().toString(),
+                    		String.valueOf(devolucao.getIdDevolucao()),
+                    		String.valueOf(devolucao.getLocacaoDevolucao().getIdLocacao()),
+                    		devolucao.getLocacaoDevolucao().getReservaLocacao().getClienteReserva().getNomeCompleto(),
+                    		devolucao.getDataDevolucao().toString(),
                             devolucao.getCondicaoVeiculo(),
                             String.valueOf(devolucao.getTaxaAtraso()),
-                            devolucao.getStatusDevolucao() ? "Sim" : "Não"
+                            devolucao.getStatusDevolucao() ? "Concluida" : "A Concluir"
                     });
                 }
             }
@@ -149,9 +241,12 @@ public class ViewDevolucao {
                 int selectedIndex = table.getSelectionIndex();
                 if (selectedIndex != -1) {
                     TableItem item = table.getItem(selectedIndex);
-                    int idDevolucao = Integer.parseInt(item.getText(0));  
+                    Integer idDevolucao = Integer.parseInt(item.getText(0));  
+                    
+                    Devolucao devolucaoDeletar = new Devolucao();
+                    devolucaoDeletar.setIdDevolucao(idDevolucao);
 
-                    devolucaoBanco.deletar(idDevolucao);
+                    devolucaoBanco.deletar(devolucaoDeletar);
                     MessageBox messageBox = new MessageBox(shell, SWT.OK);
                     messageBox.setMessage("Devolução deletada com sucesso!");
                     messageBox.open();
@@ -166,44 +261,101 @@ public class ViewDevolucao {
             }
         });
 
-        btnAtualizarDevolucao.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				TableItem[] selectedItems = table.getSelection();
+   
 
-				if (selectedItems.length == 0) {
-					MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
-					warningBox.setMessage("Selecione uma Devolucao na tabela para atualizar.");
-					warningBox.open();
-					btnListarDevolucao.notifyListeners(SWT.Selection, null);
-					return;
-				}
+        btnAtualizar.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                TableItem[] selectedItems = table.getSelection();
 
-				try {
-					        devolucao.getDataDevolucao().toString(),
-                            devolucao.getCondicaoVeiculo(),
-                            String.valueOf(devolucao.getTaxaAtraso()),
-                            devolucao.getStatusDevolucao() ? "Sim" : "Não"
+                if (selectedItems.length == 0) {
+                    MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                    warningBox.setMessage("Selecione uma devolução na tabela para atualizar.");
+                    warningBox.open();
+                    btnConsultarDevolucao.notifyListeners(SWT.Selection, null);
+                    return;
+                }
+              
+                try {
+                  
+                	 String condicao = txtCondicao.getText();
+                     Double taxaAtraso = Double.parseDouble(txtTaxaAtraso.getText());
+                     Boolean statusDevolucao = btnDevolvido.getSelection();
+                     LocalDate dataDevolucao = LocalDate.of(dateDevolucao.getYear(), dateDevolucao.getMonth() + 1, dateDevolucao.getDay());
 
-					// Atualizando o banco de dados
-					devolucaoBanco.atualizar(fidelidade);
+                   
+                    TableItem selectedItem = selectedItems[0];
+                    Integer idDevolucao = Integer.parseInt(selectedItem.getText(0)); // Assume que o ID está na primeira coluna da tabela
 
-					// Mensagem de sucesso
-					MessageBox box = new MessageBox(shell, SWT.OK);
-					box.setMessage("Fidelidade atualizada com sucesso!");
-					box.open();
-					btnListarFidelidade.notifyListeners(SWT.Selection, null);
-				} catch (Exception ex) {
-					MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-					errorBox.setMessage("Erro ao atualizar Fidelidade: " + ex.getMessage());
-					errorBox.open();
-				}
-			}
-		});
+                  
+                    Devolucao devolucao = new Devolucao(idDevolucao,dataDevolucao, condicao, taxaAtraso,statusDevolucao,locacaoSelecionada);
+
+                    
+                    devolucaoBanco.atualizar(devolucao);
+
+                    MessageBox box = new MessageBox(shell, SWT.ICON_INFORMATION);
+                    box.setMessage("Devolução atualizada com sucesso!");
+                    box.open();
+
+                   
+                    btnConsultarDevolucao.notifyListeners(SWT.Selection, null); 
+                } catch (Exception ex) {
+                    MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                    errorBox.setMessage("Erro ao atualizar devolução: " + ex.getMessage());
+                    errorBox.open();
+                }
+            }
+        });
 
 
+        btnBuscarPorID.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                txtBuscarID.setVisible(true);
+                btnConfirmarBuscarID.setVisible(true);
+            }
+        });
 
+        btnConfirmarBuscarID.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+                    String idText = txtBuscarID.getText();
+                    if (idText == null || idText.isEmpty()) {
+                        throw new NumberFormatException("ID inválido.");
+                    }
 
+                    Integer idDevolucao = Integer.parseInt(idText); 
+
+                    Devolucao devolucaoConsulta = new Devolucao();
+                    devolucaoConsulta.setIdDevolucao(idDevolucao);
+                    Devolucao devolucao = devolucaoBanco.consultar(devolucaoConsulta);
+
+                    if (devolucao != null) {
+                        table.removeAll(); 
+                        TableItem item = new TableItem(table, SWT.NONE);
+                        item.setText(new String[] {
+                        		String.valueOf(devolucao.getIdDevolucao()),
+                        		String.valueOf(devolucao.getLocacaoDevolucao().getIdLocacao()),
+                        		devolucao.getLocacaoDevolucao().getReservaLocacao().getClienteReserva().getNomeCompleto(),
+                        		devolucao.getDataDevolucao().toString(),
+                                devolucao.getCondicaoVeiculo(),
+                                String.valueOf(devolucao.getTaxaAtraso()),
+                                devolucao.getStatusDevolucao() ? "Concluida" : "A Concluir"
+                        });
+                    } else {
+                        MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                        box.setMessage("Devolução não encontrada.");
+                        box.open();
+                    }
+                } catch (NumberFormatException ex) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_ERROR);
+                    box.setMessage("ID inválido. Digite um número válido.");
+                    box.open();
+                }
+            }
+        });
+        
 
 
 

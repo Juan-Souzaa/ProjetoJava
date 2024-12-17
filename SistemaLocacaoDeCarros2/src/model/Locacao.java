@@ -34,7 +34,6 @@ public class Locacao {
 	}
 
 	
-
 	public Locacao(Integer idLocacao, LocalDate dataLocacao, LocalDate dataDevolucaoPrevista,
 			LocalDate dataDevolucaoReal, Double valorTotal, String tipoLocacao, String observacoes,
 			Veiculo veiculoLocacao, Reserva reservaLocacao) {
@@ -134,6 +133,19 @@ public class Locacao {
 	public void setReservaLocacao(Reserva reservaLocacao) {
 		this.reservaLocacao = reservaLocacao;
 	}
-	
+	  public boolean validarDatas() {
+	       
+	        if (dataDevolucaoPrevista.isBefore(dataLocacao)) {
+	            return false; // Data inválida
+	        }
+	        
+	        
+	        if (dataDevolucaoReal != null && dataDevolucaoReal.isBefore(dataLocacao)) {
+	            return false; // Data inválida
+	        }
+	        
+	        return true; // Todas as datas são válidas
+	    }
+
 	
 }

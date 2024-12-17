@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.AgenteLocacao;
-import model.Balconista;
+
 import model.Usuario;
 
 public class AgenteLocacaoBanco extends UsuarioBanco {

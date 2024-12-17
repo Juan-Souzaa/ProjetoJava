@@ -61,22 +61,22 @@ public class ModeloBanco {
         return modelos;
     }
 
-    public Modelo consultar(int nomeModelo) {
-        Modelo modelo = null;
+    public Modelo consultar(Modelo modelo) {
+        Modelo modeloConsultar = null;
         try {
             String sql = "CALL consultar_modelo(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, nomeModelo);
+            statement.setInt(1, modelo.getIdModelo());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-            	modelo = new Modelo();
-            	modelo.setIdModelo(rs.getInt("idModelo"));
-                modelo.setNomeModelo(rs.getString("nomeModelo"));
-                modelo.setValorDiaria(rs.getDouble("valorDiaria"));
-                modelo.setCategoria(rs.getString("categoria"));
-                modelo.setCapacidadePassageiros(rs.getInt("capacidadePassageiros"));
-                modelo.setTipoCombustivel(rs.getString("tipoCombustivel"));
-                modelo.setConsumoMedio(rs.getDouble("consumoMedio"));
+            	modeloConsultar = new Modelo();
+            	modeloConsultar.setIdModelo(rs.getInt("idModelo"));
+                modeloConsultar.setNomeModelo(rs.getString("nomeModelo"));
+                modeloConsultar.setValorDiaria(rs.getDouble("valorDiaria"));
+                modeloConsultar.setCategoria(rs.getString("categoria"));
+                modeloConsultar.setCapacidadePassageiros(rs.getInt("capacidadePassageiros"));
+                modeloConsultar.setTipoCombustivel(rs.getString("tipoCombustivel"));
+                modeloConsultar.setConsumoMedio(rs.getDouble("consumoMedio"));
                
            
             }
@@ -85,7 +85,7 @@ public class ModeloBanco {
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao consultar modelo: " + e.getMessage(), e);
         }
-        return modelo;
+        return modeloConsultar;
     }
 
     public void atualizar(Modelo modelo) {
@@ -109,11 +109,11 @@ public class ModeloBanco {
         }
     }
 
-    public void deletar(int nomeModelo) {
+    public void deletar(Modelo modelo) {
         try {
             String sql = "CALL deletar_modelo(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, nomeModelo);
+            statement.setInt(1, modelo.getIdModelo());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

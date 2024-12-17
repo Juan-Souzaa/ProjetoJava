@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Balconista;
-import model.Cliente;
+
 
 public class BalconistaBanco extends UsuarioBanco {
 	private DBConnection connection;

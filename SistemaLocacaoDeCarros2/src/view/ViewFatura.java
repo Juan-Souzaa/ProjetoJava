@@ -66,7 +66,7 @@ public class ViewFatura {
         lblVeiculoSelecionado.setBounds(23, 13, 200, 25);
         lblVeiculoSelecionado.setText("Nenhuma Locacao selecionada");
 
-        // Ação do botão selecionar veículo
+      
         btnSelecionarLocacao.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -74,7 +74,7 @@ public class ViewFatura {
                 locacaoSelecionada = viewSelecionarLocacao.open();
                 if (locacaoSelecionada != null) {
                     lblVeiculoSelecionado.setText("Veículo: " + locacaoSelecionada.getReservaLocacao().getClienteReserva().getNomeCompleto());
-                    // Aqui você pode associar o objeto veiculoSelecionado ao modelo
+                 
                 }
             }
         });
@@ -150,9 +150,25 @@ public class ViewFatura {
         btnCadastrarFatura.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+            	
+            	 if (locacaoSelecionada == null) {
+                     MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                     warningBox.setMessage("Selecione uma locação antes de cadastrar a fatura.");
+                     warningBox.open();
+                     return;
+                 }
+
+                 // Validação do campo "Valor Total"
+                 String valorTotalText = txtValorTotal.getText().trim();
+                 if (!valorTotalText.matches("\\d+(\\.\\d{1,2})?")) {
+                     MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                     warningBox.setMessage("O campo 'Valor Total' deve conter um número válido (ex: 100.00).");
+                     warningBox.open();
+                     return;
+                 }
           
                 LocalDate dataEmissao = LocalDate.of(dateEmissao.getYear(), dateEmissao.getMonth() + 1, dateEmissao.getDay());
-                double valorTotal = Double.parseDouble(txtValorTotal.getText());
+                Double valorTotal = Double.parseDouble(valorTotalText);
                 String observacoes = txtObservacoes.getText();
 
                
@@ -162,6 +178,9 @@ public class ViewFatura {
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Fatura cadastrada com sucesso!");
                 box.open();
+                btnListarFatura.notifyListeners(SWT.Selection, null);
+                txtValorTotal.setText("");
+                txtObservacoes.setText("");
             }
         });
 
@@ -187,8 +206,7 @@ public class ViewFatura {
         });
         
 
-        
-        // colocar botao de deletar, atualizar e listar
+       
 
          btnDeletarFatura.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -196,9 +214,14 @@ public class ViewFatura {
                 int selectedIndex = table.getSelectionIndex();
                 if(selectedIndex != -1) {
                     TableItem item = table.getItem(selectedIndex);
-                    int idFatura = Integer.parseInt(item.getText(5));
+                    Integer idFatura = Integer.parseInt(item.getText(0));
+                    
+                    
+                    Fatura faturaDeletar = new Fatura();
+                    faturaDeletar.setNumeroFatura(idFatura);
+                    
 
-                    faturaBanco.deletar(idFatura);
+                    faturaBanco.deletar(faturaDeletar);
                     MessageBox messageBox = new MessageBox(shell, SWT.OK);
                     messageBox.setMessage(" deletado com sucesso!");
                     messageBox.open();  
@@ -224,27 +247,41 @@ public class ViewFatura {
 
                  if (selectedItems.length == 0) {
                      MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
-                     warningBox.setMessage("Selecione uma fatura na tabela para atualizar.");
+                     warningBox.setMessage("Selecione uma Fatura na tabela para atualizar.");
                      warningBox.open();
                      btnListarFatura.notifyListeners(SWT.Selection, null);
                      return;
                  }
+                 
+            	 if (locacaoSelecionada == null) {
+                     MessageBox errorBox = new MessageBox(shell, SWT.ICON_WARNING);
+                     errorBox.setMessage("É necessário selecionar uma locação para atualizar a fatura.");
+                     errorBox.open();
+                     return;
+                 }
+
+            	 
+            	   
+                 String valorTotalText = txtValorTotal.getText().trim();
+                 if (!valorTotalText.matches("\\d+(\\.\\d{1,2})?")) {
+                     MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                     warningBox.setMessage("O campo 'Valor Total' deve conter um número válido (ex: 100.00).");
+                     warningBox.open();
+                     return;
+                 }
+
+              
 
                  try {
-                     // Pega os valores selecionados e preenche os campos da tabela
+                	 
+                	
+                   
                      Integer idFatura = Integer.parseInt(selectedItems[0].getText(0));
                      LocalDate dataEmissao = LocalDate.of(dateEmissao.getYear(), dateEmissao.getMonth() + 1, dateEmissao.getDay());
-                     double valorTotal = Double.parseDouble(txtValorTotal.getText());
+                     Double valorTotal = Double.parseDouble(valorTotalText);
                      String observacoes = txtObservacoes.getText();
 
-                     if (locacaoSelecionada == null) {
-                         MessageBox errorBox = new MessageBox(shell, SWT.ICON_WARNING);
-                         errorBox.setMessage("É necessário selecionar uma locação para atualizar a fatura.");
-                         errorBox.open();
-                         return;
-                     }
-
-                     // Cria o objeto Fatura com os dados preenchidos
+                     
                      Fatura fatura = new Fatura(idFatura, dataEmissao, valorTotal, observacoes, locacaoSelecionada);
                      faturaBanco.atualizar(fatura);
 
@@ -253,7 +290,7 @@ public class ViewFatura {
                      successBox.setMessage("Fatura atualizada com sucesso!");
                      successBox.open();
 
-                     // Atualiza a tabela
+                 
                      btnListarFatura.notifyListeners(SWT.Selection, null);
                  } catch (Exception ex) {
                      MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
@@ -267,23 +304,23 @@ public class ViewFatura {
          btnConsultarFaturaId.setText("Consultar Fatura por ID");
          btnConsultarFaturaId.setBounds(419, 145, 150, 30);
 
-         // Campo para entrada do ID
+         
          Text txtFaturaId = new Text(shell, SWT.BORDER);
          txtFaturaId.setBounds(591, 147, 50, 25);
          txtFaturaId.setVisible(false);
 
-         // Botão para confirmar a consulta
+     
          Button btnConfirmarFaturaId = new Button(shell, SWT.NONE);
          btnConfirmarFaturaId.setText("Confirmar ID");
          btnConfirmarFaturaId.setBounds(585, 184, 150, 30);
          btnConfirmarFaturaId.setVisible(false);
 
-         // Quando o botão "Consultar Fatura por ID" for clicado
+        
          btnConsultarFaturaId.addSelectionListener(new SelectionAdapter() {
              @Override
              public void widgetSelected(SelectionEvent e) {
-                 txtFaturaId.setVisible(true); // Exibe o campo para inserir o ID
-                 btnConfirmarFaturaId.setVisible(true); // Exibe o botão de confirmação
+                 txtFaturaId.setVisible(true); 
+                 btnConfirmarFaturaId.setVisible(true);
              }
          });
 
@@ -292,14 +329,17 @@ public class ViewFatura {
              @Override
              public void widgetSelected(SelectionEvent e) {
                  try {
-                     String idFaturaInput = txtFaturaId.getText(); // Pega o ID inserido
+                     String idFaturaInput = txtFaturaId.getText(); 
                      if (idFaturaInput != null && !idFaturaInput.isEmpty()) {
-                         int idFatura = Integer.parseInt(idFaturaInput); // Converte o ID para inteiro
+                         Integer idFatura = Integer.parseInt(idFaturaInput); 
+                         
+                         Fatura faturaConsultar = new Fatura();
+                         faturaConsultar.setNumeroFatura(idFatura);
 
-                         Fatura fatura = faturaBanco.consultar(idFatura); // Consulta no banco de dados
-
+                         Fatura fatura = faturaBanco.consultar(faturaConsultar)
+;
                          if (fatura != null) {
-                             // Adiciona os dados da fatura à tabela
+                             
                              table.removeAll();
                              TableItem item = new TableItem(table, SWT.NONE);
                              item.setText(new String[]{
@@ -312,19 +352,19 @@ public class ViewFatura {
                                      String.valueOf(fatura.getNumeroFatura()),
                              });
                          } else {
-                             // Exibe mensagem caso a fatura não seja encontrada
+                   
                              MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
                              messageBox.setMessage("Fatura não encontrada.");
                              messageBox.open();
                          }
                      } else {
-                         // Exibe mensagem caso o campo de ID esteja vazio
+                         
                          MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                          messageBox.setMessage("Digite um ID válido.");
                          messageBox.open();
                      }
                  } catch (NumberFormatException ex) {
-                     // Exibe mensagem caso o ID não seja um número válido
+                 
                      MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                      messageBox.setMessage("ID inválido.");
                      messageBox.open();

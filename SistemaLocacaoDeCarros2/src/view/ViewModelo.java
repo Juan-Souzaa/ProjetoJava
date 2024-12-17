@@ -75,7 +75,7 @@ public class ViewModelo {
         lblVeiculoSelecionado.setBounds(184, 265, 200, 25);
         lblVeiculoSelecionado.setText("Nenhum veículo selecionado");
 
-        // Ação do botão selecionar veículo
+      
         btnSelecionarVeiculo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -83,7 +83,7 @@ public class ViewModelo {
                 veiculoSelecionado = viewSelecionarVeiculo.open();
                 if (veiculoSelecionado != null) {
                     lblVeiculoSelecionado.setText("Veículo: " + veiculoSelecionado.getPlaca());
-                    // Aqui você pode associar o objeto veiculoSelecionado ao modelo
+                   
                 }
             }
         });
@@ -179,11 +179,25 @@ public class ViewModelo {
         btnCadastrarModelo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-            	 if (veiculoSelecionado == null) {
-                     MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
-                     box.setMessage("Selecione um Veiculo antes de cadastrar a Modelo.");
-                     box.open();
-                     return;}
+              
+                if (veiculoSelecionado == null) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Selecione um Veículo antes de cadastrar o Modelo.");
+                    box.open();
+                    return;
+                }
+
+            
+                if (textModeloVeiculo.getText().isEmpty() || textValorDiaria.getText().isEmpty() || 
+                    textCategoria.getText().isEmpty() || textCapacidadePassageiro.getText().isEmpty() || 
+                    textTipoCombustivel.getText().isEmpty() || textConsumoMedio.getText().isEmpty()) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Por favor, preencha todos os campos.");
+                    box.open();
+                    return;
+                    
+                }
+
                 String modeloVeiculo = textModeloVeiculo.getText();
                 Double valorDiaria = Double.parseDouble(textValorDiaria.getText());
                 String categoria = textCategoria.getText();
@@ -196,6 +210,7 @@ public class ViewModelo {
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Modelo de veículo cadastrado com sucesso!");
                 box.open();
+                btnListarModelo.notifyListeners(SWT.Selection, null);
             }
         });
 
@@ -216,7 +231,10 @@ public class ViewModelo {
 
 					Integer idModelo = Integer.parseInt(selectedItems[0].getText(0));
 					
-					modeloBanco.deletar(idModelo);
+					Modelo modeloDeletar= new Modelo();
+                    modeloDeletar.setIdModelo(idModelo);
+					
+					modeloBanco.deletar(modeloDeletar);
 					MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
 					successBox.setMessage("Modelo deletado com sucesso!");
 					successBox.open();
@@ -261,41 +279,45 @@ public class ViewModelo {
         Button btnConsultarModeloId = new Button(shell, SWT.NONE);
         btnConsultarModeloId.setText("Consultar Modelo por ID");
         btnConsultarModeloId.setBounds(381, 257, 150, 30);
-        btnConsultarModeloId.setVisible(true); // Começa invisível
+        btnConsultarModeloId.setVisible(true); 
 
-        // Text para digitar o ID do Modelo
+       
         Text txtModeloId = new Text(shell, SWT.BORDER);
         txtModeloId.setBounds(553, 256, 44, 25);
-        txtModeloId.setVisible(false); // Começa invisível
+        txtModeloId.setVisible(false); 
 
-        // Adicionando botão para confirmar a consulta com o ID
+        
         Button btnConfirmarModeloId = new Button(shell, SWT.NONE);
         btnConfirmarModeloId.setText("Confirmar ID");
         btnConfirmarModeloId.setBounds(603, 257, 150, 30);
-        btnConfirmarModeloId.setVisible(false); // Começa invisível
+        btnConfirmarModeloId.setVisible(false); 
 
-        // Quando o botão "Consultar Modelo por ID" for clicado
+        
         btnConsultarModeloId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                txtModeloId.setVisible(true); // Exibe o campo para inserir o ID
-                btnConfirmarModeloId.setVisible(true); // Exibe o botão de confirmação
+                txtModeloId.setVisible(true); 
+                btnConfirmarModeloId.setVisible(true); 
             }
         });
 
-        // Quando o botão "Confirmar ID" for clicado
+       
         btnConfirmarModeloId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    String idModeloInput = txtModeloId.getText(); // Pega o ID inserido
+                    String idModeloInput = txtModeloId.getText(); 
                     if (idModeloInput != null && !idModeloInput.isEmpty()) {
-                        int idModelo = Integer.parseInt(idModeloInput); // Converte o ID para inteiro
+                        Integer idModelo = Integer.parseInt(idModeloInput); 
+                        
+                        Modelo modeloConsultar= new Modelo();
+                        modeloConsultar.setIdModelo(idModelo);
+                        
 
-                        Modelo modelo = modeloBanco.consultar(idModelo); // Consulta no banco de dados
+                        Modelo modelo = modeloBanco.consultar(modeloConsultar); 
 
                         if (modelo != null) {
-                            // Adiciona os dados do modelo à tabela
+                            
                             table.removeAll();
                             TableItem item = new TableItem(table, SWT.NONE);
                             item.setText(new String[] {
@@ -308,19 +330,19 @@ public class ViewModelo {
                                     String.valueOf(modelo.getConsumoMedio())
                             });
                         } else {
-                            // Exibe mensagem caso o modelo não seja encontrado
+                          
                             MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
                             messageBox.setMessage("Modelo não encontrado.");
                             messageBox.open();
                         }
                     } else {
-                        // Exibe mensagem caso o campo de ID esteja vazio
+                    
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                         messageBox.setMessage("Digite um ID válido.");
                         messageBox.open();
                     }
                 } catch (NumberFormatException ex) {
-                    // Exibe mensagem caso o ID não seja um número válido
+                    
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                     messageBox.setMessage("ID inválido.");
                     messageBox.open();
@@ -344,6 +366,24 @@ public class ViewModelo {
                     btnListarModelo.notifyListeners(SWT.Selection, null);
                     return;
                 }
+                
+                if (veiculoSelecionado == null) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Selecione um Veículo antes de cadastrar o Modelo.");
+                    box.open();
+                    return;
+                }
+                
+
+                if (textModeloVeiculo.getText().isEmpty() || textValorDiaria.getText().isEmpty() || 
+                    textCategoria.getText().isEmpty() || textCapacidadePassageiro.getText().isEmpty() || 
+                    textTipoCombustivel.getText().isEmpty() || textConsumoMedio.getText().isEmpty()) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Por favor, preencha todos os campos.");
+                    box.open();
+                    return;
+                    
+                }
 
                 try {
                     Integer idModelo = Integer.parseInt(selectedItems[0].getText(0));
@@ -361,7 +401,7 @@ public class ViewModelo {
 
                     modeloBanco.atualizar(modelo);
                     
-                    // Mensagem de sucesso
+                   
                     MessageBox box = new MessageBox(shell, SWT.OK);
                     box.setMessage("Modelo atualizado com sucesso!");
                     box.open();
