@@ -49,7 +49,7 @@ public class ReservaBanco {
 				reserva.setDataDevolucao(rs.getDate("dataDevolucao").toLocalDate());
 				reserva.setObservacoes(rs.getString("observacoes"));
 
-				// Criando e setando o cliente e modelo
+		
 				Cliente cliente = new Cliente();
 
 				cliente.setNomeCompleto(rs.getString("nomeCompleto"));
@@ -59,11 +59,11 @@ public class ReservaBanco {
 				modelo.setNomeModelo(rs.getString("nomeModelo"));
 				modelo.setCategoria(rs.getString("categoria"));
 
-				// Atribuindo cliente e modelo à reserva
+				
 				reserva.setClienteReserva(cliente);
 				reserva.setModeloReserva(modelo);
 
-				// Adicionando à lista
+			
 				reservas.add(reserva);
 
 			}
@@ -75,23 +75,23 @@ public class ReservaBanco {
 		return reservas;
 	}
 
-	public Reserva consultar(int idReserva) {
-		Reserva reserva = null;
+	public Reserva consultar(Reserva reserva) {
+		Reserva reservaConsultar = null;
 		try {
 			String sql = "CALL consultar_reserva(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idReserva);
+			statement.setInt(1, reserva.getIdReserva());
 			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
-				reserva = new Reserva();
-				reserva.setIdReserva(rs.getInt("idReserva"));
-				reserva.setDataReserva(rs.getDate("dataReserva").toLocalDate());
-				reserva.setStatusReserva(rs.getString("statusReserva"));
-				reserva.setDataRetirada(rs.getDate("dataRetirada").toLocalDate());
-				reserva.setDataDevolucao(rs.getDate("dataDevolucao").toLocalDate());
-				reserva.setObservacoes(rs.getString("observacoes"));
+				reservaConsultar = new Reserva();
+				reservaConsultar.setIdReserva(rs.getInt("idReserva"));
+				reservaConsultar.setDataReserva(rs.getDate("dataReserva").toLocalDate());
+				reservaConsultar.setStatusReserva(rs.getString("statusReserva"));
+				reservaConsultar.setDataRetirada(rs.getDate("dataRetirada").toLocalDate());
+				reservaConsultar.setDataDevolucao(rs.getDate("dataDevolucao").toLocalDate());
+				reservaConsultar.setObservacoes(rs.getString("observacoes"));
 
-				// Criando e setando o cliente e modelo
+				
 				Cliente cliente = new Cliente();
 
 				cliente.setNomeCompleto(rs.getString("nomeCompleto"));
@@ -101,16 +101,16 @@ public class ReservaBanco {
 				modelo.setNomeModelo(rs.getString("nomeModelo"));
 				modelo.setCategoria(rs.getString("categoria"));
 
-				// Atribuindo cliente e modelo à reserva
-				reserva.setClienteReserva(cliente);
-				reserva.setModeloReserva(modelo);
+			
+				reservaConsultar.setClienteReserva(cliente);
+				reservaConsultar.setModeloReserva(modelo);
 			}
 			rs.close();
 			statement.close();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao consultar reserva: " + e.getMessage(), e);
 		}
-		return reserva;
+		return reservaConsultar;
 	}
 
 	public void atualizar(Reserva reserva) {
@@ -132,11 +132,11 @@ public class ReservaBanco {
 		}
 	}
 
-	public void deletar(int idReserva) {
+	public void deletar(Reserva reserva) {
 		try {
 			String sql = "CALL deletar_reserva(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idReserva);
+			statement.setInt(1, reserva.getIdReserva());
 			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {

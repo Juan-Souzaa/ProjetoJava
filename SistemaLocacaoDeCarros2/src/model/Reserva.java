@@ -117,4 +117,11 @@ public class Reserva {
 	public void setClienteReserva(Cliente clienteReserva) {
 		this.clienteReserva = clienteReserva;
 	}
+	
+    public boolean verificarDatasValidas() {
+        if (dataDevolucao.isBefore(dataRetirada)) {
+            return false; // Se a data de devolução for anterior à data de retirada
+        }
+        return true; // Se as datas forem válidas
+    }
 }

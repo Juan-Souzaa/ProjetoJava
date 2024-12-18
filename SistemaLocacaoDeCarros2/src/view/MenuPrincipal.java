@@ -49,8 +49,7 @@ public class MenuPrincipal {
         criarBotao(shell, "Veículos", x, y, width, height, ViewVeiculo.class);
         y += height + spacing;
 
-        criarBotao(shell, "Frota", x, y, width, height, ViewFrota.class);
-        y += height + spacing;
+        
 
         criarBotao(shell, "Modelos", x, y, width, height, ViewModelo.class);
         y += height + spacing;

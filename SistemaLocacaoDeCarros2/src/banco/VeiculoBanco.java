@@ -65,27 +65,27 @@ public class VeiculoBanco {
         return veiculos;
     }
 
-    public Veiculo consultar(int idVeiculo) {
-        Veiculo veiculo = null;
+    public Veiculo consultar(Veiculo veiculo) {
+        Veiculo veiculoConsultar = null;
         try {
             String sql = "CALL consultar_veiculo(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idVeiculo);
+            statement.setInt(1, veiculo.getIdVeiculo());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                veiculo = new Veiculo();
+                veiculoConsultar = new Veiculo();
                 		 
-                        veiculo.setIdVeiculo(rs.getInt("idveiculo"));
-                        veiculo.setPlaca(rs.getString("placa"));
-                        veiculo.setChassi(rs.getString("chassi"));
-                        veiculo.setCor(rs.getString("cor"));
-                        veiculo.setAno(rs.getDate("ano").toLocalDate());
-                        veiculo.setQuilometragem(rs.getDouble("quilometragem"));
-                        veiculo.setStatusDisponibilidade(rs.getBoolean("statusDisponibilidade"));
-                        veiculo.setCategoria(rs.getString("categoria"));
-                        veiculo.setSeguroAtivo(rs.getBoolean("seguroAtivo"));
-                        veiculo.setMarca(rs.getString("marca"));
-                        veiculo.setDataUltimaManutencao(rs.getDate("dataUltimaManutencao").toLocalDate());
+                        veiculoConsultar.setIdVeiculo(rs.getInt("idveiculo"));
+                        veiculoConsultar.setPlaca(rs.getString("placa"));
+                        veiculoConsultar.setChassi(rs.getString("chassi"));
+                        veiculoConsultar.setCor(rs.getString("cor"));
+                        veiculoConsultar.setAno(rs.getDate("ano").toLocalDate());
+                        veiculoConsultar.setQuilometragem(rs.getDouble("quilometragem"));
+                        veiculoConsultar.setStatusDisponibilidade(rs.getBoolean("statusDisponibilidade"));
+                        veiculoConsultar.setCategoria(rs.getString("categoria"));
+                        veiculoConsultar.setSeguroAtivo(rs.getBoolean("seguroAtivo"));
+                        veiculoConsultar.setMarca(rs.getString("marca"));
+                        veiculoConsultar.setDataUltimaManutencao(rs.getDate("dataUltimaManutencao").toLocalDate());
                         
                    }
             rs.close();
@@ -93,7 +93,7 @@ public class VeiculoBanco {
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao consultar veículo: " + e.getMessage(), e);
         }
-        return veiculo;
+        return veiculoConsultar;
     }
 
     public void atualizar(Veiculo veiculo) {
@@ -118,11 +118,11 @@ public class VeiculoBanco {
         }
     }
 
-    public void deletar(Integer idVeiculo) {
+    public void deletar(Veiculo veiculo) {
         try {
             String sql = "CALL deletar_veiculo(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idVeiculo);
+            statement.setInt(1, veiculo.getIdVeiculo());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

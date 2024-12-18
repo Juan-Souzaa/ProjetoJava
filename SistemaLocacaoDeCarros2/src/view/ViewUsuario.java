@@ -335,20 +335,34 @@ public class ViewUsuario {
 					Integer nivel = Integer.parseInt(selectedItems[0].getText(6));
 
 					if (nivel == 1) {
+						
+						Cliente clienteDeletar = new Cliente();
+						clienteDeletar.setIdUsuario(idUsuario);
 
-						clienteBanco.deletar(idUsuario);
+						clienteBanco.deletar(clienteDeletar);
 						MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
 						successBox.setMessage("Cliente deletado com sucesso!");
 						successBox.open();
 
 					} else if (nivel == 2) {
-						balconistaBanco.deletar(idUsuario);
+						
+						Balconista balconistaDeletar = new Balconista();
+						balconistaDeletar.setIdUsuario(idUsuario);
+						
+						
+						balconistaBanco.deletar(balconistaDeletar);
+						
+						
 						MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
 						successBox.setMessage("Balconista deletado com sucesso!");
 						successBox.open();
 					} else if (nivel == 3) {
-
-						agenteLocacaoBanco.deletar(idUsuario);
+						
+						AgenteLocacao agenteDeletar = new AgenteLocacao();
+						agenteDeletar.setIdUsuario(idUsuario);
+						
+						
+						agenteLocacaoBanco.deletar(agenteDeletar);
 						MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
 						successBox.setMessage("Agente deletado com sucesso!");
 						successBox.open();
@@ -460,6 +474,8 @@ public class ViewUsuario {
 					MessageBox box = new MessageBox(shell, SWT.OK);
 					box.setMessage("Cliente cadastrado com sucesso!");
 					box.open();
+					btnListar.notifyListeners(SWT.Selection, null);
+					
 				} else if (rbBalconista.getSelection()) {
 					Integer idBalc = null;
 					String nivelAcesso = "2";
@@ -472,6 +488,7 @@ public class ViewUsuario {
 					MessageBox box = new MessageBox(shell, SWT.OK);
 					box.setMessage("Balconista cadastrado com sucesso!");
 					box.open();
+					btnListar.notifyListeners(SWT.Selection, null);
 				} else if (rbAgenteLocacao.getSelection()) {
 					Integer idAgente = null;
 					String nivelAcesso = "3";
@@ -483,6 +500,7 @@ public class ViewUsuario {
 					MessageBox box = new MessageBox(shell, SWT.OK);
 					box.setMessage("Agente de Locação cadastrado com sucesso!");
 					box.open();
+					btnListar.notifyListeners(SWT.Selection, null);
 				} else {
 					MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
 					box.setMessage("Selecione o tipo de usuário antes de cadastrar.");

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Cliente;
-import model.Usuario;
+
 
 public class ClienteBanco extends UsuarioBanco {
 
@@ -79,36 +79,7 @@ public class ClienteBanco extends UsuarioBanco {
 	    }
 
 
-    public Cliente consultar(int idUsuario) {
-        Usuario usuario = super.consultar(idUsuario); 
-        Cliente cliente = null;
-        try {
-            String sql = "CALL consultar_cliente(?);";
-            PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idUsuario);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                cliente = new Cliente();
-                cliente.setCpf(usuario.getCpf());
-                cliente.setDataNascimento(rs.getDate("dataNascimento").toLocalDate());
-                cliente.setCategoriaCNH(rs.getString("categoriaCNH"));
-                cliente.setIdUsuario(usuario.getIdUsuario());
-                cliente.setNomeCompleto(usuario.getNomeCompleto());
-                cliente.setEmail(usuario.getEmail());
-                cliente.setSenha(usuario.getSenha());
-                cliente.setTelefone(usuario.getTelefone());
-                cliente.setEndereco(usuario.getEndereco());
-                cliente.setDataCadastro(usuario.getDataCadastro());
-                
-                cliente.setNivelAcesso(usuario.getNivelAcesso());
-            }
-            rs.close();
-            statement.close();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar cliente: " + e.getMessage(), e);
-        }
-        return cliente;
-    }
+  
 
     public void atualizar(Cliente cliente) {
         super.atualizar(cliente); 
@@ -127,16 +98,16 @@ public class ClienteBanco extends UsuarioBanco {
         }
     }
 
-    public void deletar(int idUsuario) {
+    public void deletar(Cliente cliente) {
         
         try {
             String sql = "CALL deletar_cliente(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idUsuario);
+            statement.setInt(1, cliente.getIdUsuario());
             statement.executeUpdate();
             statement.close();
             
-            super.deletar(idUsuario); 
+            super.deletar(cliente); 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar cliente: " + e.getMessage(), e);
         }

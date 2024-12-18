@@ -227,9 +227,12 @@ public class ViewVeiculo {
 
                 try {
                    
-                    int idVeiculo = Integer.parseInt(selectedItems[0].getText(0));
+                   Integer idVeiculo = Integer.parseInt(selectedItems[0].getText(0));
+                   
+                   Veiculo veiculoDeletar = new Veiculo();
+                   veiculoDeletar.setIdVeiculo(idVeiculo);
 
-                    veiculoBanco.deletar(idVeiculo);
+                    veiculoBanco.deletar(veiculoDeletar);
 
                     MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
                     successBox.setMessage("Veículo deletado com sucesso!");
@@ -313,7 +316,7 @@ public class ViewVeiculo {
                 }
 
                 try {
-                    // Obtém os dados selecionados na tabela
+                  
                     Integer idVeiculo = Integer.parseInt(selectedItems[0].getText(0));
                     String placaVeiculo = textPlaca.getText();
                     String chassiVeiculo = textChassi.getText();
@@ -326,7 +329,7 @@ public class ViewVeiculo {
                     Boolean seguroAtivo = btnSim.getSelection();
                     String marcaVeiculo = textMarca.getText();
 
-                    // Cria o objeto Veículo para atualizar
+                    
                     Veiculo veiculo = new Veiculo( idVeiculo,placaVeiculo, chassiVeiculo, corVeiculo, anoVeiculo, quilometragemVeiculo,
                                                    disponivelVeiculo, categoriaVeiculo, seguroAtivo, marcaVeiculo, anoManu);
 
@@ -336,7 +339,7 @@ public class ViewVeiculo {
                     successBox.setMessage("Veículo atualizado com sucesso!");
                     successBox.open();
 
-                    // Atualiza a lista de veículos
+                    
                     btnListarVeiculo.notifyListeners(SWT.Selection, null);
                 } catch (NumberFormatException ex) {
                     MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
@@ -352,45 +355,47 @@ public class ViewVeiculo {
         btnAtualizarVeiculo.setText("Atualizar Veículo");
         btnAtualizarVeiculo.setBounds(231, 412, 134, 25);
        
-     // Adicionando o botão para exibir o campo de ID do Veículo
+     
         Button btnConsultarId = new Button(shell, SWT.NONE);
         btnConsultarId.setText("Consultar Veículo por ID");
         btnConsultarId.setBounds(521, 409, 150, 30);
-        btnConsultarId.setVisible(false); // Começa invisível
+        btnConsultarId.setVisible(false); 
 
-        // Text para digitar o ID do veículo
+        
         Text txtVeiculoId = new Text(shell, SWT.BORDER);
         txtVeiculoId.setBounds(540, 328, 100, 25);
-        txtVeiculoId.setVisible(false); // Começa invisível
+        txtVeiculoId.setVisible(false); 
 
-        // Adicionando botão para confirmar a consulta com o ID
+        
         Button btnConfirmarId = new Button(shell, SWT.NONE);
         btnConfirmarId.setText("Confirmar ID");
         btnConfirmarId.setBounds(521, 360, 150, 30);
-        btnConfirmarId.setVisible(false); // Começa invisível
+        btnConfirmarId.setVisible(false); 
 
-        // Quando o botão "Consultar Veículo por ID" for clicado
+       
         btnConsultarId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                txtVeiculoId.setVisible(true); // Exibe o campo para inserir o ID
-                btnConfirmarId.setVisible(true); // Exibe o botão de confirmação
+                txtVeiculoId.setVisible(true); 
+                btnConfirmarId.setVisible(true); 
             }
         });
 
-        // Quando o botão "Confirmar ID" for clicado
+        
         btnConfirmarId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    String idVeiculoInput = txtVeiculoId.getText(); // Pega o ID inserido
+                    String idVeiculoInput = txtVeiculoId.getText(); 
                     if (idVeiculoInput != null && !idVeiculoInput.isEmpty()) {
-                        int idVeiculo = Integer.parseInt(idVeiculoInput); // Converte o ID para inteiro
+                       Integer idVeiculo = Integer.parseInt(idVeiculoInput); 
+                       
+                       Veiculo veiculoConsultar = new Veiculo();
+                       veiculoConsultar.setIdVeiculo(idVeiculo);
 
-                        Veiculo veiculo = veiculoBanco.consultar(idVeiculo); // Consulta no banco de dados
-
+                        Veiculo veiculo = veiculoBanco.consultar(veiculoConsultar); 
                         if (veiculo != null) {
-                            // Adiciona os dados do veículo à tabela
+                            
                             table.removeAll();
                             TableItem item = new TableItem(table, SWT.NONE);
                             item.setText(new String[]{
@@ -407,19 +412,19 @@ public class ViewVeiculo {
                                 veiculo.getDataUltimaManutencao().toString()
                             });
                         } else {
-                            // Exibe mensagem caso o veículo não seja encontrado
+                            
                             MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
                             messageBox.setMessage("Veículo não encontrado.");
                             messageBox.open();
                         }
                     } else {
-                        // Exibe mensagem caso o campo de ID esteja vazio
+                        
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                         messageBox.setMessage("Digite um ID válido.");
                         messageBox.open();
                     }
                 } catch (NumberFormatException ex) {
-                    // Exibe mensagem caso o ID não seja um número válido
+                    
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                     messageBox.setMessage("ID inválido.");
                     messageBox.open();
@@ -427,7 +432,7 @@ public class ViewVeiculo {
             }
         });
 
-        // Exibe o botão de "Consultar Veículo por ID" quando necessário
+    
         btnConsultarId.setVisible(true); 
     }
 }

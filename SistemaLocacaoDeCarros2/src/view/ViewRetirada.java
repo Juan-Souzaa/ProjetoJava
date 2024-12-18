@@ -70,7 +70,7 @@ public class ViewRetirada {
         lblLocacaoSelecionado.setBounds(25, 13, 200, 25);
         lblLocacaoSelecionado.setText("Nenhuma Locacao selecionada");
 
-        // Ação do botão selecionar veículo
+       
         btnSelecionarLocacao.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -78,7 +78,7 @@ public class ViewRetirada {
                 locacaoSelecionada = viewSelecionarLocacao.open();
                 if (locacaoSelecionada != null) {
                     lblLocacaoSelecionado.setText("Locação do CLiente :" + locacaoSelecionada.getReservaLocacao().getClienteReserva().getNomeCompleto());
-                    // Aqui você pode associar o objeto veiculoSelecionado ao modelo
+                   
                 }
             }
         });
@@ -136,26 +136,26 @@ public class ViewRetirada {
         btnRetirado.setBounds(10, 10, 60, 16);
         btnRetirado.setText("Retirado");
         
-        // Botão Atualizar
+        
         Button btnAtualizar = new Button(shell, SWT.NONE);
         btnAtualizar.setBounds(360, 125, 100, 30);
         btnAtualizar.setText("Atualizar");
 
-        // Botão Consultar por ID
+        
         Button btnConsultarPorID = new Button(shell, SWT.NONE);
         btnConsultarPorID.setBounds(480, 125, 150, 30);
         btnConsultarPorID.setText("Consultar por ID");
 
-        // Campo de texto para inserir o ID da Retirada
+        
         Text txtBuscarID = new Text(shell, SWT.BORDER);
         txtBuscarID.setBounds(640, 130, 50, 25);
 
-        // Botão Confirmar para buscar por ID
+        
         Button btnConfirmarBuscarID = new Button(shell, SWT.NONE);
         btnConfirmarBuscarID.setBounds(700, 125, 100, 30);
         btnConfirmarBuscarID.setText("Confirmar");
-        btnConfirmarBuscarID.setVisible(false); // Começa invisível
-        txtBuscarID.setVisible(false); // Começa invisível
+        btnConfirmarBuscarID.setVisible(false); 
+        txtBuscarID.setVisible(false); 
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
         table.setLinesVisible(true);
@@ -190,27 +190,35 @@ public class ViewRetirada {
         tblclmnStatusRetirada.setWidth(147);
         tblclmnStatusRetirada.setText("Status de Retirada");
 
-        // Cadastrar Retirada
+        
         btnCadastrarRetirada.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+            	
+            	if (locacaoSelecionada == null) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Selecione uma locação antes de cadastrar a retirada.");
+                    box.open();
+                    return;
+                }
                 String localRetirada = textLocalRetirada.getText();
                 Boolean statusRetirada = btnRetirado.getSelection();
-                // Obtendo data e hora atuais
+                
                 LocalDate dataRetirada = LocalDate.now();
                 Boolean docVerificado = btnDocVerifica.getSelection();
 
-                // Criando a retirada
+                
                 Retirada retirada = new Retirada(dataRetirada, localRetirada, docVerificado, statusRetirada,locacaoSelecionada);
                 retiradaBanco.incluir(retirada);
 
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Retirada cadastrada com sucesso!");
                 box.open();
+                btnListarRetirada.notifyListeners(SWT.Selection, null);
             }
         });
 
-        // Deletar Retirada
+        
         
         btnDeletarRetirada.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -218,9 +226,13 @@ public class ViewRetirada {
                 int selectedIndex = table.getSelectionIndex();
                 if(selectedIndex != -1) {
                     TableItem item = table.getItem(selectedIndex);
-                    int idCancelamento = Integer.parseInt(item.getText(0));
+                    Integer idRetirada = Integer.parseInt(item.getText(0));
+                    
+                    
+                    Retirada retiradaDeletar= new Retirada();
+                    retiradaDeletar.setIdRetirada(idRetirada);
 
-                    retiradaBanco.deletar(idCancelamento);
+                    retiradaBanco.deletar(retiradaDeletar);
                     MessageBox messageBox = new MessageBox(shell, SWT.OK);
                     messageBox.setMessage("Retirada deletado com sucesso!");
                     messageBox.open();  
@@ -261,7 +273,7 @@ public class ViewRetirada {
         btnAtualizar.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                // Verifica se algum item da tabela foi selecionado
+                
                 TableItem[] selectedItems = table.getSelection();
 
                 if (selectedItems.length == 0) {
@@ -272,18 +284,23 @@ public class ViewRetirada {
                     
                     return;
                 }
-
+                if (locacaoSelecionada == null) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Selecione uma locação antes de cadastrar a retirada.");
+                    box.open();
+                    return;
+                }
                 try {
                     TableItem selectedItem = selectedItems[0];
-                    Integer idRetirada = Integer.parseInt(selectedItem.getText(0)); // Assume que o ID está na primeira coluna da tabela
+                    Integer idRetirada = Integer.parseInt(selectedItem.getText(0));
                 	String localRetirada = textLocalRetirada.getText();
                 	Boolean statusRetirada = btnRetirado.getSelection();
 
-                    // Obtendo data e hora atuais
+                    
                     LocalDate dataRetirada = LocalDate.now();
                     Boolean docVerificado = btnDocVerifica.getSelection();
 
-                    // Criando a retirada
+                    
                     Retirada retirada = new Retirada(idRetirada,dataRetirada, localRetirada, docVerificado, statusRetirada,locacaoSelecionada);
                     
                 
@@ -298,7 +315,7 @@ public class ViewRetirada {
                     box.open();
 
                     
-                    btnListarRetirada.notifyListeners(SWT.Selection, null); // Força a consulta novamente para atualizar os dados na tabela
+                    btnListarRetirada.notifyListeners(SWT.Selection, null); 
                 } catch (Exception ex) {
                     MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
                     errorBox.setMessage("Erro ao atualizar retirada: " + ex.getMessage());
@@ -307,35 +324,38 @@ public class ViewRetirada {
             }
         });
 
-        // Lógica para o botão "Consultar por ID"
+      
         btnConsultarPorID.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                // Exibe o campo para inserir o ID
+               
                 txtBuscarID.setVisible(true);
                 btnConfirmarBuscarID.setVisible(true);
             }
         });
 
-        // Lógica para o botão "Confirmar" após inserir o ID
+        
         btnConfirmarBuscarID.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    // Verifica se o campo de ID foi preenchido corretamente
+                   
                     String idText = txtBuscarID.getText();
                     if (idText == null || idText.isEmpty()) {
                         throw new NumberFormatException("ID inválido.");
                     }
 
-                    Integer idRetirada = Integer.parseInt(idText); // Converte o ID inserido pelo usuário
+                    Integer idRetirada = Integer.parseInt(idText); 
+                    
+                    Retirada retiradaConsultar= new Retirada();
+                    retiradaConsultar.setIdRetirada(idRetirada);
 
-                    // Chama o método para consultar a retirada
-                    Retirada retirada = retiradaBanco.consultar(idRetirada);
+                    
+                    Retirada retirada = retiradaBanco.consultar(retiradaConsultar);
 
                     if (retirada != null) {
-                        // Se a retirada for encontrada, preenche a tabela com os dados
-                        table.removeAll(); // Limpa a tabela antes de adicionar os novos dados
+                        
+                        table.removeAll();
                         TableItem item = new TableItem(table, SWT.NONE);
                         item.setText(new String[] {
                         		String.valueOf(retirada.getIdRetirada()),
@@ -347,13 +367,13 @@ public class ViewRetirada {
                                 retirada.getStatusRetirada() ? "Concluida" : "A Concluir"
                         });
                     } else {
-                        // Exibe mensagem caso a retirada não seja encontrada
+                       
                         MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
                         box.setMessage("Retirada não encontrada.");
                         box.open();
                     }
                 } catch (NumberFormatException ex) {
-                    // Exibe mensagem de erro se o ID for inválido
+                    
                     MessageBox box = new MessageBox(shell, SWT.ICON_ERROR);
                     box.setMessage("ID inválido. Digite um número válido.");
                     box.open();

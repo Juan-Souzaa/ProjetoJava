@@ -168,6 +168,22 @@ public class ViewPagamento {
             @Override
             public void widgetSelected(SelectionEvent e) {
             	
+            	 
+                if (faturaSelecionada == null) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Selecione uma fatura antes de cadastrar o pagamento.");
+                    box.open();
+                    return;
+                }
+            	
+            	 if (textValor.getText().isEmpty() || textMetodoPagamento.getText().isEmpty() || textStatusPagamento.getText().isEmpty() || textDescricao.getText().isEmpty()) {
+                     MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                     box.setMessage("Preencha todos os campos obrigatórios.");
+                     box.open();
+                     return;
+                 }
+                
+            	
                 Double valor = Double.parseDouble(textValor.getText());
                 String metodoPagamento = textMetodoPagamento.getText();
                 LocalDate dataPagamento = LocalDate.of(dateTimeDataPagamento.getYear(), dateTimeDataPagamento.getMonth() + 1, dateTimeDataPagamento.getDay());
@@ -179,6 +195,7 @@ public class ViewPagamento {
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Pagamento cadastrado com sucesso!");
                 box.open();
+                btnListarPagamento.notifyListeners(SWT.Selection, null);
             }
         });
 
@@ -199,7 +216,10 @@ public class ViewPagamento {
 
 					Integer idPagamento= Integer.parseInt(selectedItems[0].getText(0));
 					
-					pagamentoBanco.deletar(idPagamento);
+					Pagamento pagamentoDeletar = new Pagamento();
+                    pagamentoDeletar.setIdPagamento(idPagamento);
+					
+					pagamentoBanco.deletar(pagamentoDeletar);
 					MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
 					successBox.setMessage("Pagamento deletado com sucesso!");
 					successBox.open();
@@ -244,25 +264,25 @@ public class ViewPagamento {
         Button btnConsultarPagamentoId = new Button(shell, SWT.NONE);
         btnConsultarPagamentoId.setText("Consultar Pagamento por ID");
         btnConsultarPagamentoId.setBounds(374, 225, 162, 30);
-        btnConsultarPagamentoId.setVisible(true); // Começa invisível
+        btnConsultarPagamentoId.setVisible(true); 
 
-        // Text para digitar o ID do Pagamento
+       
         Text txtPagamentoId = new Text(shell, SWT.BORDER);
         txtPagamentoId.setBounds(557, 230, 44, 25);
-        txtPagamentoId.setVisible(false); // Começa invisível
+        txtPagamentoId.setVisible(false); 
 
-        // Adicionando botão para confirmar a consulta com o ID
+       
         Button btnConfirmarPagamentoId = new Button(shell, SWT.NONE);
         btnConfirmarPagamentoId.setText("Confirmar ID");
         btnConfirmarPagamentoId.setBounds(637, 225, 150, 30);
-        btnConfirmarPagamentoId.setVisible(false); // Começa invisível
+        btnConfirmarPagamentoId.setVisible(false); 
 
-        // Quando o botão "Consultar Pagamento por ID" for clicado
+  
         btnConsultarPagamentoId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                txtPagamentoId.setVisible(true); // Exibe o campo para inserir o ID
-                btnConfirmarPagamentoId.setVisible(true); // Exibe o botão de confirmação
+                txtPagamentoId.setVisible(true); 
+                btnConfirmarPagamentoId.setVisible(true); 
             }
         });
         Button btnAtualizarPagamento = new Button(shell, SWT.NONE);
@@ -282,21 +302,36 @@ public class ViewPagamento {
                     
                     return;
                 }
+                
+                
+                if (faturaSelecionada == null) {
+                    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                    box.setMessage("Selecione uma fatura antes de cadastrar o pagamento.");
+                    box.open();
+                    return;
+                }
+            	
+            	 if (textValor.getText().isEmpty() || textMetodoPagamento.getText().isEmpty() || textStatusPagamento.getText().isEmpty() || textDescricao.getText().isEmpty()) {
+                     MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                     box.setMessage("Preencha todos os campos obrigatórios.");
+                     box.open();
+                     return;
+                 }
                 try {
-                    Integer idPagamento = Integer.parseInt(selectedItems[0].getText(0)); // ID do pagamento na coluna 7
+                    Integer idPagamento = Integer.parseInt(selectedItems[0].getText(0)); 
 
-                    // Coletando os dados para atualização
+                   
                     Double valor = Double.parseDouble(textValor.getText());
                     String metodoPagamento = textMetodoPagamento.getText();
                     LocalDate dataPagamento = LocalDate.of(dateTimeDataPagamento.getYear(), dateTimeDataPagamento.getMonth() + 1, dateTimeDataPagamento.getDay());
                     String statusPagamento = textStatusPagamento.getText();
                     String descricao = textDescricao.getText();
                     
-                    // Criando o objeto Pagamento com os dados coletados
+                  
                     Pagamento pagamento = new Pagamento(idPagamento, valor, metodoPagamento, dataPagamento, statusPagamento, descricao,faturaSelecionada);
                     pagamentoBanco.atualizar(pagamento);
                     
-                    // Mensagem de sucesso
+                  
                     MessageBox box = new MessageBox(shell, SWT.OK);
                     box.setMessage("Pagamento atualizado com sucesso!");
                     box.open();
@@ -310,19 +345,22 @@ public class ViewPagamento {
             }
         });
 
-        // Quando o botão "Confirmar ID" for clicado
+       
         btnConfirmarPagamentoId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    String idPagamentoInput = txtPagamentoId.getText(); // Pega o ID inserido
+                    String idPagamentoInput = txtPagamentoId.getText(); 
                     if (idPagamentoInput != null && !idPagamentoInput.isEmpty()) {
-                        int idPagamento = Integer.parseInt(idPagamentoInput); // Converte o ID para inteiro
+                        Integer idPagamento = Integer.parseInt(idPagamentoInput); 
+                        
+                       Pagamento pagamentoConsultar = new Pagamento();
+                       pagamentoConsultar.setIdPagamento(idPagamento);
 
-                        Pagamento pagamento = pagamentoBanco.consultar(idPagamento); // Consulta no banco de dados
+                        Pagamento pagamento = pagamentoBanco.consultar(pagamentoConsultar); 
 
                         if (pagamento != null) {
-                            // Adiciona os dados do pagamento à tabela
+                           
                             table.removeAll();
                             TableItem item = new TableItem(table, SWT.NONE);
                             item.setText(new String[] {
@@ -335,19 +373,19 @@ public class ViewPagamento {
                                     pagamento.getDescricao()
                             });
                         } else {
-                            // Exibe mensagem caso o pagamento não seja encontrado
+                            
                             MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
                             messageBox.setMessage("Pagamento não encontrado.");
                             messageBox.open();
                         }
                     } else {
-                        // Exibe mensagem caso o campo de ID esteja vazio
+                      
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                         messageBox.setMessage("Digite um ID válido.");
                         messageBox.open();
                     }
                 } catch (NumberFormatException ex) {
-                    // Exibe mensagem caso o ID não seja um número válido
+                    
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                     messageBox.setMessage("ID inválido.");
                     messageBox.open();

@@ -163,11 +163,18 @@ public class ViewSeguro {
         DateTime dateVigencia = new DateTime(shell, SWT.BORDER);
         dateVigencia.setBounds(82, 153, 80, 24);
 
-        // Cadastrar Seguro
+       
         btnCadastrarSeguro.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 
+            	
+            	 if (locacaoSelecionada == null) {
+                     MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                     warningBox.setMessage("Selecione uma locação antes de cadastrar o seguro.");
+                     warningBox.open();
+                     return;
+                 }
                 String tipoSeguro = textTipoSeguro.getText();
                 Double valorCobertura = Double.parseDouble(textValorCobertura.getText());
                 Double franquia = Double.parseDouble(textFranquia.getText());
@@ -179,19 +186,23 @@ public class ViewSeguro {
                 MessageBox box = new MessageBox(shell, SWT.OK);
                 box.setMessage("Seguro cadastrado com sucesso!");
                 box.open();
+                btnListarSeguro.notifyListeners(SWT.Selection, null);
             }
         });
 
-        // Deletar Seguro
         btnDeletarSeguro.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int selectedIndex = table.getSelectionIndex();
 				if (selectedIndex != -1) {
 					TableItem item = table.getItem(selectedIndex);
-					int idSeguro = Integer.parseInt(item.getText(1));
-
-					seguroBanco.deletar(idSeguro);
+					Integer idSeguro = Integer.parseInt(item.getText(1));
+					
+					Seguro seguroDeletar= new Seguro();
+					seguroDeletar.setIdSeguro(idSeguro);
+                      
+					
+					seguroBanco.deletar(seguroDeletar);
 					MessageBox messageBox = new MessageBox(shell, SWT.OK);
 					messageBox.setMessage("Deletado com sucesso!");
 					messageBox.open();
@@ -206,14 +217,14 @@ public class ViewSeguro {
 			}
 		});
 
-        // Listar Seguro
+        
         btnListarSeguro.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 List<Seguro> listaSeguros = seguroBanco.listar();
                 table.removeAll();
 
-                // Popula a tabela com os dados
+              
                 for (Seguro seguro : listaSeguros) {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[]{
@@ -249,21 +260,29 @@ public class ViewSeguro {
                      
                      return;
                  }
+                 
+             	
+            	 if (locacaoSelecionada == null) {
+                     MessageBox warningBox = new MessageBox(shell, SWT.ICON_WARNING);
+                     warningBox.setMessage("Selecione uma locação antes de cadastrar o seguro.");
+                     warningBox.open();
+                     return;
+                 }
                 try {
-                    // Pegando os dados da interface
-                    int idSeguro = Integer.parseInt(selectedItems[0].getText(1)); // Aqui você pega o ID do Seguro que será atualizado
+                    
+                    Integer idSeguro = Integer.parseInt(selectedItems[0].getText(1)); // Aqui você pega o ID do Seguro que será atualizado
                     String tipoSeguro = textTipoSeguro.getText();
                     Double valorCobertura = Double.parseDouble(textValorCobertura.getText());
                     Double franquia = Double.parseDouble(textFranquia.getText());
                     LocalDate vigencia = LocalDate.of(dateVigencia.getYear(), dateVigencia.getMonth() + 1, dateVigencia.getDay());
 
-                    // Criando o objeto de Seguro com os dados
+                   
                     Seguro seguro = new Seguro(idSeguro, tipoSeguro, valorCobertura, franquia, vigencia, locacaoSelecionada);
                     
-                    // Chamando o método de atualização do banco de dados
+               
                     seguroBanco.atualizar(seguro);
                     
-                    // Mensagem de sucesso
+                    
                     MessageBox box = new MessageBox(shell, SWT.OK);
                     box.setMessage("Seguro atualizado com sucesso!");
                     box.open();
@@ -276,45 +295,55 @@ public class ViewSeguro {
                 }
             }
         });
-     // Adicionando o botão para exibir o campo de ID do Seguro
+    
         Button btnConsultarSeguroId = new Button(shell, SWT.NONE);
         btnConsultarSeguroId.setText("Consultar Seguro por ID");
         btnConsultarSeguroId.setBounds(331, 257, 150, 30);
-        btnConsultarSeguroId.setVisible(false); // Começa invisível
+        btnConsultarSeguroId.setVisible(false); 
 
-        // Text para digitar o ID do Seguro
+        
         Text txtSeguroId = new Text(shell, SWT.BORDER);
         txtSeguroId.setBounds(497, 256, 100, 25);
-        txtSeguroId.setVisible(false); // Começa invisível
+        txtSeguroId.setVisible(false); 
 
-        // Adicionando botão para confirmar a consulta com o ID
+        
         Button btnConfirmarSeguroId = new Button(shell, SWT.NONE);
         btnConfirmarSeguroId.setText("Confirmar ID");
         btnConfirmarSeguroId.setBounds(603, 257, 150, 30);
-        btnConfirmarSeguroId.setVisible(false); // Começa invisível
+        btnConfirmarSeguroId.setVisible(false); 
 
-        // Quando o botão "Consultar Seguro por ID" for clicado
+        
         btnConsultarSeguroId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                txtSeguroId.setVisible(true); // Exibe o campo para inserir o ID
-                btnConfirmarSeguroId.setVisible(true); // Exibe o botão de confirmação
+                txtSeguroId.setVisible(true); 
+                btnConfirmarSeguroId.setVisible(true); 
             }
         });
 
-        // Quando o botão "Confirmar ID" for clicado
+    
         btnConfirmarSeguroId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    String idSeguroInput = txtSeguroId.getText(); // Pega o ID inserido
+                    String idSeguroInput = txtSeguroId.getText(); 
                     if (idSeguroInput != null && !idSeguroInput.isEmpty()) {
-                        int idSeguro = Integer.parseInt(idSeguroInput); // Converte o ID para inteiro
-
-                        Seguro seguro = seguroBanco.consultar(idSeguro); // Consulta no banco de dados
-
+                        Integer idSeguro = Integer.parseInt(idSeguroInput); 
+                        
+                        Seguro seguroConsultar = new Seguro();
+                        seguroConsultar.setIdSeguro(idSeguro);
+                        
+                        
+                        
+                        Seguro seguro = seguroBanco.consultar(seguroConsultar);
+                        
+                        
+                        
+                        
+                        
+                        
                         if (seguro != null) {
-                            // Adiciona os dados do seguro à tabela
+                         
                             table.removeAll();
                             TableItem item = new TableItem(table, SWT.NONE);
                             item.setText(new String[] {
@@ -328,19 +357,19 @@ public class ViewSeguro {
                                     
                             });
                         } else {
-                            // Exibe mensagem caso o seguro não seja encontrado
+                            
                             MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
                             messageBox.setMessage("Seguro não encontrado.");
                             messageBox.open();
                         }
                     } else {
-                        // Exibe mensagem caso o campo de ID esteja vazio
+                        
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                         messageBox.setMessage("Digite um ID válido.");
                         messageBox.open();
                     }
                 } catch (NumberFormatException ex) {
-                    // Exibe mensagem caso o ID não seja um número válido
+                   
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                     messageBox.setMessage("ID inválido.");
                     messageBox.open();
@@ -349,7 +378,7 @@ public class ViewSeguro {
             }
         });
 
-        // Exibe o botão de "Consultar Seguro por ID" quando necessário
+        
         btnConsultarSeguroId.setVisible(true); 
     }
 }

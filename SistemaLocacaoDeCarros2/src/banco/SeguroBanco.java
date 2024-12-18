@@ -74,20 +74,20 @@ public class SeguroBanco {
 		return seguros;
 	}
 
-	public Seguro consultar(int idSeguro) {
-		Seguro seguro = null;
+	public Seguro consultar(Seguro seguro) {
+		Seguro seguroConsultar = null;
 		try {
 			String sql = "CALL consultar_seguro(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idSeguro);
+			statement.setInt(1, seguro.getIdSeguro());
 			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
-				seguro = new Seguro();
-				seguro.setIdSeguro(rs.getInt("idSeguro"));
-				seguro.setTipoSeguro(rs.getString("tipoSeguro"));
-				seguro.setValorCobertura(rs.getDouble("valorCobertura"));
-				seguro.setFranquia(rs.getDouble("franquia"));
-				seguro.setVigencia(rs.getDate("vigencia").toLocalDate());
+				seguroConsultar = new Seguro();
+				seguroConsultar.setIdSeguro(rs.getInt("idSeguro"));
+				seguroConsultar.setTipoSeguro(rs.getString("tipoSeguro"));
+				seguroConsultar.setValorCobertura(rs.getDouble("valorCobertura"));
+				seguroConsultar.setFranquia(rs.getDouble("franquia"));
+				seguroConsultar.setVigencia(rs.getDate("vigencia").toLocalDate());
 				
 				Reserva reserva = new Reserva();
 				Cliente cliente = new Cliente();
@@ -103,14 +103,14 @@ public class SeguroBanco {
 				locacao.setReservaLocacao(reserva);
 				
 				
-				seguro.setLocacao(locacao);
+				seguroConsultar.setLocacao(locacao);
 			}
 			rs.close();
 			statement.close();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao consultar seguro: " + e.getMessage(), e);
 		}
-		return seguro;
+		return seguroConsultar;
 	}
 
 	public void atualizar(Seguro seguro) {
@@ -130,11 +130,11 @@ public class SeguroBanco {
 		}
 	}
 
-	public void deletar(int idSeguro) {
+	public void deletar(Seguro seguro) {
 		try {
 			String sql = "CALL deletar_seguro(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idSeguro);
+			statement.setInt(1, seguro.getIdSeguro());
 			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {

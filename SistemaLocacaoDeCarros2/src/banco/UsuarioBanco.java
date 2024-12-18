@@ -67,31 +67,7 @@ public class UsuarioBanco {
     }
 
   
-    public Usuario consultar(int idUsuario) {
-        Usuario usuario = null;
-        try {
-            String sql = "CALL consultar_usuario(?);";
-            PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idUsuario);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                usuario = new Usuario();
-                usuario.setIdUsuario(rs.getInt("idUsuario"));
-                usuario.setNomeCompleto(rs.getString("nomeCompleto"));
-                usuario.setEmail(rs.getString("email"));
-                usuario.setTelefone(rs.getString("telefone"));
-                usuario.setEndereco(rs.getString("endereco"));
-                usuario.setDataCadastro(rs.getDate("dataCadastro").toLocalDate());
-                
-                usuario.setNivelAcesso(rs.getString("nivelAcesso"));
-            }
-            rs.close();
-            statement.close();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar usuário: " + e.getMessage(), e);
-        }
-        return usuario;
-    }
+
 
     // Função para atualizar um usuário
     public void atualizar(Usuario usuario) {
@@ -117,11 +93,11 @@ public class UsuarioBanco {
     }
 
    
-    public void deletar(int idUsuario) {
+    public void deletar(Usuario usuario) {
         try {
             String sql = "CALL deletar_usuario(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, idUsuario);
+            statement.setInt(1, usuario.getIdUsuario());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

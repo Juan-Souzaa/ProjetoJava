@@ -216,15 +216,24 @@ public class ViewReserva {
                     
 
                     Reserva reserva = new Reserva( dataReserva, statusReserva, dataRetirada, dataDevolucao, observacoes, clienteSelecionado,modeloSelecionado);
+                    
+                    if (!reserva.verificarDatasValidas()) {
+                        MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                        box.setMessage("A data de devolução não pode ser anterior à data de retirada.");
+                        box.open();
+                        return;
+                    }
                     reservaBanco.incluir(reserva);
 
                     MessageBox box = new MessageBox(shell, SWT.OK);
                     box.setMessage("Reserva cadastrada com sucesso!");
                     box.open();
+                    btnListarReserva.notifyListeners(SWT.Selection, null);
                 } catch (Exception ex) {
                     MessageBox box = new MessageBox(shell, SWT.ICON_ERROR);
                     box.setMessage("Erro ao cadastrar reserva: " + ex.getMessage());
                     box.open();
+                    
                 }
             }
         });
@@ -245,6 +254,14 @@ public class ViewReserva {
                      
                      return;
                  }
+                 
+              	if (clienteSelecionado == null || modeloSelecionado == null) {
+            	    MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+            	    box.setMessage("Selecione um cliente e um modelo antes de cadastrar a reserva.");
+            	    box.open();
+            	    return;
+            	}
+                
                 try {
                 	Integer idReserva = Integer.parseInt(selectedItems[0].getText(0)); 
 
@@ -254,11 +271,18 @@ public class ViewReserva {
                     LocalDate dataDevolucao = LocalDate.of(dateTimeDataDevolucao.getYear(), dateTimeDataDevolucao.getMonth() + 1, dateTimeDataDevolucao.getDay());
                     String observacoes = textObservacoes.getText();
 
-                    // Criando o objeto de Seguro com os dados
+                   
                     Reserva reserva = new Reserva( idReserva,dataReserva, statusReserva, dataRetirada, dataDevolucao, observacoes, clienteSelecionado,modeloSelecionado);
-                    reservaBanco.atualizar(reserva);
+                    if (!reserva.verificarDatasValidas()) {
+                        MessageBox box = new MessageBox(shell, SWT.ICON_WARNING);
+                        box.setMessage("A data de devolução não pode ser anterior à data de retirada.");
+                        box.open();
+                        return;
+                    }
                     
-                    // Mensagem de sucesso
+                    
+                    reservaBanco.atualizar(reserva);
+                
                     MessageBox box = new MessageBox(shell, SWT.OK);
                     box.setMessage("Resrva atualizada com sucesso!");
                     box.open();
@@ -288,7 +312,11 @@ public class ViewReserva {
 
 					Integer idReserva = Integer.parseInt(selectedItems[0].getText(0));
 					
-					reservaBanco.deletar(idReserva);
+					
+					Reserva reservaDeletar = new Reserva();
+					reservaDeletar.setIdReserva(idReserva);
+					
+					reservaBanco.deletar(reservaDeletar);
 					MessageBox successBox = new MessageBox(shell, SWT.ICON_INFORMATION);
 					successBox.setMessage("Reserva deletada com sucesso!");
 					successBox.open();
@@ -335,41 +363,43 @@ public class ViewReserva {
         Button btnConsultarReservaId = new Button(shell, SWT.NONE);
         btnConsultarReservaId.setText("Consultar Reserva por ID");
         btnConsultarReservaId.setBounds(381, 257, 150, 30);
-        btnConsultarReservaId.setVisible(true); // Começa invisível
+        btnConsultarReservaId.setVisible(true); 
 
-        // Text para digitar o ID do Seguro
+        
         Text txtReservaId = new Text(shell, SWT.BORDER);
         txtReservaId.setBounds(553, 256, 44, 25);
-        txtReservaId.setVisible(false); // Começa invisível
-
-        // Adicionando botão para confirmar a consulta com o ID
+        txtReservaId.setVisible(false); 
+        
         Button btnConfirmarReservaId = new Button(shell, SWT.NONE);
         btnConfirmarReservaId.setText("Confirmar ID");
         btnConfirmarReservaId.setBounds(603, 257, 150, 30);
-        btnConfirmarReservaId.setVisible(false); // Começa invisível
+        btnConfirmarReservaId.setVisible(false); 
 
-        // Quando o botão "Consultar Seguro por ID" for clicado
+     
         btnConsultarReservaId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                txtReservaId.setVisible(true); // Exibe o campo para inserir o ID
-                btnConfirmarReservaId.setVisible(true); // Exibe o botão de confirmação
+                txtReservaId.setVisible(true); 
+                btnConfirmarReservaId.setVisible(true); 
             }
         });
 
-        // Quando o botão "Confirmar ID" for clicado
+        
         btnConfirmarReservaId.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    String idReservaInput = txtReservaId.getText(); // Pega o ID inserido
+                    String idReservaInput = txtReservaId.getText(); 
                     if (idReservaInput != null && !idReservaInput.isEmpty()) {
-                        int idReserva = Integer.parseInt(idReservaInput); // Converte o ID para inteiro
+                        Integer idReserva = Integer.parseInt(idReservaInput); 
+                        
+                        Reserva reservaConsultar = new Reserva();
+    					reservaConsultar.setIdReserva(idReserva);
 
-                        Reserva reserva = reservaBanco.consultar(idReserva); // Consulta no banco de dados
+                        Reserva reserva = reservaBanco.consultar(reservaConsultar);
 
                         if (reserva != null) {
-                            // Adiciona os dados do seguro à tabela
+                           
                             table.removeAll();
                             TableItem item = new TableItem(table, SWT.NONE);
                             item.setText(new String[] {
@@ -384,19 +414,19 @@ public class ViewReserva {
                                     
                             });
                         } else {
-                            // Exibe mensagem caso o seguro não seja encontrado
+                            
                             MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
                             messageBox.setMessage("Reserva não encontrado.");
                             messageBox.open();
                         }
                     } else {
-                        // Exibe mensagem caso o campo de ID esteja vazio
+                        
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                         messageBox.setMessage("Digite um ID válido.");
                         messageBox.open();
                     }
                 } catch (NumberFormatException ex) {
-                    // Exibe mensagem caso o ID não seja um número válido
+                   
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
                     messageBox.setMessage("ID inválido.");
                     messageBox.open();

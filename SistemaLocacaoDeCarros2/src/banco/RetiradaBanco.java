@@ -69,12 +69,12 @@ public class RetiradaBanco {
 		return retiradas;
 	}
 
-	public Retirada consultar(int idRetirada) {
-		Retirada retirada = null;
+	public Retirada consultar(Retirada retirada) {
+		Retirada retiradaConsultar = null;
 		try {
 			String sql = "CALL consultar_retirada(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idRetirada);
+			statement.setInt(1, retirada.getIdRetirada());
 			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
 				Reserva reserva = new Reserva();
@@ -88,13 +88,13 @@ public class RetiradaBanco {
 				locacao.setReservaLocacao(reserva);
 				
 				
-				retirada = new Retirada();
-				retirada.setIdRetirada(rs.getInt("idRetirada"));
-				retirada.setDataRetirada(rs.getDate("dataRetirada").toLocalDate());
-				retirada.setLocalRetirada(rs.getString("localRetirada"));
-				retirada.setDocumentosVerificados(rs.getBoolean("documentosVerificados"));
-				retirada.setStatusRetirada(rs.getBoolean("statusRetirada"));
-				retirada.setLocacaoRetirada(locacao);
+				retiradaConsultar = new Retirada();
+				retiradaConsultar.setIdRetirada(rs.getInt("idRetirada"));
+				retiradaConsultar.setDataRetirada(rs.getDate("dataRetirada").toLocalDate());
+				retiradaConsultar.setLocalRetirada(rs.getString("localRetirada"));
+				retiradaConsultar.setDocumentosVerificados(rs.getBoolean("documentosVerificados"));
+				retiradaConsultar.setStatusRetirada(rs.getBoolean("statusRetirada"));
+				retiradaConsultar.setLocacaoRetirada(locacao);
 				
 			}
 			rs.close();
@@ -102,7 +102,7 @@ public class RetiradaBanco {
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao consultar retirada: " + e.getMessage(), e);
 		}
-		return retirada;
+		return retiradaConsultar;
 	}
 
 	public void atualizar(Retirada retirada) {
@@ -125,11 +125,11 @@ public class RetiradaBanco {
 		}
 	}
 
-	public void deletar(int idRetirada) {
+	public void deletar(Retirada retirada) {
 		try {
 			String sql = "CALL deletar_retirada(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idRetirada); // Passa o ID da retirada para a procedure
+			statement.setInt(1, retirada.getIdRetirada()); // Passa o ID da retirada para a procedure
 			statement.executeUpdate(); // Deleta a retirada
 			statement.close();
 		} catch (SQLException e) {

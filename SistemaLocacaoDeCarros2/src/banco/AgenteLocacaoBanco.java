@@ -6,7 +6,7 @@ import java.util.List;
 
 import model.AgenteLocacao;
 
-import model.Usuario;
+
 
 public class AgenteLocacaoBanco extends UsuarioBanco {
 	
@@ -65,37 +65,7 @@ public class AgenteLocacaoBanco extends UsuarioBanco {
         return agentes;
     }
 
-    public AgenteLocacao consultar(int codigoAgente) {
-        Usuario usuario = super.consultar(codigoAgente);
-        AgenteLocacao agente = null;
-        try {
-            String sql = "CALL consultar_agente_locacao(?);";
-            PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, codigoAgente);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                agente = new AgenteLocacao();
-                agente.setCodigoAgente(rs.getInt("codigoAgente"));
-                agente.setRegiaoAtuacao(rs.getString("regiaoAtuacao"));
-
-                
-                agente.setIdUsuario(usuario.getIdUsuario());
-                agente.setNomeCompleto(usuario.getNomeCompleto());
-                agente.setEmail(usuario.getEmail());
-                agente.setSenha(usuario.getSenha());
-                agente.setTelefone(usuario.getTelefone());
-                agente.setEndereco(usuario.getEndereco());
-                agente.setDataCadastro(usuario.getDataCadastro());
-                
-                agente.setNivelAcesso(usuario.getNivelAcesso());
-            }
-            rs.close();
-            statement.close();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar agente de locação: " + e.getMessage(), e);
-        }
-        return agente;
-    }
+  
 
     public void atualizar(AgenteLocacao agente) {
         super.atualizar(agente); 
@@ -111,16 +81,16 @@ public class AgenteLocacaoBanco extends UsuarioBanco {
         }
     }
 
-    public void deletar(int codigoAgente) {
+    public void deletar(AgenteLocacao agente) {
       
         try {
             String sql = "CALL deletar_agente(?);";
             PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-            statement.setInt(1, codigoAgente);
+            statement.setInt(1, agente.getIdUsuario());
             statement.executeUpdate();
             statement.close();
             
-            super.deletar(codigoAgente);
+            super.deletar(agente);
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar agente de locação: " + e.getMessage(), e);
         }

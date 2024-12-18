@@ -71,21 +71,7 @@ public class ViewLocacao {
 		Label lblClienteSelecionado = new Label(shell, SWT.NONE);
 		lblClienteSelecionado.setBounds(6, 27, 193, 30);
 		lblClienteSelecionado.setText("Reserva do Cliente: Nenhum selecionado");
-
-		btnSelecionarReserva.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ViewSelecionarReserva viewSelecionarReserva = new ViewSelecionarReserva(); // Crie a instância da
-																							// ViewCliente
-				reservaSelecionada = viewSelecionarReserva.open(); // Abre a janela de seleção
-				// Obtém o cliente selecionado
-				if (reservaSelecionada != null) {
-					lblClienteSelecionado
-							.setText("Reserva do Cliente:" + reservaSelecionada.getClienteReserva().getNomeCompleto());
-				}
-			}
-		});
-
+		
 		Button btnSelecionarVeiculo = new Button(shell, SWT.NONE);
 		btnSelecionarVeiculo.setBounds(6, 359, 150, 25);
 		btnSelecionarVeiculo.setText("Selecionar Veículo");
@@ -93,6 +79,23 @@ public class ViewLocacao {
 		Label lblVeiculoSelecionado = new Label(shell, SWT.NONE);
 		lblVeiculoSelecionado.setBounds(184, 359, 200, 25);
 		lblVeiculoSelecionado.setText("Nenhum veículo selecionado");
+
+		btnSelecionarReserva.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ViewSelecionarReserva viewSelecionarReserva = new ViewSelecionarReserva(); 
+				veiculoSelecionado = null;// Crie a instância da
+				lblVeiculoSelecionado.setText("Nenhum Veiculo Selecionado ");
+																							// ViewCliente
+				reservaSelecionada = viewSelecionarReserva.open(); // Abre a janela de seleção
+				// Obtém o cliente selecionado
+				if (reservaSelecionada != null) {
+					lblClienteSelecionado.setText("Reserva do Cliente:" + reservaSelecionada.getClienteReserva().getNomeCompleto() + "Modelo" + reservaSelecionada.getModeloReserva().getCategoria());
+				}
+			}
+		});
+
+		
 
 		btnSelecionarVeiculo.addSelectionListener(new SelectionAdapter() {
 			@Override

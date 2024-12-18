@@ -61,28 +61,7 @@ public class BalconistaBanco extends UsuarioBanco {
         return balconistas;
     }
 
-	// Consultar balconista por matrícula
-	public Balconista consultar(String matricula) {
-		Balconista balconista = null;
-		try {
-			String sql = "CALL consultar_balconista(?);";
-			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setString(1, matricula);
-			ResultSet rs = statement.executeQuery();
-			if (rs.next()) {
-				balconista = new Balconista();
-				balconista.setIdBalconista(rs.getInt("matricula"));
-				balconista.setTurno(rs.getString("turno"));
-
-				balconista.setFilial(rs.getString("filial"));
-			}
-			rs.close();
-			statement.close();
-		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao consultar balconista: " + e.getMessage(), e);
-		}
-		return balconista;
-	}
+	
 
 	public void atualizar(Balconista balconista) {
 		super.atualizar(balconista);
@@ -101,15 +80,15 @@ public class BalconistaBanco extends UsuarioBanco {
 		}
 	}
 
-	public void deletar(int idUsuario) {
+	public void deletar(Balconista balconista) {
 		try {
 			String sql = "CALL deletar_balconista(?);";
 			PreparedStatement statement = connection.getConnection().prepareStatement(sql);
-			statement.setInt(1, idUsuario);
+			statement.setInt(1, balconista.getIdUsuario());
 			statement.executeUpdate();
 			statement.close();
 			
-			super.deletar(idUsuario);
+			super.deletar(balconista);
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao deletar balconista: " + e.getMessage(), e);
 		}
