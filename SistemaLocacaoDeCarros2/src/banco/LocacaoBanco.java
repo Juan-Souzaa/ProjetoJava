@@ -77,6 +77,7 @@ public class LocacaoBanco {
                 
                 // Criando e associando o veículo à locação
                 Veiculo veiculo = new Veiculo();
+                veiculo.setMarca(rs.getString("marca"));
                 veiculo.setPlaca(rs.getString("veiculoPlaca"));
                 veiculo.setCategoria(rs.getString("veiculoCategoria"));
                 locacao.setVeiculoLocacao(veiculo); // Associando o veículo à locação
